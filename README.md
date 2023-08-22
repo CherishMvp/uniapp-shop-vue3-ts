@@ -164,3 +164,38 @@ npm run dev:h5
 ├── tsconfig.json              # typescript 配置
 └── vite.config.ts             # vue-cli 配置
 ```
+
+# 2023-08-16 16:42:33
+
+- 主题色配置
+
+# 2023-08-22 11:34:22
+
+- `git reset Head^1`撤回本地 commit 放回本地暂存区
+
+# 2023-08-22 11:44:35
+
+git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn.net/weixin_47980825/article/details/127473686`
+
+- husky 介绍
+  husky 可以帮助我们在 执行 git commit 提交的时候，按照 eslint 规范进行修复代码。
+  husky 是一个 git hook 工具，可以帮助我们触发 git 提交的各个阶段：pre-commit、commit-msg、pre-push 支持所有的 Git 钩子
+  - 安装与配置
+    - `npx husky-init && npm install`
+    - 会在 .husky/pre-commit 生成一个测试命令（在 git commit -m''执行之前执行）
+- Commitizen 来帮助我们规范提交代码。
+  - Commitizen 是一个帮助我们编写规范 commit message 的工具。
+  - 安装
+    - `npm install commitizen -D`
+  - 安装 cz-conventional-changelog - `npx commitizen init cz-conventional-changelog --save-dev --save-exact`
+  - package.json 配置 config：
+    - ` "config": { "commitizen": { "path": "./node_modules/cz-conventional-changelog" }}`
+- 测试
+  - `npx cz`
+  - 格式：本次修改范围 - 选择提交信息 - 详细描述信息 - 是否是重大修改 - 是否影响 open issue（如 codeup 云效）
+- 添加脚本
+- `"commit":"cz" `
+- 阻止不规范提交
+  - 安装`@commitlint/config-conventional 和 @commitlint/cli`
+  - 在根目录创建` commitlint.config.js` 文件，配置 `commitlint`
+  - 使用 husky 生成 commit-msg 文件，验证提交信息： - `npx husky add .husky/commit-msg "npx --no-install commitlint --edit $1"`
