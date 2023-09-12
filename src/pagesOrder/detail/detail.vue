@@ -45,23 +45,9 @@ const query = defineProps<{
 // 获取页面栈
 const pages = getCurrentPages()
 
-interface Keyframe {
-  [key: string]: string | number
-}
-interface AnimateOptions {
-  scrollSource: string
-  timeRange: number
-  startScrollOffset: number
-  endScrollOffset: number
-}
-interface PageInstance extends Page.PageInstance {
-  animate: (
-    selector: string,
-    keyframes: Keyframe[],
-    duration: number,
-    options?: AnimateOptions,
-  ) => void
-}
+// 基于小程序的 Page 类型扩展 uni-app 的 Page
+type PageInstance = Page.PageInstance & WechatMiniprogram.Page.InstanceMethods<any>
+
 // #ifdef MP-WEIXIN
 // 获取当前页面实例，数组最后一项
 const pageInstance = pages.at(-1) as PageInstance
@@ -138,6 +124,11 @@ const onOrderPay = async () => {
     // 正式环境微信支付
     const res = await getPayWxPayMiniPayAPI({ orderId: query.id })
     await wx.requestPayment(res.result)
+    // #endif
+
+    // #ifdef H5 || APP-PLUS
+    // H5端 和 App 端未开通支付-模拟支付体验
+    await getPayMockAPI({ orderId: query.id })
     // #endif
   }
   // 关闭当前页，再跳转支付结果页
