@@ -37,10 +37,18 @@ const resetData = () => {
   guessList.value = []
   finish.value = false
 }
+// 触发emit事件，打开商品详情弹窗
+const open = (item: any) => {
+  console.log('商品信息', item)
+  emit('showPopup', item)
+  // 通过组件定义的ref调用uni-popup方法 ,如果传入参数 ，type 属性将失效 ，仅支持 ['top','left','bottom','right','center']
+}
 // 组件挂载完毕
 onMounted(() => {
   getHomeGoodsGuessLikeData()
 })
+// 子传父
+const emit = defineEmits(['showPopup'])
 // 暴露方法
 defineExpose({
   resetData,
@@ -54,19 +62,24 @@ defineExpose({
     <text class="text">猜你喜欢</text>
   </view>
   <view class="guess">
-    <navigator
+    <!-- 将此处的跳转到某个链接，改为底部弹出层 -->
+    <!-- <view
       class="guess-item"
       v-for="item in guessList"
       :key="item.id"
       :url="`/pages/goods/goods?id=${item.id}`"
-    >
+    > -->
+    <view class="guess-item" v-for="item in guessList" :key="item.id" @click="open(item)">
       <image class="image" mode="aspectFill" :src="item.picture"></image>
       <view class="name"> {{ item.name }} </view>
       <view class="price">
-        <text class="small">¥</text>
-        <text>{{ item.price }}</text>
+        <view>
+          <!-- <text class="small">¥ </text> -->
+          <text>{{ item.price }}元/斤</text>
+        </view>
+        <view> <text class="icon-cart"></text></view>
       </view>
-    </navigator>
+    </view>
   </view>
   <view class="loading-text">
     {{ finish ? '没有更多数据~' : '正在加载...' }}
@@ -133,10 +146,13 @@ defineExpose({
     -webkit-box-orient: vertical;
   }
   .price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     line-height: 1;
     padding-top: 4rpx;
     color: #cf4444;
-    font-size: 26rpx;
+    font-size: 35rpx;
   }
   .small {
     font-size: 80%;

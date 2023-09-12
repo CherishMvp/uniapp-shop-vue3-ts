@@ -110,8 +110,11 @@ const onScrolltolower = async () => {
           <image class="thumb" :src="goods.picture"></image>
           <view class="name ellipsis">{{ goods.name }}</view>
           <view class="price">
-            <text class="symbol">¥</text>
-            <text class="number">{{ goods.price }}</text>
+            <view>
+              <!-- <text class="symbol">¥</text> -->
+              <text class="number">{{ goods.price }}元/斤</text>
+            </view>
+            <view> <text class="icon-cart"></text></view>
           </view>
         </navigator>
       </view>
@@ -202,7 +205,10 @@ page {
   .price {
     line-height: 1;
     color: #cf4444;
-    font-size: 30rpx;
+    font-size: 32rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .symbol {
     font-size: 70%;

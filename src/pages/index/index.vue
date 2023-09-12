@@ -8,7 +8,7 @@ import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
 import { useGuessList } from '@/composables'
-
+import { myHotList } from '@/mock/mockOrder'
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -27,7 +27,9 @@ const getHomeCategoryData = async () => {
 const hotList = ref<HotItem[]>([])
 const getHomeHotData = async () => {
   const res = await getHomeHotAPI()
-  hotList.value = res.result
+  // TODO:mock data
+  // hotList.value = res.result
+  hotList.value = myHotList.result
 }
 
 // 是否加载中标记
@@ -63,6 +65,14 @@ const onRefresherrefresh = async () => {
   // 关闭动画
   isTriggered.value = false
 }
+// 子传父，打开poup
+const popupRef = ref()
+const productInfo = ref()
+const openPoup = (item: any) => {
+  console.log('收到子传来的', item)
+  popupRef.value?.open('bottom')
+  productInfo.value = item
+}
 </script>
 
 <template>
@@ -84,13 +94,17 @@ const onRefresherrefresh = async () => {
         <!-- 自定义轮播图 -->
         <XtxSwiper :list="bannerList" />
         <!-- 分类面板 -->
-        <CategoryPanel :list="categoryList" />
+        <CategoryPanel v-if="false" :list="categoryList" />
         <!-- 热门推荐 -->
         <HotPanel :list="hotList" />
         <!-- 猜你喜欢 -->
-        <XtxGuess ref="guessRef" />
+        <XtxGuess ref="guessRef" @showPopup="openPoup" />
       </template>
     </scroll-view>
+    <uni-popup ref="popupRef" background-color="#fafafa" type="bottom">
+      <span>底部弹出 Popup</span>
+      {{ productInfo }}
+    </uni-popup>
   </view>
 </template>
 

@@ -35,7 +35,7 @@ export type HotItem = {
   /** 标题 */
   title: string
   /** 推荐类型 */
-  type: string
+  type: string | number
 }
 
 /** 猜你喜欢-商品类型 */
