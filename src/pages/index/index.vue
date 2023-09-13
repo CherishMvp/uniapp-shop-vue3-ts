@@ -8,7 +8,21 @@ import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
 import { useGuessList } from '@/composables'
-
+// 判断是否滚动
+const isScroll = ref(false)
+const onRefreshabort = async (e: any) => {
+  isScroll.value = true
+  uni.$emit('showCart', {
+    show: isScroll.value,
+  })
+  setTimeout(() => {
+    isScroll.value = false
+    uni.$emit('showCart', {
+      show: isScroll.value,
+    })
+  }, 600) // 设置延迟时间，单位为毫秒
+  // clearTimeout(scrollTimer)
+}
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -39,7 +53,6 @@ onLoad(async () => {
   await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
   isLoading.value = false
 })
-
 // 猜你喜欢组合式函数调用
 const { guessRef, onScrolltolower } = useGuessList()
 // 当前下拉刷新状态
@@ -48,11 +61,13 @@ const isTriggered = ref(false)
 const onRefresherrefresh = async () => {
   // 开始动画
   isTriggered.value = true
+  isScroll.value = true
+  console.log('isScroll', isScroll.value)
   // 加载数据
   // await getHomeBannerData()
   // await getHomeCategoryData()
   // await getHomeHotData()
-  // 重置猜你喜欢组件数据
+  // 重置猜你喜欢组件数据；要先重置，然后再搜索
   guessRef.value?.resetData()
   await Promise.all([
     getHomeBannerData(),
@@ -69,11 +84,14 @@ const onRefresherrefresh = async () => {
   <view class="viewport">
     <!-- 自定义导航栏 -->
     <CustomNavbar />
+    <!-- 全局按钮购物车 -->
+    <CherishShopCart />
     <!-- 滚动容器 -->
     <scroll-view
       enable-back-to-top
       refresher-enabled
       @refresherrefresh="onRefresherrefresh"
+      @scroll="onRefreshabort"
       :refresher-triggered="isTriggered"
       @scrolltolower="onScrolltolower"
       class="scroll-view"

@@ -19,7 +19,7 @@ const query = defineProps<{
 // console.log(query)
 const currUrlMap = urlMap.find((v) => v.type === query.type)
 // 动态设置标题
-uni.setNavigationBarTitle({ title: currUrlMap!.title })
+uni.setNavigationBarTitle({ title: currUrlMap!.title }) //!.是一种称为"非空断言操作符,确定某个表达式不会为null或undefined，并强制将其视为非空值。
 
 // 推荐封面图
 const bannerPicture = ref('')

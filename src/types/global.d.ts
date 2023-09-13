@@ -23,17 +23,17 @@ export type PageParams = {
 /** 通用商品类型 */
 export type GoodsItem = {
   /** 商品描述 */
-  desc: string
+  goods_desc: string
   /** 商品折扣 */
-  discount: number
+  goods_discount?: number
   /** id */
-  id: string
+  goods_id: string
   /** 商品名称 */
-  name: string
+  goods_name: string
   /** 商品已下单数量 */
-  orderNum: number
+  goods_orderNum: number
   /** 商品图片 */
-  picture: string
+  goods_picture: string
   /** 商品价格 */
-  price: number
+  goods_price: number
 }

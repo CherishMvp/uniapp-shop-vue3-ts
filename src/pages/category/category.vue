@@ -6,7 +6,7 @@ import type { BannerItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 import PageSkeleton from './components/PageSkeleton.vue'
-
+import { mockCategories, mockCategories_NewType } from '@/mock/mockData'
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getBannerData = async () => {
@@ -18,8 +18,11 @@ const getBannerData = async () => {
 const categoryList = ref<CategoryTopItem[]>([])
 const activeIndex = ref(0)
 const getCategoryTopData = async () => {
-  const res = await getCategoryTopAPI()
-  categoryList.value = res.result
+  // const res = await getCategoryTopAPI()
+  // const res = mockCategories //旧的类型的数据
+  const res = mockCategories_NewType
+  console.log('res', res)
+  categoryList.value = res.result as any
 }
 
 // 是否数据加载完毕
@@ -31,8 +34,9 @@ onLoad(async () => {
 })
 
 // 提取当前二级分类数据
+// 2023-08-24 14:44:01 二级分类设为subcategory
 const subCategoryList = computed(() => {
-  return categoryList.value[activeIndex.value]?.children || []
+  return categoryList.value[activeIndex.value]?.subcategory || []
 })
 </script>
 
@@ -65,24 +69,24 @@ const subCategoryList = computed(() => {
         <!-- 焦点图 -->
         <XtxSwiper class="banner" :list="bannerList" />
         <!-- 内容区域 -->
-        <view class="panel" v-for="item in subCategoryList" :key="item.id">
+        <view class="panel" v-for="item in subCategoryList" :key="item.subcategory_id">
           <view class="title">
-            <text class="name">{{ item.name }}</text>
+            <text class="name">{{ item.subcategory_name }}</text>
             <navigator class="more" hover-class="none">全部</navigator>
           </view>
           <view class="section">
             <navigator
               v-for="goods in item.goods"
-              :key="goods.id"
+              :key="goods.goods_id"
               class="goods"
               hover-class="none"
-              :url="`/pages/goods/goods?id=${goods.id}`"
+              :url="`/pages/goods/goods?id=${goods.goods_id}`"
             >
-              <image class="image" :src="goods.picture"></image>
-              <view class="name ellipsis">{{ goods.name }}</view>
+              <image class="image" :src="goods.goods_picture"></image>
+              <view class="name ellipsis">{{ goods.goods_name }}</view>
               <view class="price">
                 <text class="symbol">¥</text>
-                <text class="number">{{ goods.price }}</text>
+                <text class="number">{{ goods.goods_price }}</text>
               </view>
             </navigator>
           </view>

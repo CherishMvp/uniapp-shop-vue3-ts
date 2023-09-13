@@ -199,3 +199,15 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
   - 安装`@commitlint/config-conventional 和 @commitlint/cli`
   - 在根目录创建` commitlint.config.js` 文件，配置 `commitlint`
   - 使用 husky 生成 commit-msg 文件，验证提交信息： - `npx husky add .husky/commit-msg "npx --no-install commitlint --edit $1"`
+
+# 2023-08-23 14:59:36
+
+- 分类列表数据库分析：
+  - 展示结构：总分类——二级子分类——对应分类下的商品集合——
+  - 对应数据表：categories——subcategories——goods（层层嵌套）
+  - 读取展示：可根据每个表关联的外键 id 来查询。最终组合成前端所需的数据格式。
+- 使用`navigator`组件进行路由传参时，可以通过`defineProps`接收:
+  - 在给定的代码中，`navigator`组件通过绑定动态的`url`属性以及模板字符串的方式将参数传递给目标页面。这种方式仅适用于在导航过程中传递参数给目标页面本身，并不会直接将参数传递给其他组件。
+  - 至于为什么可以在其他组件中使用`const query = defineProps<{ id: string }>()`，是因为`defineProps`函数是 Vue 3 中的一种特性，用于定义组件的 props 属性。通过定义`id`属性的类型为`string`，在其他组件中使用`const query = defineProps<{ id: string }>()`可以获取到通过路由传递过来的`id`参数。
+  - 假设您在其他组件中使用了该`defineProps`语法并成功获取了`id`参数，那是因为该组件被作为目标页面加载，并通过路由接收了`id`参数。在这种情况下，组件可以使用`defineProps`来定义 props，并通过`id`属性来访问传递过来的参数值。
+  - 需要注意的是，`defineProps`是 Vue 3 的一种语法，而且只能在组件中使用。其他组件可以通过 props 属性或其他状态管理方式来获取传递的参数值。在使用`navigator`组件时，可以通过前面提到的方法来在子组件中获取传递的参数值。

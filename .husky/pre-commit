@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run lint-staged
+# Don't use eslint to check for formatting problems for now
+# npm run lint-staged

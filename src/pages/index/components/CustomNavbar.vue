@@ -33,8 +33,10 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
     height: 64rpx;
     padding-left: 30rpx;
     .logo-image {
-      width: 166rpx;
-      height: 39rpx;
+      // width: 166rpx;
+      //height: 39rpx;
+      width: 100px;
+      height: 60rpx;
     }
     .logo-text {
       flex: 1;

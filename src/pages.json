@@ -9,6 +9,8 @@
 			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
 			// 以 Xtx 开头的组件，在 components 文件夹中查找引入（需要重启服务器）
 			"^Xtx(.*)": "@/components/Xtx$1.vue"
+			// 以 Xtx 开头的组件，在 components 文件夹中查找引入（需要重启服务器）
+			"^Cherish(.*)": "@/components/Cherish$1.vue"
 		}
 	},
 	"pages": [

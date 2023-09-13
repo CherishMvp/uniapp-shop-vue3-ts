@@ -1,0 +1,12 @@
+SELECT categories.*, 
+subcategories.id AS subcategory_id, 
+subcategories.name AS subcategory_name,
+subcategories.picture AS subcategory_picture, 
+ goods.id AS goods_id, goods.name AS goods_name, 
+ goods.description AS goods_desc, 
+ goods.price AS goods_price, 
+ goods.picture AS goods_picture,
+ goods.orderNum AS goods_orderNum
+FROM categories
+JOIN subcategories ON subcategories.category_id = categories.id
+JOIN goods ON goods.subcategory_id = subcategories.id

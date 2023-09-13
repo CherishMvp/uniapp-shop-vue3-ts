@@ -12,3 +12,17 @@ export const getGoodsByIdAPI = (id: string) => {
     data: { id },
   })
 }
+export const getGoodsByIdAPI_Express = (id: string) => {
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: 'http://localhost:3000/users/goods',
+      data: { id },
+      method: 'GET',
+      success: ({ data, statusCode, header }) => {
+        console.log('dataa', data)
+        resolve(data)
+      },
+      fail: (error) => {},
+    })
+  })
+}

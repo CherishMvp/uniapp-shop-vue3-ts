@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getHomeGoodsGuessLikeAPI } from '@/services/home'
+import { getHomeGoodsGuessLikeAPI, getHomeGoodsGuessLikeAPI_Express } from '@/services/home'
 import type { PageParams } from '@/types/global'
 import type { GuessItem } from '@/types/home'
 import { onMounted, ref } from 'vue'
@@ -19,12 +19,14 @@ const getHomeGoodsGuessLikeData = async () => {
   if (finish.value === true) {
     return uni.showToast({ icon: 'none', title: '没有更多数据~' })
   }
-  const res = await getHomeGoodsGuessLikeAPI(pageParams)
+  // const res = await getHomeGoodsGuessLikeAPI(pageParams)
+  const res = (await getHomeGoodsGuessLikeAPI_Express(pageParams)) as any
+  console.log('res', res)
   // guessList.value = res.result.items
   // 数组追加
   guessList.value.push(...res.result.items)
   // 分页条件
-  if (pageParams.page < res.result.pages) {
+  if (pageParams.page < res.result.totalPages) {
     // 页码累加
     pageParams.page++
   } else {
@@ -57,14 +59,14 @@ defineExpose({
     <navigator
       class="guess-item"
       v-for="item in guessList"
-      :key="item.id"
-      :url="`/pages/goods/goods?id=${item.id}`"
+      :key="item.goods_id"
+      :url="`/pages/goods/goods?id=${item.goods_id}`"
     >
-      <image class="image" mode="aspectFill" :src="item.picture"></image>
-      <view class="name"> {{ item.name }} </view>
+      <image class="image" mode="aspectFill" :src="item.goods_picture"></image>
+      <view class="name"> {{ item.goods_name }} </view>
       <view class="price">
         <text class="small">¥</text>
-        <text>{{ item.price }}</text>
+        <text>{{ item.goods_price }}</text>
       </view>
     </navigator>
   </view>
@@ -73,7 +75,7 @@ defineExpose({
   </view>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 :host {
   display: block;
 }

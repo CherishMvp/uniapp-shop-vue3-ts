@@ -26,6 +26,7 @@ const query = defineProps<{
 
 // 获取收货地址详情数据
 const getMemberAddressByIdData = async () => {
+  console.log('query.id', query.id)
   if (query.id) {
     // 发送请求
     const res = await getMemberAddressByIdAPI(query.id)

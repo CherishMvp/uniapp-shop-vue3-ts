@@ -46,3 +46,20 @@ export const getHomeGoodsGuessLikeAPI = (data?: PageParams) => {
     data,
   })
 }
+/**
+ * 猜你喜欢-小程序-express_test
+ */
+export const getHomeGoodsGuessLikeAPI_Express = (data?: PageParams) => {
+  return new Promise((resolve, reject) => {
+    uni.request({
+      url: 'http://localhost:3000/users/goods',
+      data,
+      method: 'GET',
+      success: ({ data, statusCode, header }) => {
+        console.log('dataa', data)
+        resolve(data)
+      },
+      fail: (error) => {},
+    })
+  })
+}

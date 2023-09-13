@@ -5,13 +5,13 @@ import type {
   SkuPopupLocaldata,
 } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 import { postMemberCartAPI } from '@/services/cart'
-import { getGoodsByIdAPI } from '@/services/goods'
+import { getGoodsByIdAPI, getGoodsByIdAPI_Express } from '@/services/goods'
 import type { GoodsResult } from '@/types/goods'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
-
+import { mockGoodDetail } from '@/mock/mockData'
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
@@ -23,28 +23,32 @@ const query = defineProps<{
 // 获取商品详情信息
 const goods = ref<GoodsResult>()
 const getGoodsByIdData = async () => {
-  const res = await getGoodsByIdAPI(query.id)
-  goods.value = res.result
+  console.log('要查询的商品ID', query.id)
+  // const res = await getGoodsByIdAPI(query.id)
+  const res = (await getGoodsByIdAPI_Express(query.id)) as any
+
+  // const res = mockGoodDetail
+  goods.value = res.result as any
   // SKU组件所需格式
   localdata.value = {
     _id: res.result.id,
     name: res.result.name,
-    goods_thumb: res.result.mainPictures[0],
-    spec_list: res.result.specs.map((v) => {
+    goods_thumb: res.result?.mainPictures[0],
+    spec_list: res.result?.specs.map((v: any) => {
       return {
         name: v.name,
         list: v.values,
       }
     }),
-    sku_list: res.result.skus.map((v) => {
+    sku_list: res.result?.skus.map((v: any) => {
       return {
         _id: v.id,
         goods_id: res.result.id,
         goods_name: res.result.name,
         image: v.picture,
-        price: v.price * 100, // 注意：需要乘以 100
+        price: Number(v.price) * 100, // 注意：需要乘以 100
         stock: v.inventory,
-        sku_name_arr: v.specs.map((vv) => vv.valueName),
+        sku_name_arr: v.specs?.map((vv: any) => vv.valueName), //商品详情数组列表
       }
     }),
   }
@@ -109,6 +113,8 @@ const selectArrText = computed(() => {
 })
 // 加入购物车事件
 const onAddCart = async (ev: SkuPopupEvent) => {
+  // 这个ev传来的就是localdata，处理好的商品数据
+  console.log('添加至购物车', ev)
   await postMemberCartAPI({ skuId: ev._id, count: ev.buy_num })
   uni.showToast({ title: '添加成功' })
   isShowSku.value = false
@@ -149,7 +155,7 @@ const onBuyNow = (ev: SkuPopupEvent) => {
         <view class="indicator">
           <text class="current">{{ currentIndex + 1 }}</text>
           <text class="split">/</text>
-          <text class="total">{{ goods?.mainPictures.length }}</text>
+          <text class="total">{{ goods?.mainPictures?.length }}</text>
         </view>
       </view>
 
@@ -181,7 +187,7 @@ const onBuyNow = (ev: SkuPopupEvent) => {
     </view>
 
     <!-- 商品详情 -->
-    <view class="detail panel">
+    <view class="detail panel" v-if="false">
       <view class="title">
         <text>详情</text>
       </view>
@@ -205,23 +211,24 @@ const onBuyNow = (ev: SkuPopupEvent) => {
     </view>
 
     <!-- 同类推荐 -->
-    <view class="similar panel">
+    <!-- 2023-08-24 17:18:02 如果没有相似商品则不显示 -->
+    <view class="similar panel" v-if="!goods?.similarProducts">
       <view class="title">
         <text>同类推荐</text>
       </view>
       <view class="content">
         <navigator
           v-for="item in goods?.similarProducts"
-          :key="item.id"
+          :key="item.goods_id"
           class="goods"
           hover-class="none"
-          :url="`/pages/goods/goods?id=${item.id}`"
+          :url="`/pages/goods/goods?id=${item.goods_id}`"
         >
-          <image class="image" mode="aspectFill" :src="item.picture"></image>
-          <view class="name ellipsis">{{ item.name }}</view>
+          <image class="image" mode="aspectFill" :src="item.goods_picture"></image>
+          <view class="name ellipsis">{{ item.goods_name }}</view>
           <view class="price">
             <text class="symbol">¥</text>
-            <text class="number">{{ item.price }}</text>
+            <text class="number">{{ item.goods_price }}</text>
           </view>
         </navigator>
       </view>
