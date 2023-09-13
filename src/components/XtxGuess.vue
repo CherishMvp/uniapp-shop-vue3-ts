@@ -73,11 +73,9 @@ defineExpose({
       <image class="image" mode="aspectFill" :src="item.picture"></image>
       <view class="name"> {{ item.name }} </view>
       <view class="price">
-        <view>
-          <!-- <text class="small">¥ </text> -->
-          <text>{{ item.price }}元/斤</text>
-        </view>
-        <view> <text class="icon-cart"></text></view>
+        <!-- <text class="small">¥ </text> -->
+        <text>{{ item.price }}元/斤</text>
+        <uni-icons type="plus-filled" color="#cf4444" size="28px" />
       </view>
     </view>
   </view>
@@ -147,9 +145,10 @@ defineExpose({
   }
   .price {
     display: flex;
-    align-items: center;
+    // align-items: stretch;
     justify-content: space-between;
-    line-height: 1;
+    line-height: 28px;
+    height: 28px;
     padding-top: 4rpx;
     color: #cf4444;
     font-size: 35rpx;

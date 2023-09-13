@@ -105,10 +105,13 @@ const openPoup = (item: any) => {
       <span>底部弹出 Popup</span>
       {{ productInfo }}
     </uni-popup>
+    <navigator class="shop_cart" url="/pages/cart/cart2" open-type="navigate" hover-class="none">
+      <uni-icons type="cart" color="#4cd964" size="45" />
+    </navigator>
   </view>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 page {
   background-color: #f7f7f7;
   height: 100%;
@@ -124,5 +127,10 @@ page {
 .scroll-view {
   flex: 1;
   overflow: hidden;
+}
+.shop_cart {
+  position: fixed;
+  right: 5vw;
+  bottom: 20vh;
 }
 </style>
