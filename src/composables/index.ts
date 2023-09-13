@@ -10,6 +10,7 @@ export const useGuessList = () => {
 
   // 滚动触底事件
   const onScrolltolower = () => {
+    // console.log('isLower')
     guessRef.value?.getMore()
   }
 

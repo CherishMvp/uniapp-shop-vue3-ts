@@ -9,6 +9,7 @@ import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
 import { useGuessList } from '@/composables'
 import { myHotList } from '@/mock/mockOrder'
+import { getGoodsByIdAPI } from '@/services/goods'
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -66,12 +67,41 @@ const onRefresherrefresh = async () => {
   isTriggered.value = false
 }
 // 子传父，打开poup
-const popupRef = ref()
 const productInfo = ref()
-const openPoup = (item: any) => {
-  console.log('收到子传来的', item)
-  popupRef.value?.open('bottom')
-  productInfo.value = item
+// uni-ui 弹出层组件 ref
+const popup = ref<{
+  open: (type?: UniHelper.UniPopupType) => void
+  close: () => void
+}>()
+const localdata = ref()
+const openPoup = async (goods_id: number | string) => {
+  console.log('收到子传来的商品ID', goods_id)
+  const res = await getGoodsByIdAPI(goods_id as string) //调用api获取
+  productInfo.value = res.result
+  // SKU组件所需格式
+  localdata.value = {
+    _id: res.result.id,
+    name: res.result.name,
+    goods_thumb: res.result.mainPictures[0],
+    spec_list: res.result.specs.map((v) => {
+      return {
+        name: v.name,
+        list: v.values,
+      }
+    }),
+    sku_list: res.result.skus.map((v) => {
+      return {
+        _id: v.id,
+        goods_id: res.result.id,
+        goods_name: res.result.name,
+        image: v.picture,
+        price: v.price * 100, // 注意：需要乘以 100
+        stock: v.inventory,
+        sku_name_arr: v.specs.map((vv) => vv.valueName),
+      }
+    }),
+  }
+  popup.value?.open('bottom')
 }
 </script>
 
@@ -101,12 +131,13 @@ const openPoup = (item: any) => {
         <XtxGuess ref="guessRef" @showPopup="openPoup" />
       </template>
     </scroll-view>
-    <uni-popup ref="popupRef" background-color="#fafafa" type="bottom">
-      <span>底部弹出 Popup</span>
-      {{ productInfo }}
+    <!-- 底部 弹出层 -->
+    <uni-popup ref="popup" background-color="#ffffff" @close="popup?.close()" type="bottom">
+      <span>获取信息商品信息成功</span>
+      {{ productInfo?.name }}
     </uni-popup>
     <navigator class="shop_cart" url="/pages/cart/cart2" open-type="navigate" hover-class="none">
-      <uni-icons type="cart" color="#4cd964" size="45" />
+      <uni-icons type="cart" color="#276d33" size="45" />
     </navigator>
   </view>
 </template>
@@ -125,7 +156,9 @@ page {
 }
 
 .scroll-view {
-  flex: 1;
+  //flex: 1;
+  flex: auto;
+  height: 100vh; //flex:1会出现无法滚动到底部的问题
   overflow: hidden;
 }
 .shop_cart {

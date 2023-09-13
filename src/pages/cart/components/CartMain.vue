@@ -229,7 +229,8 @@ const { guessRef, onScrolltolower } = useGuessList()
 
 // 滚动容器
 .scroll-view {
-  flex: 1;
+  flex: none; //同样的，使用flex:1会出问题
+  height: 95vh; //底部有一个action_bar
   background-color: #f7f7f8;
 }
 
