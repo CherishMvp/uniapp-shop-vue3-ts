@@ -204,7 +204,7 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
 - Commitizen 来帮助我们规范提交代码。
   - Commitizen 是一个帮助我们编写规范 commit message 的工具。
   - 安装
-    - `npm install commitizen -D`
+    - `npm install commitizen -D`2023-09-13 09:28:35
   - 安装 cz-conventional-changelog - `npx commitizen init cz-conventional-changelog --save-dev --save-exact`
   - package.json 配置 config：
     - ` "config": { "commitizen": { "path": "./node_modules/cz-conventional-changelog" }}`
@@ -217,3 +217,7 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
   - 安装`@commitlint/config-conventional 和 @commitlint/cli`
   - 在根目录创建` commitlint.config.js` 文件，配置 `commitlint`
   - 使用 husky 生成 commit-msg 文件，验证提交信息： - `npx husky add .husky/commit-msg "npx --no-install commitlint --edit $1"`
+
+# 2023 年 9 月 13 日
+
+- master 下关闭 GitHub 和 gitee 托管
