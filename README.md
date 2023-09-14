@@ -227,3 +227,5 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
 - 开全局 clshx 代理，但是 github 在 push 的时候还是不走，要设置 proxy
   `git config --global http.proxy socks5://127.0.0.1:1080`
   `git config --global https.proxy socks5://127.0.0.1:1080`
+- 新增无权限处理方法
+  - 参考链接:`https://blog.csdn.net/the__future/article/details/130038818`
