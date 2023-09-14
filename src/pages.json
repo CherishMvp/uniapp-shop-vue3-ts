@@ -33,7 +33,8 @@
     {
       "path": "pages/test/test",
       "style": {
-        "navigationBarTitleText": "devPage"
+        "navigationBarTitleText": "devPage",
+        "disableScroll": true
       }
     },
     {

@@ -12,6 +12,7 @@
       backgroundColor: '#E9F8F5',
     }"
     @add-cart="onAddCart"
+    @close="mySkuClose"
   />
 </template>
 
@@ -23,17 +24,20 @@ import type {
 } from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
 import { postMemberCartAPI } from '@/services/cart'
 const goods_info = defineProps(['goods_id', 'localdata', 'isShowSku', 'mode'])
+const emits = defineEmits(['mySkuState'])
 const showPoup = ref(false)
 
 watch(
-  goods_info.isShowSku,
-  () => {
-    showPoup.value = goods_info.isShowSku
-    console.log('showPo', showPoup.value)
+  () => goods_info.isShowSku,
+  (newValue, oldValue) => {
+    showPoup.value = newValue
+    console.log('是否展示', showPoup.value)
+    console.log('isShowSku 变化前后的值', oldValue, newValue)
   },
-  { deep: true, immediate: true },
 )
-console.log('goods_info', goods_info)
+const mySkuClose = () => {
+  emits('mySkuState', false)
+}
 // 直接在本地触发就行，poup写在本页
 // SKU组件实例
 const skuPopupRef = ref<SkuPopupInstance>()
@@ -42,7 +46,8 @@ const onAddCart = async (ev: SkuPopupEvent) => {
   console.log('event', ev)
   await postMemberCartAPI({ skuId: ev._id, count: ev.buy_num })
   uni.showToast({ title: '添加成功' })
-  showPoup.value = false
+  emits('mySkuState', false)
+  // showPoup.value = false
 }
 </script>
 

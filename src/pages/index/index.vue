@@ -99,9 +99,12 @@ const getGoodsByIdData = async (goods_id: string) => {
   isShowSku.value = true
   console.log('localdata.value', localdata.value, 'isShowSku.value', isShowSku.value)
 }
-const openPoup = async (goods_id: string) => {
+const openPoup = (goods_id: string) => {
   console.log('收到子传来的商品ID', goods_id)
-  await getGoodsByIdData(goods_id)
+  getGoodsByIdData(goods_id)
+}
+const changeSkuState = (state: boolean) => {
+  isShowSku.value = state
 }
 </script>
 
@@ -131,12 +134,16 @@ const openPoup = async (goods_id: string) => {
         <XtxGuess ref="guessRef" @show-popup="openPoup" />
       </template>
     </scroll-view>
-
+    <mySkuPoup
+      @my-sku-state="changeSkuState"
+      :localdata="localdata"
+      :is-show-sku="isShowSku"
+      :mode="2"
+    />
     <!-- 悬浮购物车 -->
     <navigator class="shop_cart" url="/pages/cart/cart2" open-type="navigate" hover-class="none">
       <uni-icons type="cart" color="#276d33" size="45" />
     </navigator>
-    <mySkuPoup :localdata="localdata" :is-show-sku="isShowSku" :mode="2" />
   </view>
 </template>
 

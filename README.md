@@ -229,3 +229,25 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
   `git config --global https.proxy socks5://127.0.0.1:1080`
 - 新增无权限处理方法
   - 参考链接:`https://blog.csdn.net/the__future/article/details/130038818`
+
+# 2023-09-14 22:11:27
+
+- 如有必要，对 uniapp 自定义组件进行样式穿透
+  1. 语言要一样 <script lang="ts">
+     export default {
+     options: { styleIsolation: 'shared' },
+     }
+  2. 结构<div class="mysection">
+     <uni-section :title="'选择客户姓名'" type="line" />
+     </div>
+  3. scoped 下有:deep(.uni-section-header\_\_content) {
+     color: #27ba9b !important;
+     font-size: 25px !important;
+     }
+  4. 加上前缀，可以指定类下的内置样式修改.mysection :deep(.uni-section-header\_\_content) {
+     color: #27ba9b !important;
+     font-size: 25px !important;
+     background-color: #cf4444;
+     }
+- 掌握骨架片转 vue 文件的用法，暂时不需要使用
+- 要注意不要一直揪着样式不放，很容易浪费时间
