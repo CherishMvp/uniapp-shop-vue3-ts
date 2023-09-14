@@ -221,3 +221,9 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
 # 2023 年 9 月 13 日
 
 - master 下关闭 GitHub 和 gitee 托管
+
+# 2023-09-14 18:28:12
+
+- 开全局 clshx 代理，但是 github 在 push 的时候还是不走，要设置 proxy
+  `git config --global http.proxy socks5://127.0.0.1:1080`
+  `git config --global https.proxy socks5://127.0.0.1:1080`
