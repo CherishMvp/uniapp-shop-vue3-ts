@@ -9,7 +9,9 @@ import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
 import { useGuessList } from '@/composables'
 import { myHotList } from '@/mock/mockOrder'
+import mySkuPoup from '@/mycomponents/mySkuPoup/index.vue'
 import { getGoodsByIdAPI } from '@/services/goods'
+
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -67,17 +69,10 @@ const onRefresherrefresh = async () => {
   isTriggered.value = false
 }
 // 子传父，打开poup
-const productInfo = ref()
-// uni-ui 弹出层组件 ref
-const popup = ref<{
-  open: (type?: UniHelper.UniPopupType) => void
-  close: () => void
-}>()
 const localdata = ref()
-const openPoup = async (goods_id: number | string) => {
-  console.log('收到子传来的商品ID', goods_id)
-  const res = await getGoodsByIdAPI(goods_id as string) //调用api获取
-  productInfo.value = res.result
+const isShowSku = ref(false)
+const getGoodsByIdData = async (goods_id: string) => {
+  const res = await getGoodsByIdAPI(goods_id)
   // SKU组件所需格式
   localdata.value = {
     _id: res.result.id,
@@ -101,7 +96,12 @@ const openPoup = async (goods_id: number | string) => {
       }
     }),
   }
-  popup.value?.open('bottom')
+  isShowSku.value = true
+  console.log('localdata.value', localdata.value, 'isShowSku.value', isShowSku.value)
+}
+const openPoup = async (goods_id: string) => {
+  console.log('收到子传来的商品ID', goods_id)
+  await getGoodsByIdData(goods_id)
 }
 </script>
 
@@ -128,17 +128,15 @@ const openPoup = async (goods_id: number | string) => {
         <!-- 热门推荐 -->
         <HotPanel :list="hotList" />
         <!-- 猜你喜欢 -->
-        <XtxGuess ref="guessRef" @showPopup="openPoup" />
+        <XtxGuess ref="guessRef" @show-popup="openPoup" />
       </template>
     </scroll-view>
-    <!-- 底部 弹出层 -->
-    <uni-popup ref="popup" background-color="#ffffff" @close="popup?.close()" type="bottom">
-      <span>获取信息商品信息成功</span>
-      {{ productInfo?.name }}
-    </uni-popup>
+
+    <!-- 悬浮购物车 -->
     <navigator class="shop_cart" url="/pages/cart/cart2" open-type="navigate" hover-class="none">
       <uni-icons type="cart" color="#276d33" size="45" />
     </navigator>
+    <mySkuPoup :localdata="localdata" :is-show-sku="isShowSku" :mode="2" />
   </view>
 </template>
 
@@ -150,7 +148,8 @@ page {
 }
 
 .viewport {
-  height: 100%;
+  //修改下视口宽度为100vh就行，scrollview设为flex：1使用剩下的100%就行
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -158,7 +157,7 @@ page {
 .scroll-view {
   //flex: 1;
   flex: auto;
-  height: 100vh; //flex:1会出现无法滚动到底部的问题
+  height: calc(100% - 20px); //flex:1会出现无法滚动到底部的问题
   overflow: hidden;
 }
 .shop_cart {

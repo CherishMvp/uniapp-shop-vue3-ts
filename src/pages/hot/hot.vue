@@ -130,6 +130,7 @@ const openSkuPopup = (val: any) => {
   isShowSku.value = true
   // 修改按钮模式
   mode.value = val
+  console.log('mode.value ', mode.value)
 }
 // SKU组件实例
 const skuPopupRef = ref<SkuPopupInstance>()
@@ -181,7 +182,7 @@ const onAddCart = async (ev: SkuPopupEvent) => {
           :key="goods.id"
           :url="`/pages/goods/goods?id=${goods.id}`"
         > -->
-        <!-- 同样的，改成poup弹出的形式，不必进入下一页 -->
+        <!-- 同样的，改成poup弹出的形式，没有引入子组件，是直接在当前页遍历数据。不必进入下一页 -->
         <view
           class="navigator"
           v-for="goods in item.goodsItems.items"

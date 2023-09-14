@@ -20,13 +20,20 @@
       "style": {
         "navigationStyle": "custom",
         "navigationBarTextStyle": "white",
-        "navigationBarTitleText": "首页"
+        "navigationBarTitleText": "首页",
+        "disableScroll": true
       }
     },
     {
       "path": "pages/category/category",
       "style": {
         "navigationBarTitleText": "商品分类"
+      }
+    },
+    {
+      "path": "pages/test/test",
+      "style": {
+        "navigationBarTitleText": "devPage"
       }
     },
     {
@@ -90,6 +97,12 @@
       {
         "text": "分类",
         "pagePath": "pages/category/category",
+        "iconPath": "static/tabs/category_default.png",
+        "selectedIconPath": "static/tabs/category_selected.png"
+      },
+      {
+        "text": "devPage",
+        "pagePath": "pages/test/test",
         "iconPath": "static/tabs/category_default.png",
         "selectedIconPath": "static/tabs/category_selected.png"
       },

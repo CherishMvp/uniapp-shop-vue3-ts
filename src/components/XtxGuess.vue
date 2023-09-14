@@ -3,7 +3,6 @@ import { getHomeGoodsGuessLikeAPI } from '@/services/home'
 import type { PageParams } from '@/types/global'
 import type { GuessItem } from '@/types/home'
 import { onMounted, ref } from 'vue'
-
 // 分页参数
 const pageParams: Required<PageParams> = {
   page: 1,
@@ -80,6 +79,7 @@ defineExpose({
       </view>
     </view>
   </view>
+  <!-- 自定义skuPoup -->
   <view class="loading-text">
     {{ finish ? '没有更多数据~' : '正在加载...' }}
   </view>
