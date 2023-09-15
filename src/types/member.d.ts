@@ -16,6 +16,8 @@ export type LoginResult = BaseProfile & {
   mobile: string
   /** 登录凭证 */
   token: string
+  /**角色 **/
+  role: string
 }
 
 /** 个人信息 用户详情信息 */
