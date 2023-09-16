@@ -67,13 +67,13 @@
               <!-- TODO:后续要在pinia中添加角色的信息 -->
               <view class="footer" v-if="!isCustomer">
                 <view
-                  @tap="hanleOrderEdit(0, item.orderDetail)"
+                  @tap="hanleOrderEdit(0, item)"
                   v-if="userRole == 'operator' || userRole == 'admin'"
                   class="button edit_weight_button"
                   >录入重量</view
                 >
                 <view
-                  @tap="hanleOrderEdit(1, item.orderDetail)"
+                  @tap="hanleOrderEdit(1, item)"
                   v-if="userRole == 'admin'"
                   class="button primary"
                   >修改价格</view
@@ -94,12 +94,23 @@
           <button class="button">去添加</button>
         </navigator>
       </view>
-      <uni-popup background-color="#fafafa" :safe-area="false" ref="editPoup" @change="handlePoup">
+      <uni-popup
+        background-color="#fafafa"
+        :safe-area="false"
+        ref="editPoup"
+        @change="handlePoup"
+        type="bottom"
+      >
         <div class="poup_wrap">
-          <scroll-view scroll-y class="scroll_view">
-            <div class="header">
-              {{ poupEditType != 'weight' ? '修改价格' : '修改重量' }}
+          <div class="header">
+            <div class="left">
+              {{ editHeaderInfo.type != 'weight' ? '修改价格' : '修改重量' }}
             </div>
+            <div class="right">
+              {{ editHeaderInfo.orderInfo.name }} — {{ editHeaderInfo.orderInfo.date }}
+            </div>
+          </div>
+          <scroll-view scroll-y class="scroll_view">
             <div class="poup_content">
               <div class="line" v-for="(editItem, editIndex) in editPoupData" :key="editIndex">
                 <uni-forms
@@ -107,14 +118,14 @@
                   :rules="editFormRules"
                   label-position="left"
                   :modelValue="editItem"
-                  v-if="poupEditType == 'weight'"
+                  v-if="editHeaderInfo.type == 'weight'"
                 >
                   <uni-forms-item required :label="editItem.productName" name="weight">
                     <uni-easyinput
                       :clear-size="('18px' as any)"
                       type="digit"
                       v-model="editItem.weight"
-                      placeholder="请输入价格"
+                      placeholder="请输入重量"
                     />
                   </uni-forms-item>
                 </uni-forms>
@@ -123,7 +134,7 @@
                   :rules="editFormRules"
                   label-position="left"
                   :modelValue="editItem"
-                  v-if="poupEditType == 'fixedPrice'"
+                  v-if="editHeaderInfo.type == 'fixedPrice'"
                 >
                   <uni-forms-item required :label="editItem.productName" name="fixedPrice">
                     <uni-easyinput
@@ -176,7 +187,13 @@ const mockRole = ['admin', 'operator', 'customer']
 const orderData = ref<Datum[]>()
 const userRole = ref()
 const editFormRef = ref<UniHelper.UniFormsInstance>()
-const poupEditType = ref('')
+const editHeaderInfo = ref({
+  type: '',
+  orderInfo: {
+    date: '',
+    name: '',
+  },
+})
 const editFormRules: UniHelper.UniFormsRules = {
   // 对name字段进行必填验证
   weight: { rules: [{ required: true, errorMessage: '请输入重量', format: 'number' }] },
@@ -224,16 +241,16 @@ const handlePoup = (e: any) => {
  * @param id：0重量，1价格
  * @example id=0或1
  **/
-const hanleOrderEdit = (id: any, info?: any) => {
+const hanleOrderEdit = (id: any, info: Datum) => {
   console.log('id', id, 'info', info)
-  if (id == 0) {
-    poupEditType.value = 'weight'
-    editPoupData.value = info
-    editPoup.value?.open('bottom')
+  editHeaderInfo.value.orderInfo = { date: info.orderDate, name: info.userName }
+  editPoupData.value = info.orderDetail
+  const typeMap: { [key: number]: string } = {
+    0: 'weight',
+    1: 'fixedPrice',
   }
-  if (id == 1) {
-    poupEditType.value = 'fixedPrice'
-    editPoupData.value = info
+  if (typeMap.hasOwnProperty(id)) {
+    editHeaderInfo.value.type = typeMap[id]
     editPoup.value?.open('bottom')
   }
 }
@@ -351,27 +368,52 @@ const checkUserIdentity = async () => {
 }
 onShow(async () => {
   // 模拟此处获取用户角色信息
+  uni.showLoading({
+    title: '加载中',
+    mask: false,
+  })
   await checkUserIdentity()
   console.log('onMounted')
+  uni.hideLoading()
 })
 </script>
 <style lang="scss" scoped>
+//修改表单的字体大小
+.line :deep(.uni-forms-item__label) {
+  font-size: 30rpx !important;
+}
+.line :deep(.uni-easyinput__content-input) {
+  font-size: 30rpx !important;
+}
+.line :deep(.uni-select__input-box) {
+  font-size: 30rpx !important;
+}
 .poup_wrap {
-  height: 45vh;
-  padding: 20rpx;
+  height: 55vh;
   //background-color: #27ba9b;
+  .header {
+    position: relative;
+    widows: 100%;
+    top: 0;
+    padding: 10rpx;
+    font-weight: 500;
+    font-size: 35rpx;
+    text-align: left;
+    background-color: #f6f5f3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
   .scroll_view {
+    padding: 20rpx;
     height: 100%;
-    .header {
-      padding: 10rpx;
-      text-align: left;
-    }
     .poup_content {
       display: flex;
       align-items: center;
       justify-content: center;
       flex-wrap: wrap;
       flex-direction: column;
+      padding-bottom: 100rpx;
       .line {
         display: flex;
         width: 60%;
@@ -477,7 +519,7 @@ page {
 }
 .group {
   .total {
-    font-size: 35rpx;
+    font-size: 30rpx;
     color: #000;
     line-height: 1;
     display: flex;

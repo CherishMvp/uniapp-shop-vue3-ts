@@ -23,7 +23,7 @@ const urlMap = [
 const query = defineProps<{
   type: string
 }>()
-// console.log(query)
+console.log(query)
 const currUrlMap = urlMap.find((v) => v.type === query.type)
 // 动态设置标题
 uni.setNavigationBarTitle({ title: currUrlMap!.title })

@@ -35,3 +35,41 @@ export interface OrderDetail {
   totalPrice: string
   weight: number
 }
+export interface ProductInfo {
+  /**
+   * 基本价格
+   */
+  baselinePrice: number
+  /**
+   * 分类（鸡鸭等）
+   */
+  categoryName: string
+  /**
+   * 分类ID（父级ID）
+   */
+  cid: string
+  /**
+   * 修正价格应该是对于某个客户的某个商品的价格，不能触发全部的改动；对于单独客户的修正价格，单独存放在一个表中维护
+   */
+  fixedPrice: number
+  /**
+   * 库存
+   */
+  inventory: number
+  /**
+   * 图片链接（存在阿里云OSS上）
+   */
+  picture: string
+  /**
+   * 商品ID
+   */
+  pid: string
+  /**
+   * 商品名称
+   */
+  productName: string
+  /**
+   * 应该是json格式存入数据库中，["小","中","大"]
+   */
+  spec: string
+}
