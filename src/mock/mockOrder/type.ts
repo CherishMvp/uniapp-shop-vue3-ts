@@ -25,14 +25,17 @@ export interface Datum {
 }
 
 export interface OrderDetail {
-  baselinePrice: string
+  pid?: string
+  cid?: string
+  picture?: string | undefined
+  baselinePrice: number
   categoryName: string
-  fixedPrice: string
+  fixedPrice: number
   inventory: number
   number: number
   productName: string
-  spec: string
-  totalPrice: string
+  spec: string[]
+  totalPrice: number
   weight: number
 }
 export interface ProductInfo {

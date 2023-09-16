@@ -13,9 +13,9 @@ import { computed, ref } from 'vue'
 
 // 热门推荐页 标题和url
 const urlMap = [
-  { type: '1', title: '特惠推荐', url: '/hot/preference' },
-  { type: '2', title: '爆款推荐', url: '/hot/inVogue' },
-  { type: '3', title: '一站买全', url: '/hot/oneStop' },
+  { type: '1', title: '鸡类', url: '/hot/preference' },
+  { type: '2', title: '鸭类', url: '/hot/inVogue' },
+  { type: '3', title: '其他类', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
 ]
 
@@ -88,7 +88,13 @@ const popup = ref<{
 const localdata = ref()
 const openPoup = async (goods_id: string) => {
   console.log('收到本页点击的商品ID', goods_id)
+  uni.showLoading({
+    title: '加载中',
+    mask: false,
+  })
   await getGoodsByIdData(goods_id)
+  uni.hideLoading()
+
   openSkuPopup(2) //拿到数据后，开启poup
   // popup.value?.open('bottom') //先不开启这个
 }

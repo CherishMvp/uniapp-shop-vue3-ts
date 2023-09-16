@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { OrderDetail } from '@/mock/mockOrder/type'
 import { getGoodsByIdAPI } from '@/services/goods'
 import { getHotRecommendAPI } from '@/services/hot'
 import type { SubTypeItem } from '@/types/hot'
@@ -7,7 +8,7 @@ import { ref } from 'vue'
 
 // 热门推荐页 标题和url
 const urlMap = [
-  { type: '1', title: '特惠推荐', url: '/hot/preference' },
+  { type: '1', title: '品类管理', url: '/hot/preference' },
   { type: '2', title: '爆款推荐', url: '/hot/inVogue' },
   { type: '3', title: '一站买全', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
@@ -35,7 +36,6 @@ const specList = [
   { text: '大', value: '大' },
 ]
 
-const filePath = ref()
 /**
  * @description 上传图片 暂存图片，等待上传
  **/
@@ -46,7 +46,8 @@ const onPictureChange = () => {
     success: (res) => {
       // 本地路径
       const { tempFilePath } = res.tempFiles[0]
-      filePath.value = tempFilePath
+      productInfo.value.picture = tempFilePath
+      console.log('current picture: ', productInfo.value.picture)
       // 上传
       // uploadFile(tempFilePath)最终提交的时候再上传
     },
@@ -153,7 +154,7 @@ const baseProductInfo = {
   picture: '',
 }
 // 直接在本地触发就行，poup写在本页
-const productInfo = ref({
+const productInfo = ref<Partial<OrderDetail>>({
   pid: '',
   cid: '',
   categoryName: '',
@@ -161,7 +162,7 @@ const productInfo = ref({
   baselinePrice: 0,
   spec: ['小', '中', '大'],
   inventory: 0,
-  picture: '',
+  picture: undefined,
 })
 
 // uni-ui 弹出层组件 ref
@@ -245,10 +246,15 @@ const saveChanges = async () => {
 
   if (isValid) {
     // 表单校验通过，继续处理逻辑
-    productInfo.value.picture ?? filePath.value
+    console.log(
+      'productInfo.value.picturexxx',
+      productInfo.value.picture,
+      typeof productInfo.value.picture,
+    )
+    console.log('picture: ', productInfo.value.picture)
     console.log('Saving changes:', productInfo.value)
-    // 可以将更新后的数据发送到服务器，或者使用 productInfo.value 更新 Vuex store
-    uploadFile(filePath.value) //最终提交的时候再上传
+    //TODO 可以将更新后的数据发送到服务器，或者使用 productInfo.value 更新 Vuex store
+    uploadFile(productInfo.value.picture!) //最终提交的时候再上传
     editPoup.value?.close()
     uni.showToast({
       title: '修改成功',
@@ -258,7 +264,7 @@ const saveChanges = async () => {
     })
     console.log('Saving changes:', productInfo.value)
     // TODO 更新成功后，恢复表单表单默认数据
-    productInfo.value = baseProductInfo
+    //productInfo.value = baseProductInfo
     console.log('sb', baseProductInfo)
   }
 }

@@ -72,6 +72,10 @@ const onRefresherrefresh = async () => {
 const localdata = ref()
 const isShowSku = ref(false)
 const getGoodsByIdData = async (goods_id: string) => {
+  uni.showLoading({
+    title: '加载中',
+    mask: false,
+  })
   const res = await getGoodsByIdAPI(goods_id)
   // SKU组件所需格式
   localdata.value = {
@@ -96,6 +100,7 @@ const getGoodsByIdData = async (goods_id: string) => {
       }
     }),
   }
+  uni.hideLoading()
   isShowSku.value = true
   console.log('localdata.value', localdata.value, 'isShowSku.value', isShowSku.value)
 }
