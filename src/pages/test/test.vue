@@ -249,7 +249,7 @@ const hanleOrderEdit = (id: any, info: Datum) => {
     0: 'weight',
     1: 'fixedPrice',
   }
-  if (typeMap.hasOwnProperty(id)) {
+  if (typeMap[id]) {
     editHeaderInfo.value.type = typeMap[id]
     editPoup.value?.open('bottom')
   }
@@ -333,7 +333,7 @@ const onNameChange = async (e: any) => {
 // 初始化调用: 页面显示触发
 // 判断是否有订单数据
 const getAllOrderList = async () => {
-  orderData.value = allOrderList.data
+  orderData.value = allOrderList.data as any
   console.log('orderData.value = ', orderData.value)
   // orderData.value[0].orderDetail[0].baselinePrice
 }

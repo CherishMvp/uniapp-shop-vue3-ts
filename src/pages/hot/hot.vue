@@ -11,7 +11,7 @@ import type { SubTypeItem } from '@/types/hot'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 
-// 热门推荐页 标题和url
+// 热门推荐页  标题和url
 const urlMap = [
   { type: '1', title: '鸡类', url: '/hot/preference' },
   { type: '2', title: '鸭类', url: '/hot/inVogue' },

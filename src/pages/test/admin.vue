@@ -13,7 +13,7 @@ const urlMap = [
   { type: '4', title: '新鲜好物', url: '/hot/new' },
 ]
 /**
- * @description 商品分类数组
+ * @description  商品分类数组
  **/
 const range = [
   { value: 1001, text: '鸡类' },

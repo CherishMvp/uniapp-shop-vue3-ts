@@ -37,7 +37,7 @@ const specList = [
 ]
 
 /**
- * @description 上传图片 暂存图片，等待上传
+ * @description   上传图片 暂存图片，等待上传
  **/
 const onPictureChange = () => {
   uni.chooseMedia({
