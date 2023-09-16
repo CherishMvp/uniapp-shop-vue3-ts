@@ -31,7 +31,7 @@ const loginSuccess = (profile: LoginResult) => {
   // 保存会员信息
   const memberStore = useMemberStore()
   // TODO 设为admin用户
-  profile.role = 'operator'
+  //profile.role = 'operator'
   memberStore.setProfile(profile)
   // 成功提示
   uni.showToast({ icon: 'success', title: '登录成功' })

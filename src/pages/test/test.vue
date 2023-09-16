@@ -68,15 +68,13 @@
               <view class="footer" v-if="!isCustomer">
                 <view
                   @tap="hanleOrderEdit(0, item.orderDetail)"
-                  v-if="
-                    memberStore.profile.role == 'operator' || memberStore.profile.role == 'admin'
-                  "
+                  v-if="userRole == 'operator' || userRole == 'admin'"
                   class="button edit_weight_button"
                   >录入重量</view
                 >
                 <view
-                  @tap="hanleOrderEdit(1)"
-                  v-if="memberStore.profile.role == 'admin'"
+                  @tap="hanleOrderEdit(1, item.orderDetail)"
+                  v-if="userRole == 'admin'"
                   class="button primary"
                   >修改价格</view
                 >
@@ -99,35 +97,46 @@
       <uni-popup background-color="#fafafa" :safe-area="false" ref="editPoup" @change="handlePoup">
         <div class="poup_wrap">
           <scroll-view scroll-y class="scroll_view">
+            <div class="header">
+              {{ poupEditType != 'weight' ? '修改价格' : '修改重量' }}
+            </div>
             <div class="poup_content">
-              <div class="line">
-                <uni-forms :label-position="('top' as any)" :modelValue="mockEditPoupData">
-                  <uni-forms-item label="商品" name="productName">
-                    <uni-easyinput v-model="mockEditPoupData.productName" :disabled="true" />
-                  </uni-forms-item>
-                  <uni-forms-item label="重量" name="weight">
+              <div class="line" v-for="(editItem, editIndex) in editPoupData" :key="editIndex">
+                <uni-forms
+                  ref="editFormRef"
+                  :rules="editFormRules"
+                  label-position="left"
+                  :modelValue="editItem"
+                  v-if="poupEditType == 'weight'"
+                >
+                  <uni-forms-item required :label="editItem.productName" name="weight">
                     <uni-easyinput
+                      :clear-size="('18px' as any)"
                       type="digit"
-                      v-model="mockEditPoupData.weight"
+                      v-model="editItem.weight"
                       placeholder="请输入价格"
                     />
                   </uni-forms-item>
                 </uni-forms>
-                <div class="button edit_weight_button" @click="saveChanges">Submit</div>
+                <uni-forms
+                  ref="editFormRef"
+                  :rules="editFormRules"
+                  label-position="left"
+                  :modelValue="editItem"
+                  v-if="poupEditType == 'fixedPrice'"
+                >
+                  <uni-forms-item required :label="editItem.productName" name="fixedPrice">
+                    <uni-easyinput
+                      :clear-size="('18px' as any)"
+                      type="digit"
+                      v-model="editItem.fixedPrice"
+                      placeholder="请输入价格"
+                    />
+                  </uni-forms-item>
+                </uni-forms>
               </div>
+              <view class="button edit_weight_button" @click="saveChanges">提交</view>
             </div>
-
-            <!-- <div
-              v-if="1 > 2"
-              class="poup_content"
-              v-for="(item, index) in editPoupData"
-              :key="index"
-            >
-              <div class="line">
-                <text> {{ item.productName }}: </text>
-                <div><input type="text" /></div>
-              </div>
-            </div> -->
           </scroll-view>
         </div>
       </uni-popup>
@@ -143,9 +152,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { allOrderList, myOrderList } from '@/mock/mockOrder/index'
-import { onShow } from '@dcloudio/uni-app'
+import { onReady, onShow } from '@dcloudio/uni-app'
 import type { Datum, OrderDetail } from '@/mock/mockOrder/type'
 import { useMemberStore } from '@/stores'
 /**
@@ -166,16 +175,46 @@ const memberStore = useMemberStore()
 const mockRole = ['admin', 'operator', 'customer']
 const orderData = ref<Datum[]>()
 const userRole = ref()
-const mockEditPoupData = ref({ productName: 'asd', weight: 12 })
+const editFormRef = ref<UniHelper.UniFormsInstance>()
+const poupEditType = ref('')
+const editFormRules: UniHelper.UniFormsRules = {
+  // 对name字段进行必填验证
+  weight: { rules: [{ required: true, errorMessage: '请输入重量', format: 'number' }] },
+  fixedPrice: { rules: [{ required: true, errorMessage: '请输入价格', format: 'number' }] },
+}
 const isCustomer = computed(() => {
   return userRole.value == 'admin' || userRole.value == 'operator' ? false : true
 })
-const editPoup = ref()
+const editPoup = ref<{
+  open: (type?: UniHelper.UniPopupType) => void
+  close: () => void
+}>()
 const editPoupData = ref<OrderDetail[]>()
-const saveChanges = () => {
-  // Handle saving changes here (e.g., send to server, update Vuex store, etc.)
-  console.log('Saving changes:', editPoupData.value)
-  // You can send the updated data to your server or update your Vuex store with this.orderDetail
+const saveChanges = async () => {
+  let isValid = true // 校验状态标志
+  for (let i = 0; i < (editPoupData.value as any).length; i++) {
+    const formRef = (editFormRef.value as any)[i]
+    const isFormValid = await formRef?.validate?.()
+    if (!isFormValid) {
+      console.log('表单错误信息')
+      isValid = false
+      break // 如果校验不通过，则停止后续处理
+    }
+  }
+  if (isValid) {
+    // 所有表单校验通过，继续处理逻辑
+    console.log('Saving changes:', editPoupData.value)
+    // 可以将更新后的数据发送到服务器，或者使用 editPoupData.value 更新 Vuex store
+    editPoup.value?.close()
+    uni.showToast({
+      title: '修改成功',
+      icon: 'success',
+      duration: 1500,
+      mask: false,
+    })
+    console.log('Saving changes:', editPoupData.value)
+    console.log('sb')
+  }
 }
 const handlePoup = (e: any) => {
   console.log('poup状态', e)
@@ -188,6 +227,12 @@ const handlePoup = (e: any) => {
 const hanleOrderEdit = (id: any, info?: any) => {
   console.log('id', id, 'info', info)
   if (id == 0) {
+    poupEditType.value = 'weight'
+    editPoupData.value = info
+    editPoup.value?.open('bottom')
+  }
+  if (id == 1) {
+    poupEditType.value = 'fixedPrice'
     editPoupData.value = info
     editPoup.value?.open('bottom')
   }
@@ -289,7 +334,8 @@ const checkUserIdentity = async () => {
 
   // mock user identity is customer,production should use async api to get
   // TODO:获取用户身份
-  userRole.value = mockRole[0]
+  // userRole.value = mockRole[0]
+  userRole.value = memberStore.profile?.role ?? 'admin'
   if (userRole.value == 'customer') {
     await getCurrentUserOrderList()
     // TODO:只读取自己的订单数据，只返回最近三单
@@ -311,25 +357,51 @@ onShow(async () => {
 </script>
 <style lang="scss" scoped>
 .poup_wrap {
-  height: 30vh;
+  height: 45vh;
   padding: 20rpx;
   //background-color: #27ba9b;
   .scroll_view {
     height: 100%;
+    .header {
+      padding: 10rpx;
+      text-align: left;
+    }
     .poup_content {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
+      flex-direction: column;
       .line {
         display: flex;
-        width: 100%;
+        width: 60%;
         flex-wrap: wrap;
         flex-direction: column;
-        margin: 10rpx 0;
+      }
+      .button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 260rpx;
+        padding: 15rpx 18rpx;
+        line-height: 1.5;
+        color: #fff;
+        font-size: 32rpx;
+        border-radius: 20rpx;
+      }
+
+      .primary {
+        color: #fff;
+        background-color: #27ba9b;
+      }
+      .edit_weight_button {
+        background-color: #f0ad4e;
       }
     }
   }
+}
+.line :deep(.uni-forms-item__label) {
+  justify-content: flex-end !important;
 }
 // 空状态
 .cart-blank,
