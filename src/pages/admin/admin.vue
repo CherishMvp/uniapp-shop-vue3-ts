@@ -405,6 +405,8 @@ const saveChanges = async () => {
 //修改表单的字体大小
 .line :deep(.uni-forms-item__label) {
   font-size: 30rpx !important;
+  justify-content: flex-end !important;
+  width: 140rpx !important;
 }
 .line :deep(.uni-easyinput__content-input) {
   font-size: 30rpx !important;

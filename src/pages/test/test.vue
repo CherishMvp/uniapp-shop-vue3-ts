@@ -120,7 +120,7 @@
                   :modelValue="editItem"
                   v-if="editHeaderInfo.type == 'weight'"
                 >
-                  <uni-forms-item required :label="editItem.productName" name="weight">
+                  <uni-forms-item :label="editItem.productName" name="weight">
                     <uni-easyinput
                       :clear-size="('18px' as any)"
                       type="digit"
@@ -136,7 +136,7 @@
                   :modelValue="editItem"
                   v-if="editHeaderInfo.type == 'fixedPrice'"
                 >
-                  <uni-forms-item required :label="editItem.productName" name="fixedPrice">
+                  <uni-forms-item :label="editItem.productName" name="fixedPrice">
                     <uni-easyinput
                       :clear-size="('18px' as any)"
                       type="digit"
@@ -381,6 +381,8 @@ onShow(async () => {
 //修改表单的字体大小
 .line :deep(.uni-forms-item__label) {
   font-size: 30rpx !important;
+  justify-content: flex-end !important;
+  width: 140rpx !important;
 }
 .line :deep(.uni-easyinput__content-input) {
   font-size: 30rpx !important;
@@ -441,9 +443,6 @@ onShow(async () => {
       }
     }
   }
-}
-.line :deep(.uni-forms-item__label) {
-  justify-content: flex-end !important;
 }
 // 空状态
 .cart-blank,

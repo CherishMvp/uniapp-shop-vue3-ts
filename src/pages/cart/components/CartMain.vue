@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { InputNumberBoxEvent } from '@/components/vk-data-input-number-box/vk-data-input-number-box'
-import { useGuessList } from '@/composables'
 import {
   deleteMemberCartAPI,
   getMemberCartAPI,
@@ -39,6 +38,9 @@ onShow(() => {
     getMemberCartData()
   }
 })
+const previewImage = (src: any) => {
+  uni.previewImage({ urls: [src] })
+}
 
 // 点击删除按钮
 const onDeleteCart = (skuId: string) => {
@@ -96,7 +98,10 @@ const selectedCartList = computed(() => {
 const selectedCartListCount = computed(() => {
   return selectedCartList.value.reduce((sum, item) => sum + item.count, 0)
 })
-
+// 主页
+const goHome = (url: string) => {
+  uni.switchTab({ url })
+}
 // 计算选中总金额
 const selectedCartListMoney = computed(() => {
   return selectedCartList.value
@@ -112,24 +117,38 @@ const gotoPayment = () => {
       title: '请选择商品',
     })
   }
+  // TODO:直接进行下单结算就行
+  uni.showModal({
+    content: '是否下单？',
+    confirmColor: '#27BA9B',
+    success: (res) => {
+      if (res.confirm) {
+        // 清理用户信息
+        // memberStore.clearProfile()
+        console.log('订单创建操作')
+        // await xxx
+        // 返回上一页
+        // uni.navigateBack()
+      }
+    },
+  })
   // 跳转到结算页
-  uni.navigateTo({ url: '/pagesOrder/create/create' })
+  // uni.navigateTo({ url: '/pagesOrder/create/create' })
 }
 
 // 猜你喜欢
-const { guessRef, onScrolltolower } = useGuessList()
 </script>
 
 <template>
-  <scroll-view enable-back-to-top scroll-y class="scroll-view" @scrolltolower="onScrolltolower">
+  <scroll-view enable-back-to-top scroll-y class="scroll-view">
     <!-- 已登录: 显示购物车 -->
     <template v-if="memberStore.profile">
       <!-- 购物车列表 -->
       <view class="cart-list" v-if="showCartList">
         <!-- 优惠提示 -->
         <view class="tips">
-          <text class="label">满减</text>
-          <text class="desc">满1件, 即可享受9折优惠</text>
+          <text class="label">提示</text>
+          <text class="desc">请仔细检查商品数量</text>
         </view>
         <!-- 滑动操作分区 -->
         <uni-swipe-action>
@@ -143,18 +162,19 @@ const { guessRef, onScrolltolower } = useGuessList()
                 class="checkbox"
                 :class="{ checked: item.selected }"
               ></text>
-              <navigator
+              <!-- <navigator
                 :url="`/pages/goods/goods?id=${item.id}`"
                 hover-class="none"
                 class="navigator"
-              >
+              > -->
+              <view @click="previewImage(item.picture)" hover-class="none" class="navigator">
                 <image mode="aspectFill" class="picture" :src="item.picture"></image>
                 <view class="meta">
                   <view class="name ellipsis">{{ item.name }}</view>
                   <view class="attrsText ellipsis">{{ item.attrsText }}</view>
                   <view class="price">{{ item.nowPrice }}</view>
                 </view>
-              </navigator>
+              </view>
               <!-- 商品数量 -->
               <view class="count">
                 <vk-data-input-number-box
@@ -179,9 +199,9 @@ const { guessRef, onScrolltolower } = useGuessList()
       <view class="cart-blank" v-else>
         <image src="/static/images/blank_cart.png" class="image" />
         <text class="text">购物车还是空的，快来挑选好货吧</text>
-        <navigator url="/pages/index/index" hover-class="none">
+        <view @click="goHome('/pages/index/index')" hover-class="none">
           <button class="button">去首页看看</button>
-        </navigator>
+        </view>
       </view>
       <!-- 吸底工具栏 -->
       <view
@@ -189,9 +209,10 @@ const { guessRef, onScrolltolower } = useGuessList()
         class="toolbar"
         :style="{ paddingBottom: safeAreaInsetBottom ? safeAreaInsets?.bottom + 'px' : 0 }"
       >
+        <!-- TODO:改为显示商品总件数即可 -->
         <text @tap="onChangeSelectedAll" class="all" :class="{ checked: isSelectedAll }">全选</text>
-        <text class="text">合计:</text>
-        <text class="amount">{{ selectedCartListMoney }}</text>
+        <text class="text">商品总数:</text>
+        <text class="total_number">{{ selectedCartListCount }}</text>
         <view class="button-grounp">
           <view
             @tap="gotoPayment"
@@ -211,8 +232,6 @@ const { guessRef, onScrolltolower } = useGuessList()
       </navigator>
     </view>
     <!-- 猜你喜欢 -->
-    <XtxGuess ref="guessRef" />
-    <!-- 底部占位空盒子 -->
     <view class="toolbar-height"></view>
   </scroll-view>
 </template>
@@ -230,7 +249,7 @@ const { guessRef, onScrolltolower } = useGuessList()
 // 滚动容器
 .scroll-view {
   flex: none; //同样的，使用flex:1会出问题
-  height: 95vh; //底部有一个action_bar
+  height: 100vh; //底部有一个action_bar
   background-color: #f7f7f8;
 }
 
@@ -320,6 +339,7 @@ const { guessRef, onScrolltolower } = useGuessList()
       border-radius: 4rpx;
       color: #888;
       background-color: #f7f7f8;
+      margin-bottom: 8rpx;
     }
 
     .price {
@@ -338,7 +358,7 @@ const { guessRef, onScrolltolower } = useGuessList()
     // 商品数量
     .count {
       position: absolute;
-      bottom: 20rpx;
+      bottom: 10rpx;
       right: 5rpx;
 
       display: flex;
@@ -478,7 +498,14 @@ const { guessRef, onScrolltolower } = useGuessList()
       font-size: 12px;
     }
   }
+  .total_number {
+    font-size: 20px;
+    color: #323233;
 
+    .decimal {
+      font-size: 12px;
+    }
+  }
   .button-grounp {
     margin-left: auto;
     display: flex;

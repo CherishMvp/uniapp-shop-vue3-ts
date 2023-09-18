@@ -263,3 +263,51 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
 # 2023-09-16 20:32:37
 
 - 校验代码
+
+# 2023-09-18 11:02:10
+
+- <XtxGuess/>未删减版本见 commmit `788812843d99b82cdec4c0d9360c523dc061510es`
+- 要拉取指定的 commit 版本内容，您可以使用 Git 命令 `git checkout`。这将使您的工作目录和索引状态回到特定 commit 时的状态，您可以查看该 commit 的内容并进行修改或分析。
+
+以下是基本的步骤：
+
+1. 首先，使用以下命令列出 commit，以查找您想要拉取的 commit 的哈希值：
+
+   `bash git log `
+
+   从输出中找到您想要的 commit，记录其哈希值（通常是一串类似于 `commit 1234567890abcdef` 的字符）。
+
+2. 使用 `git checkout` 命令切换到特定 commit。假设哈希值是 `1234567890abcdef`：
+   `bash git checkout 1234567890abcdef `
+
+   这将将您的工作目录和索引状态切换到指定 commit 的状态。
+
+3. 现在您可以查看或修改该 commit 的内容。
+
+如果您只想查看特定 commit 的内容，而不切换到该 commit，可以使用以下命令：
+
+`bash git show 1234567890abcdef `
+
+这将显示该 commit 的详细信息，包括提交的消息和修改的内容。
+
+请注意，在切换到特定 commit 后，您处于“分离头指针”状态，任何在这种状态下的修改将不会影响到分支上。如果需要在特定 commit 上进行修改并将其保存为新 commit，您可能需要创建一个新分支。
+
+# 2023-09-18 11:17:27
+
+- 可以使用伪元素设置金额前缀
+
+  - .amount {
+    font-size: 20px;
+    color: #cf4444;
+
+  .decimal {
+  font-size: 12px;
+  }
+
+  &::before {
+  content: '￥';
+  font-size: 12px;
+  }
+  }
+
+- 要注意如果有设置 fix 底部 actionbar 此类的，屏幕高度要设为 100vh 撑满

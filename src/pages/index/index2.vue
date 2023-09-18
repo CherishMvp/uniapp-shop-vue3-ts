@@ -3,6 +3,7 @@ import { getHomeBannerAPI, getHomeCategoryAPI, getHomeHotAPI } from '@/services/
 import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
+import CustomNavbar from './components/CustomNavbar.vue'
 import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
@@ -10,9 +11,7 @@ import { useGuessList } from '@/composables'
 import { myHotList } from '@/mock/mockOrder'
 import mySkuPoup from '@/mycomponents/mySkuPoup/index.vue'
 import { getGoodsByIdAPI } from '@/services/goods'
-/**
- * TODO:不自定义表头
- **/
+
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
@@ -116,6 +115,8 @@ const changeSkuState = (state: boolean) => {
 
 <template>
   <view class="viewport">
+    <!-- 自定义导航栏 -->
+    <CustomNavbar />
     <!-- 滚动容器 -->
     <scroll-view
       enable-back-to-top

@@ -18,8 +18,8 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationStyle": "custom",
-        "navigationBarTextStyle": "white",
+        // "navigationStyle": "custom",
+        // "navigationBarTextStyle": "white",
         "navigationBarTitleText": "首页",
         "disableScroll": true
       }
@@ -205,7 +205,7 @@
         }
       ]
     }
-  ],
+  ]
   /**
    "preloadRule" 字段定义了分包预下载规则。在示例中，"preloadRule" 中的键值对 "pages/my/my"
     定义了页面路径，并通过 "packages" 字段指定了需要预下载的子包列表。
@@ -221,10 +221,10 @@
   //     "packages": ["pagesMember"]
   //   }
   // }
-  "preloadRule": {
-    "pages/my/my2": {
-      "network": "all",
-      "packages": ["pagesMember"]
-    }
-  }
+  // "preloadRule": {
+  //   "pages/my/my2": {
+  //     "network": "all",
+  //     "packages": ["pagesMember"]
+  //   }
+  // }
 }
