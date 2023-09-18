@@ -57,11 +57,11 @@
       }
     },
     {
-      "path": "pages/my/my",
+      "path": "pages/my/my2",
       "style": {
         "navigationStyle": "custom",
         "navigationBarTextStyle": "white",
-        "navigationBarTitleText": "我的"
+        "navigationBarTitleText": "新版我的"
       }
     },
     {
@@ -127,13 +127,19 @@
         "selectedIconPath": "static/tabs/cart_selected.png"
       },
       {
-        "text": "我的",
-        "pagePath": "pages/my/my",
+        "text": "新版我的",
+        "pagePath": "pages/my/my2",
         "iconPath": "static/tabs/user_default.png",
         "selectedIconPath": "static/tabs/user_selected.png"
       }
     ]
   },
+  /**
+  1. 把要分包的文件都放在一个大文件下，，subPackages数组对象；每个对象包括root和pages配置项；
+  root就是这个大文件夹的名字。pages也是一个数组对象，有一个分页面要显示的就几个item，item的内容就是正常
+  小程序的页面配置内容，也有path、style等等。而path就直接写成该大文件夹下的路径即可，不要’/‘。
+  2. 不管是root配置项还是pages下的path配置，都不需要加’/‘
+   **/
   // 分包加载规则
   "subPackages": [
     {
@@ -200,9 +206,23 @@
       ]
     }
   ],
+  /**
+   "preloadRule" 字段定义了分包预下载规则。在示例中，"preloadRule" 中的键值对 "pages/my/my"
+    定义了页面路径，并通过 "packages" 字段指定了需要预下载的子包列表。
+   在这里，"pages/my/my" 页面预下载了 pagesMember 子包。
+   这样，在运行小程序时，当用户访问到 "pages/my/my" 页面之前，小程序会先预下载 pagesMember 子包；
+   而pagesOrder是用于填写订单的 不需要提前加载；pagesOrder/create/create也可以直接用于跳转使用
+   **/
+
   // 分包预下载规则
+  // "preloadRule": {
+  //   "pages/my/my": {
+  //     "network": "all",
+  //     "packages": ["pagesMember"]
+  //   }
+  // }
   "preloadRule": {
-    "pages/my/my": {
+    "pages/my/my2": {
       "network": "all",
       "packages": ["pagesMember"]
     }
