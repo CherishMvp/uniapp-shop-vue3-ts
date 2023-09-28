@@ -23,3 +23,34 @@ export type CartItem = {
   /** 是否为有效商品 */
   isEffective: boolean
 }
+/**
+ * Request
+ */
+export interface PoultryCartItem {
+  itemId: number
+  number: number
+  pid: number
+  productDetail: ProductDetail
+  spec: string
+  selected: boolean
+}
+
+export interface ProductDetail {
+  baselinePrice: string
+  inventory: number
+  picture: string
+  pid: number
+  productName: string
+  spec: string[]
+}
+
+/** 购物车类型 */
+export type PoultryCart = {
+  /** 商品 ID */
+  cartId: number
+  openId: string
+  userName: string
+  createTime: string
+  updateTime: string
+  cartItems: PoultryCartItem[]
+}

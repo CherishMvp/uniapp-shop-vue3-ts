@@ -4,7 +4,7 @@ import CartMain from './components/CartMain.vue'
 
 <template>
   <!-- 适配底部安全区 -->
-  <CartMain safe-area-inset-bottom />
+  <CartMain :safe-area-inset-bottom="true" />
 </template>
 
 <style lang="scss">

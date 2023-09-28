@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { postLoginAPI, postLoginWxMinAPI, postLoginWxMinSimpleAPI } from '@/services/login'
+import {
+  postLoginAPI,
+  postLoginWxMinAPI,
+  postLoginWxMinSimpleAPI,
+  postPhoneNumberAPI,
+} from '@/services/login'
 import { useMemberStore } from '@/stores'
-import type { LoginResult } from '@/types/member'
+import type { PolutryLoginResult } from '@/types/member'
 import { onLoad } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 
@@ -11,23 +16,54 @@ let code = ''
 onLoad(async () => {
   const res = await wx.login()
   code = res.code
+  await onGetUserInfo(code)
 })
-
+// 先判断有没有存储过的用户信息，后面再决定传参注册
+const userOpenId = ref('')
+const onGetUserInfo = async (code: string) => {
+  const res = await postLoginWxMinAPI({ code })
+  console.log('返回基本信息', res)
+  //这一步要拿到openId，跟手机号码注册的时候，如果没有token返回，说明没有对应的用户信息，则需要触发注册操作
+  console.log('res.result.token', res.result.token)
+  if (!res.result.openId) {
+    userOpenId.value = res.result.openId
+    uni.showToast({
+      title: '暂无用户信息，点击按钮进行注册',
+      icon: 'loading',
+      mask: true,
+    })
+  } else {
+    uni.showToast({
+      title: '登陆成功',
+      icon: 'success',
+      mask: true,
+    })
+    // uni.navigateBack()
+    console.log('拿到token相关信息', res)
+    loginSuccess(res.result)
+  }
+}
 // 获取用户手机号码
 const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
-  const { encryptedData, iv } = ev.detail
-  const res = await postLoginWxMinAPI({ code, encryptedData, iv })
-  loginSuccess(res.result)
+  console.log('e.detail', ev.detail)
+  // const { encryptedData, iv } = ev.detail
+  if (ev.detail.errMsg !== 'getPhoneNumber:fail user deny' && ev.detail.code) {
+    // 拿到手机号码
+    const res: any = await postPhoneNumberAPI(ev.detail.code, { openId: userOpenId.value })
+    console.log('phoenumber', res)
+    loginSuccess(res.result)
+    // res.result.mobile=phoneNumber.result.data
+  }
 }
 // #endif
 
-// 模拟手机号码快捷登录（开发练习）
+// 模拟手机号码快捷登录
 const onGetphonenumberSimple = async () => {
   const res = await postLoginWxMinSimpleAPI('13123456789')
-  loginSuccess(res.result)
+  // loginSuccess(res.result)
 }
 
-const loginSuccess = (profile: LoginResult) => {
+const loginSuccess = (profile: PolutryLoginResult) => {
   // 保存会员信息
   const memberStore = useMemberStore()
   // TODO 设为admin用户
@@ -39,7 +75,7 @@ const loginSuccess = (profile: LoginResult) => {
     // 页面跳转
     // uni.switchTab({ url: '/pages/my/my' })
     uni.navigateBack()
-  }, 500)
+  }, 1500)
 }
 
 // #ifdef H5
@@ -52,7 +88,7 @@ const form = ref({
 // 表单提交
 const onSubmit = async () => {
   const res = await postLoginAPI(form.value)
-  loginSuccess(res.result)
+  // loginSuccess(res.result)
 }
 // #endif
 </script>
@@ -60,9 +96,7 @@ const onSubmit = async () => {
 <template>
   <view class="viewport">
     <view class="logo">
-      <image
-        src="https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/images/logo_icon.png"
-      ></image>
+      <image src="https://poultry-image.oss-cn-huhehaote.aliyuncs.com/image/logo.png"></image>
     </view>
     <view class="login">
       <!-- 网页端表单登录 -->
@@ -79,7 +113,7 @@ const onSubmit = async () => {
         手机号快捷登录
       </button>
       <!-- #endif -->
-      <view class="extra">
+      <view class="extra" v-if="false">
         <view class="caption">
           <text>其他登录方式</text>
         </view>
@@ -90,7 +124,7 @@ const onSubmit = async () => {
           </button>
         </view>
       </view>
-      <view class="tips">登录/注册即视为你同意《服务条款》和《小兔鲜儿隐私协议》</view>
+      <view class="tips">登录/注册即视为你同意《服务条款》和《家禽预定小程序隐私协议》</view>
     </view>
   </view>
 </template>

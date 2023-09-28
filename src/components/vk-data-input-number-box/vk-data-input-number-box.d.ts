@@ -25,7 +25,7 @@ export type InputNumberBoxProps = {
   /** 输入框和按钮的背景颜色（默认#F2F3F5） */
   bgColor: string
   /** 步进器标识符 */
-  index: string
+  index: string | number
   /** 输入框内容发生变化时触发 */
   onChange: (event: InputNumberBoxEvent) => void
   /** 输入框失去焦点时触发 */

@@ -1,51 +1,55 @@
 <script setup lang="ts">
-import { getHomeBannerAPI, getHomeCategoryAPI, getHomeHotAPI } from '@/services/home'
-import type { BannerItem, CategoryItem, HotItem } from '@/types/home'
-import { onLoad } from '@dcloudio/uni-app'
+import { getPolutryHotAPI, getPoultryBannerAPI } from '@/services/home'
+import type { BannerItem, HotItem } from '@/types/home'
+import { onHide, onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
 import { useGuessList } from '@/composables'
-import { myHotList } from '@/mock/mockOrder'
-import mySkuPoup from '@/mycomponents/mySkuPoup/index.vue'
-import { getGoodsByIdAPI } from '@/services/goods'
+import { getPoultryGoodsByIdAPI } from '@/services/goods'
+import sbxtx from '@/components/mySkuPoup/sbxtxpoup.vue'
+import { checkLoginState } from '@/hooks/loginstate/index'
+
 /**
  * TODO:不自定义表头
  **/
 // 获取轮播图数据
 const bannerList = ref<BannerItem[]>([])
 const getHomeBannerData = async () => {
-  const res = await getHomeBannerAPI()
+  // const res = await getHomeBannerAPI()
+  const res = await getPoultryBannerAPI()
+  console.log('res: ', res)
   bannerList.value = res.result
-}
-
-// 获取前台分类数据
-const categoryList = ref<CategoryItem[]>([])
-const getHomeCategoryData = async () => {
-  const res = await getHomeCategoryAPI()
-  categoryList.value = res.result
 }
 
 // 获取热门推荐数据
 const hotList = ref<HotItem[]>([])
 const getHomeHotData = async () => {
-  const res = await getHomeHotAPI()
+  const res = await getPolutryHotAPI()
   // TODO:mock data
-  // hotList.value = res.result
-  hotList.value = myHotList.result
+  hotList.value = res.result
+  console.log('hotList: ', hotList.value)
 }
 
 // 是否加载中标记
 const isLoading = ref(false)
-
+// 判断登陆状态
+const isLogin = ref(false)
+// onload的时候判断是否登陆（根据openId）
+// const checkLoginState = computed(() => {
+//   return isLogin.value
+// })
 // 页面加载
 onLoad(async () => {
   isLoading.value = true
-  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+  await Promise.all([getHomeBannerData(), getHomeHotData()])
   isLoading.value = false
 })
-
+// onshow的时候重新获取用户信息
+onShow(async () => {
+  isLogin.value = await checkLoginState()
+})
 // 猜你喜欢组合式函数调用
 const { guessRef, onScrolltolower } = useGuessList()
 // 当前下拉刷新状态
@@ -60,58 +64,37 @@ const onRefresherrefresh = async () => {
   // await getHomeHotData()
   // 重置猜你喜欢组件数据
   guessRef.value?.resetData()
-  await Promise.all([
-    getHomeBannerData(),
-    getHomeCategoryData(),
-    getHomeHotData(),
-    guessRef.value?.getMore(),
-  ])
+  await Promise.all([getHomeBannerData(), getHomeHotData(), guessRef.value?.getMore()])
   // 关闭动画
   isTriggered.value = false
 }
 // 子传父，打开poup
-const localdata = ref()
-const isShowSku = ref(false)
-const getGoodsByIdData = async (goods_id: string) => {
+const getGoodsByIdData = async (goods_id: number) => {
+  // 先清空上次的数据
   uni.showLoading({
     title: '加载中',
     mask: false,
   })
-  const res = await getGoodsByIdAPI(goods_id)
-  // SKU组件所需格式
-  localdata.value = {
-    _id: res.result.id,
-    name: res.result.name,
-    goods_thumb: res.result.mainPictures[0],
-    spec_list: res.result.specs.map((v) => {
-      return {
-        name: v.name,
-        list: v.values,
-      }
-    }),
-    sku_list: res.result.skus.map((v) => {
-      return {
-        _id: v.id,
-        goods_id: res.result.id,
-        goods_name: res.result.name,
-        image: v.picture,
-        price: v.price * 100, // 注意：需要乘以 100
-        stock: v.inventory,
-        sku_name_arr: v.specs.map((vv) => vv.valueName),
-      }
-    }),
-  }
+  // 假设这个商品现在是pid为1的商品
+  // const res = await getGoodsByIdAPI(goods_id)
+  const res: any = await getPoultryGoodsByIdAPI(goods_id)
+  const currentGoods = res.result.items
+  console.log('currentGoods', currentGoods)
   uni.hideLoading()
-  isShowSku.value = true
-  console.log('localdata.value', localdata.value, 'isShowSku.value', isShowSku.value)
 }
-const openPoup = (goods_id: string) => {
+onHide(() => {
+  console.log('onShow', showPoup.value)
+  if (showPoup.value) showPoup.value = false
+})
+const goodsId = ref()
+const openPoup = (goods_id: number) => {
   console.log('收到子传来的商品ID', goods_id)
-  getGoodsByIdData(goods_id)
+  showPoup.value = true
+  goodsId.value = goods_id
+  // getGoodsByIdData(goods_id) //直接在myskupoup子组建调用
 }
-const changeSkuState = (state: boolean) => {
-  isShowSku.value = state
-}
+const changeSkuState = (state: boolean) => {}
+const showPoup = ref(false)
 </script>
 
 <template>
@@ -131,21 +114,23 @@ const changeSkuState = (state: boolean) => {
         <!-- 自定义轮播图 -->
         <XtxSwiper :list="bannerList" />
         <!-- 分类面板 -->
-        <CategoryPanel v-if="false" :list="categoryList" />
+        <!-- <CategoryPanel v-if="false" :list="categoryList" /> -->
         <!-- 热门推荐 -->
         <HotPanel :list="hotList" />
         <!-- 猜你喜欢 -->
-        <XtxGuess ref="guessRef" @show-popup="openPoup" />
+        <XtxGuess ref="guessRef" :is-login="isLogin" @show-popup="openPoup" />
       </template>
     </scroll-view>
-    <mySkuPoup
-      @my-sku-state="changeSkuState"
-      :localdata="localdata"
-      :is-show-sku="isShowSku"
-      :mode="2"
-    />
+    <sbxtx v-model="showPoup" :goodsId="goodsId" />
+
     <!-- 悬浮购物车 -->
-    <navigator class="shop_cart" url="/pages/cart/cart2" open-type="navigate" hover-class="none">
+    <navigator
+      v-if="!showPoup"
+      class="shop_cart"
+      url="/pages/cart/cart2"
+      open-type="navigate"
+      hover-class="none"
+    >
       <uni-icons type="cart" color="#276d33" size="45" />
     </navigator>
   </view>

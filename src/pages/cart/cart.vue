@@ -3,7 +3,7 @@ import CartMain from './components/CartMain.vue'
 </script>
 
 <template>
-  <CartMain />
+  <CartMain :safeAreaInsetBottom="false" />
 </template>
 
 <style lang="scss">

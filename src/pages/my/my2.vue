@@ -3,14 +3,12 @@ import myProfile from './components/profile.vue'
 /**
  * TODO：只要展示基本的用户信息就行，修改也不要。只要展示memberStore中的信息即可
  **/
-// 获取屏幕边界到安全区域距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
 </script>
 
 <template>
   <scroll-view enable-back-to-top class="viewport center" scroll-y>
     <!-- 个人资料 -->
-    <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' }">
+    <view class="profile">
       <!-- 情况1：已登录 -->
       <!-- 展示个人资料 -->
       <my-profile></my-profile>

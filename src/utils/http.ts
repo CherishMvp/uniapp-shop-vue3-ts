@@ -12,12 +12,12 @@
 
 import { useMemberStore } from '@/stores'
 
-const baseURL = 'https://pcapi-xiaotuxian-front-devtest.itheima.net'
+const baseURL = 'https://poultry.duck6.top'
 
 // 添加拦截器
 const httpInterceptor = {
   // 拦截前触发
-  invoke(options: UniApp.RequestOptions) {
+  invoke(options: UniApp.RequestOptions, baseURL = 'https://poultry.duck6.top') {
     // 1. 非 http 开头需拼接地址
     if (!options.url.startsWith('http')) {
       options.url = baseURL + options.url
@@ -58,12 +58,23 @@ type Data<T> = {
   msg: string
   result: T
 }
+// type PoulData<T> = {
+//   code: string
+//   msg: string
+//   result: T
+// }
 // 2.2 添加类型，支持泛型
-export const http = <T>(options: UniApp.RequestOptions) => {
+export const http = <T>(options: UniApp.RequestOptions, baseURL?: string) => {
   // 1. 返回 Promise 对象
   return new Promise<Data<T>>((resolve, reject) => {
+    const interceptorOptions = { ...options }
+    if (baseURL) {
+      httpInterceptor.invoke(interceptorOptions, baseURL)
+    } else {
+      httpInterceptor.invoke(interceptorOptions)
+    }
     uni.request({
-      ...options,
+      ...interceptorOptions,
       // 响应成功
       success(res) {
         // 状态码 2xx， axios 就是这样设计的

@@ -1,32 +1,89 @@
 <script setup lang="ts">
-import { getMemberProfileAPI, putMemberProfileAPI } from '@/services/profile'
+import { postLoginWxMinAPI, postPhoneNumberAPI } from '@/services/login'
+import { getUserProfileAPI, putUserProfileAPI } from '@/services/profile'
 import { useMemberStore } from '@/stores'
-import type { Gender, ProfileDetail } from '@/types/member'
-import { onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
-
+import { onLoad, onShow } from '@dcloudio/uni-app'
+import { onMounted, ref } from 'vue'
+import type { PolutryLoginResult } from '@/types/member'
+import { roleMap } from '@/types/enum'
 // 获取屏幕边界到安全区域距离
 
 // 获取个人信息，修改个人信息需提供初始值
 const profile = ref()
-const getMemberProfileData = async () => {
-  // const res = await getMemberProfileAPI()
-  // profile.value = res.result
-  profile.value = memberStore.profile
+const isLoginPopupVisible = ref(false)
+const submit = (e: any) => {
+  console.log('e', e)
 }
-
-onLoad(() => {
-  // getMemberProfileData()
-  console.log(' memberStore.profile', memberStore.profile)
-  profile.value = memberStore.profile
-  console.log('profile', profile.value)
-})
-
 const memberStore = useMemberStore()
 
-// 登陆逻辑
-const onLogin = () => {
-  console.log('处理简单的登陆逻辑')
+const getCurrentUserInfo = () => {
+  const memberStore = useMemberStore()
+  console.log('profile.value', profile.value)
+  profile.value = memberStore.profile
+}
+onShow(async () => {
+  console.log('能用吗')
+  await getCurrentUserInfo()
+})
+// 登陆逻辑,直接在当前页面处理就行
+//
+// #ifdef MP-WEIXIN
+// 获取 code 登录凭证
+let code = ''
+onLoad(async () => {
+  const res = await wx.login()
+  code = res.code
+  await onGetUserInfo(code)
+})
+onMounted(() => {})
+// 先判断有没有存储过的用户信息，后面再决定传参注册
+const onGetUserInfo = async (code: string) => {
+  console.log('拿到请求openid的code', code)
+  const res: any = await postLoginWxMinAPI({ code })
+  if (!res.result) {
+    uni.showModal({
+      title: '提示',
+      content: '是否登陆',
+      confirmColor: '#242',
+      success: ({ confirm, cancel }) => {
+        if (confirm) {
+          console.log('confirm', confirm)
+          // isLoginPopupVisible.value = true
+          uni.getUserProfile({
+            desc: 'xx',
+            success(result) {
+              console.log('result', result)
+              const { encryptedData, iv, rawData } = result
+              console.log('rawData', rawData, 'iv', iv, 'enc', encryptedData)
+              const res = getUserProfileAPI({ code, encryptedData, iv, rawData })
+              console.log('resss', res)
+            },
+          })
+        }
+      },
+    })
+  }
+  console.log('拿到token相关信息', res)
+}
+const loginSuccess = (profile: PolutryLoginResult) => {
+  // 保存会员信息
+  const memberStore = useMemberStore()
+  // TODO 设为admin用户
+  //profile.role = 'operator'
+  memberStore.setProfile(profile)
+  // 成功提示
+  uni.showToast({ icon: 'success', title: '登录成功' })
+  setTimeout(() => {
+    // 页面跳转
+    // uni.switchTab({ url: '/pages/my/my' })
+    uni.navigateBack()
+  }, 500)
+}
+
+// #endif
+const onLogin = async () => {
+  await onGetUserInfo(code)
+  console.log('准备跳转到登录页面登陆')
 }
 // 退出登录
 const onLogout = () => {
@@ -39,24 +96,50 @@ const onLogout = () => {
         // 清理用户信息
         memberStore.clearProfile()
         // 返回上一页
-        uni.navigateBack()
+        // uni.navigateBack()
       }
     },
   })
 }
 
-// 点击保存提交表单
-const onSubmit = async () => {
-  const { nickname, gender, birthday } = profile.value
-  const res = await putMemberProfileAPI({
-    nickname,
+const updateUserInfo = async (userName: any) => {
+  const newUserInfo = { userName: userName, openId: memberStore.profile?.openId }
+  const res: any = await putUserProfileAPI({
+    ...newUserInfo,
   })
   // 更新Store昵称
-  memberStore.profile!.nickname = res.result.nickname
-  uni.showToast({ icon: 'success', title: '保存成功' })
+  uni.showLoading({
+    title: '加载中',
+    mask: true,
+  })
   setTimeout(() => {
-    uni.navigateBack()
-  }, 400)
+    console.log('res.result.userName', res.result.userName)
+    memberStore.profile!.userName = res.result.userName
+    uni.hideLoading()
+    uni.showToast({
+      title: '修改成功',
+      icon: 'success',
+      duration: 500,
+      mask: true,
+    })
+  }, 1000)
+}
+
+// 点击保存提交表单
+const onSubmit = async () => {
+  uni.showModal({
+    title: '输入用户名',
+    editable: true,
+    showCancel: true,
+    placeholderText: '请输入你的名字',
+    success: ({ confirm, cancel, content }) => {
+      console.log('confirm', confirm)
+      if (confirm) {
+        console.log('得到新的用户名', content)
+        updateUserInfo(content)
+      }
+    },
+  })
 }
 </script>
 
@@ -64,45 +147,75 @@ const onSubmit = async () => {
   <view class="viewport">
     <!-- 导航栏 -->
     <!-- 表单 -->
-    <view class="form" v-if="memberStore.profile">
+    <text class="header">用户信息</text>
+
+    <view class="form" v-if="memberStore.profile?.openId">
       <!-- 表单内容 -->
       <view class="form-content">
         <view class="form-item">
-          <text class="label">昵称</text>
-          <text class="input" type="text" placeholder="请填写昵称">{{ profile?.nickname }}</text>
+          <text class="label">用户名</text>
+          <text class="input placeholder" type="text" placeholder="请填写昵称"
+            >{{ profile?.userName }}
+          </text>
         </view>
         <view class="form-item">
           <text class="label">账号</text>
-          <text class="account placeholder">{{ profile?.account }}</text>
+          <text class="account placeholder">{{ profile?.openId?.slice(0, 8) }}</text>
         </view>
         <view class="form-item">
           <text class="label">权限</text>
-          <text class="account placeholder">{{ profile?.role ?? '未知' }}</text>
+          <text class="account placeholder">{{ roleMap.get(profile?.role) ?? '未知' }}</text>
         </view>
         <view class="form-item">
           <text class="label">手机号码</text>
-          <text class="account placeholder">{{ profile?.account }}</text>
+          <text class="account placeholder" style="color: rgb(97, 195, 162)">{{
+            profile?.phoneNumber
+          }}</text>
         </view>
         <hr />
       </view>
       <!-- 提交按钮 -->
-      <button @tap="onLogout" class="form-button">退出登陆</button>
+      <div class="footer">
+        <button @tap="onLogout" class="form-button">退出登陆</button>
+        <button @tap="onSubmit" class="form-button">修改用户名</button>
+        <navigator v-if="false" url="/pages/login/login" class="form-navigator">老登陆</navigator>
+      </div>
     </view>
     <view v-else>
+      <!-- 未点击录入信息 -->
       <div class="form">
-        <navigator @tap="onLogin" url="/pages/login/login" hover-class="none">
+        <navigator url="/pages/login/login" hover-class="none">
           <button class="form-button">立即登陆</button>
         </navigator>
       </div>
+      <edit-info :isVisible.sync="isLoginPopupVisible" @submit="submit" />
     </view>
   </view>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .form {
   background-color: #ffffff !important;
   width: 80vw;
   border-radius: 80rpx;
+  .form-item {
+    font-size: 20px;
+    .input {
+      width: 200rpx;
+      overflow: hidden;
+    }
+  }
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .form-button {
+      // width: 190rpx;
+    }
+    .form-button:first-child {
+      background: burlywood !important;
+    }
+  }
 }
 page {
   background-color: #faf8f8;
@@ -116,6 +229,14 @@ page {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  .header {
+    font-size: 45rpx;
+    letter-spacing: 5rpx;
+    text-align: center;
+    line-height: 1;
+    margin: 55rpx;
+    font-weight: 600;
+  }
 }
 /* 操作按钮 */
 .action {

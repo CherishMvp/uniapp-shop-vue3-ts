@@ -25,13 +25,7 @@
       }
     },
     {
-      "path": "pages/category/category",
-      "style": {
-        "navigationBarTitleText": "商品分类"
-      }
-    },
-    {
-      "path": "pages/test/test",
+      "path": "pages/order/order",
       "style": {
         "navigationBarTitleText": "订单",
         "disableScroll": true
@@ -47,13 +41,15 @@
     {
       "path": "pages/cart/cart",
       "style": {
-        "navigationBarTitleText": "购物车"
+        "navigationBarTitleText": "购物车",
+        "disableScroll": true
       }
     },
     {
       "path": "pages/cart/cart2",
       "style": {
-        "navigationBarTitleText": "购物车"
+        "navigationBarTitleText": "购物车",
+        "disableScroll": true
       }
     },
     {
@@ -61,7 +57,7 @@
       "style": {
         "navigationStyle": "custom",
         "navigationBarTextStyle": "white",
-        "navigationBarTitleText": "新版我的"
+        "navigationBarTitleText": "个人中心"
       }
     },
     {
@@ -73,13 +69,8 @@
     {
       "path": "pages/hot/hot",
       "style": {
-        "navigationBarTitleText": "商品分类"
-      }
-    },
-    {
-      "path": "pages/goods/goods",
-      "style": {
-        "navigationBarTitleText": "商品详情"
+        "navigationBarTitleText": "商品分类",
+        "disableScroll": true
       }
     }
   ],
@@ -92,9 +83,10 @@
   // 设置 TabBar
   "tabBar": {
     "color": "#333",
-    "selectedColor": "#27ba9b",
+    "selectedColor": "#4ea0b3",
     "backgroundColor": "#fff",
     "borderStyle": "white",
+    // "custom":true,
     "list": [
       {
         "text": "首页",
@@ -102,23 +94,11 @@
         "iconPath": "static/tabs/home_default.png",
         "selectedIconPath": "static/tabs/home_selected.png"
       },
-      // {
-      //   "text": "分类",
-      //   "pagePath": "pages/category/category",
-      //   "iconPath": "static/tabs/category_default.png",
-      //   "selectedIconPath": "static/tabs/category_selected.png"
-      // },
-      {
-        "text": "品类管理",
-        "pagePath": "pages/admin/admin",
-        "iconPath": "static/tabs/category_default.png",
-        "selectedIconPath": "static/tabs/category_selected.png"
-      },
       {
         "text": "订单",
-        "pagePath": "pages/test/test",
-        "iconPath": "static/tabs/category_default.png",
-        "selectedIconPath": "static/tabs/category_selected.png"
+        "pagePath": "pages/order/order",
+        "iconPath": "static/tabs/order_default.png",
+        "selectedIconPath": "static/tabs/order_selected.png"
       },
       {
         "text": "购物车",
@@ -127,13 +107,19 @@
         "selectedIconPath": "static/tabs/cart_selected.png"
       },
       {
-        "text": "新版我的",
+        "text": "品类管理",
+        "pagePath": "pages/admin/admin",
+        "iconPath": "static/tabs/category_default.png",
+        "selectedIconPath": "static/tabs/category_selected.png"
+      },
+      {
+        "text": "个人中心",
         "pagePath": "pages/my/my2",
         "iconPath": "static/tabs/user_default.png",
         "selectedIconPath": "static/tabs/user_selected.png"
       }
     ]
-  },
+  }
   /**
   1. 把要分包的文件都放在一个大文件下，，subPackages数组对象；每个对象包括root和pages配置项；
   root就是这个大文件夹的名字。pages也是一个数组对象，有一个分页面要显示的就几个item，item的内容就是正常
@@ -141,71 +127,29 @@
   2. 不管是root配置项还是pages下的path配置，都不需要加’/‘
    **/
   // 分包加载规则
-  "subPackages": [
-    {
-      // 子包的根目录
-      "root": "pagesMember",
-      // 页面路径和窗口表现
-      "pages": [
-        {
-          "path": "settings/settings",
-          "style": {
-            "navigationBarTitleText": "设置"
-          }
-        },
-        {
-          "path": "profile/profile",
-          "style": {
-            "navigationStyle": "custom",
-            "navigationBarTextStyle": "white",
-            "navigationBarTitleText": "个人信息"
-          }
-        },
-        {
-          "path": "address/address",
-          "style": {
-            "navigationBarTitleText": "地址管理"
-          }
-        },
-        {
-          "path": "address-form/address-form",
-          "style": {
-            "navigationBarTitleText": ""
-          }
-        }
-      ]
-    },
-    {
-      "root": "pagesOrder",
-      "pages": [
-        {
-          "path": "create/create",
-          "style": {
-            "navigationBarTitleText": "填写订单"
-          }
-        },
-        {
-          "path": "detail/detail",
-          "style": {
-            "navigationBarTitleText": "订单详情",
-            "navigationStyle": "custom"
-          }
-        },
-        {
-          "path": "payment/payment",
-          "style": {
-            "navigationBarTitleText": "支付结果"
-          }
-        },
-        {
-          "path": "list/list",
-          "style": {
-            "navigationBarTitleText": "订单列表"
-          }
-        }
-      ]
-    }
-  ]
+  // "subPackages": [
+  //   {
+  //     // 子包的根目录
+  //     "root": "pagesMember",
+  //     // 页面路径和窗口表现
+  //     "pages": [
+  //       {
+  //         "path": "settings/settings",
+  //         "style": {
+  //           "navigationBarTitleText": "设置"
+  //         }
+  //       },
+  //       {
+  //         "path": "profile/profile",
+  //         "style": {
+  //           "navigationStyle": "custom",
+  //           "navigationBarTextStyle": "white",
+  //           "navigationBarTitleText": "个人信息"
+  //         }
+  //       }
+  //     ]
+  //   }
+  // ]
   /**
    "preloadRule" 字段定义了分包预下载规则。在示例中，"preloadRule" 中的键值对 "pages/my/my"
     定义了页面路径，并通过 "packages" 字段指定了需要预下载的子包列表。

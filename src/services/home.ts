@@ -1,6 +1,7 @@
-import type { PageParams, PageResult } from '@/types/global'
+import type { PageParams, PageResult, PoultryGoodsItem, PoultryPageResult } from '@/types/global'
 import type { BannerItem, CategoryItem, GuessItem, HotItem } from '@/types/home'
 import { http } from '@/utils/http'
+import { baseUrl } from '@/utils/setting'
 
 /**
  * 首页-广告区域-小程序
@@ -15,7 +16,19 @@ export const getHomeBannerAPI = (distributionSite = 1) => {
     },
   })
 }
-
+/**
+ * 首页-广告区域-小程序
+ * @param distributionSite 广告区域展示位置（投放位置 投放位置，1为首页，2为分类商品页） 默认是1
+ */
+export const getPoultryBannerAPI = () => {
+  return http<BannerItem[]>(
+    {
+      method: 'GET',
+      url: '/poultry/user/banner',
+    },
+    baseUrl,
+  )
+}
 /**
  * 首页-前台分类-小程序
  */
@@ -35,7 +48,18 @@ export const getHomeHotAPI = () => {
     url: '/home/hot/mutli',
   })
 }
-
+/**
+ * 首页-热门推荐-家禽预定
+ */
+export const getPolutryHotAPI = () => {
+  return http<HotItem[]>(
+    {
+      method: 'GET',
+      url: '/poultry/user/hot',
+    },
+    baseUrl,
+  )
+}
 /**
  * 猜你喜欢-小程序
  */
@@ -45,4 +69,17 @@ export const getHomeGoodsGuessLikeAPI = (data?: PageParams) => {
     url: '/home/goods/guessLike',
     data,
   })
+}
+/**
+ * 猜你喜欢-小程序
+ */
+export const getPoultryLikeAPI = (data?: PageParams) => {
+  return http<PoultryPageResult<PoultryGoodsItem>>(
+    {
+      method: 'GET',
+      url: '/poultry/getProduct',
+      data,
+    },
+    baseUrl,
+  )
 }

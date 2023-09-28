@@ -9,9 +9,15 @@ type BaseProfile = {
   /** 昵称 */
   nickname?: string
 }
-
+export type NewUserInfo = {
+  id?: number
+  userName: string
+  role: string
+  phoneNumber: string
+  openId: string
+}
 /** 小程序登录 登录用户信息 */
-export type LoginResult = BaseProfile & {
+export type LoginResult = NewUserInfo & {
   /** 手机号 */
   mobile: string
   /** 登录凭证 */
@@ -19,7 +25,15 @@ export type LoginResult = BaseProfile & {
   /**角色 **/
   role: string
 }
-
+/** 小程序登录 登录用户信息 */
+export type PolutryLoginResult = {
+  id: number
+  openId: string
+  phoneNumber: string
+  role: string
+  token: string
+  userName: string
+}
 /** 个人信息 用户详情信息 */
 export type ProfileDetail = BaseProfile & {
   /** 性别 */

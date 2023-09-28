@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { getHomeGoodsGuessLikeAPI } from '@/services/home'
-import type { PageParams } from '@/types/global'
-import type { GuessItem } from '@/types/home'
+import { getPoultryLikeAPI } from '@/services/home'
+import type { PoultryGoodsItem } from '@/types/global'
 import { onMounted, ref } from 'vue'
+import { CustomerModal } from '@/hooks/loginstate/components/tologin'
 // 分页参数
-const pageParams: Required<PageParams> = {
+const pageParams = {
   page: 1,
   pageSize: 10,
 }
 // 猜你喜欢的列表
-const guessList = ref<GuessItem[]>([])
+const guessList = ref<PoultryGoodsItem[]>([])
 // 已结束标记
 const finish = ref(false)
 // 获取猜你喜欢数据
@@ -18,19 +18,21 @@ const getHomeGoodsGuessLikeData = async () => {
   if (finish.value === true) {
     return uni.showToast({ icon: 'none', title: '没有更多数据~' })
   }
-  const res = await getHomeGoodsGuessLikeAPI(pageParams)
+  const res = await getPoultryLikeAPI(pageParams)
 
+  console.log('拿到商品: ', res)
   // guessList.value = res.result.items
   // 数组追加
   guessList.value.push(...res.result.items)
   // 分页条件
-  if (pageParams.page < res.result.pages) {
+  if (pageParams.page < res.result.totalPages) {
     // 页码累加
     pageParams.page++
   } else {
     finish.value = true
   }
 }
+const props = defineProps(['isLogin'])
 // 重置数据
 const resetData = () => {
   pageParams.page = 1
@@ -39,13 +41,20 @@ const resetData = () => {
 }
 // 触发emit事件，打开商品详情弹窗
 const open = (goods_id: any) => {
-  emit('showPopup', goods_id)
+  console.log('登陆状态', props.isLogin)
+  if (props.isLogin) {
+    emit('showPopup', goods_id)
+  } else {
+    CustomerModal('请先登录', '/pages/login/login')
+  }
   // 通过组件定义的ref调用uni-popup方法 ,如果传入参数 ，type 属性将失效 ，仅支持 ['top','left','bottom','right','center']
 }
 // 组件挂载完毕
 onMounted(() => {
+  console.log('用的是老的guess组件')
   getHomeGoodsGuessLikeData()
 })
+
 // 子传父
 const emit = defineEmits(['showPopup'])
 // 暴露方法
@@ -68,13 +77,13 @@ defineExpose({
       :key="item.id"
       :url="`/pages/goods/goods?id=${item.id}`"
     > -->
-    <view class="guess-item" v-for="item in guessList" :key="item.id" @click="open(item.id)">
+    <view class="guess-item" v-for="item in guessList" :key="item.pid" @click.stop="open(item.pid)">
       <!-- <view class="guess-item" v-for="item in guessList" :key="item.id" @tap="openPopup('service')"> -->
       <image class="image" mode="aspectFill" :src="item.picture"></image>
-      <view class="name"> {{ item.name }} </view>
+      <view class="name"> {{ item.productName }} </view>
       <view class="price">
         <!-- <text class="small">¥ </text> -->
-        <text>{{ item.price }}元/斤</text>
+        <text>{{ item.baselinePrice }}元/斤</text>
         <uni-icons type="plus-filled" color="#cf4444" size="28px" />
       </view>
     </view>
@@ -136,7 +145,8 @@ defineExpose({
   .name {
     height: 75rpx;
     margin: 10rpx 0;
-    font-size: 26rpx;
+    font-size: 35rpx;
+    line-height: 1;
     color: #262626;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -153,6 +163,7 @@ defineExpose({
     padding-top: 4rpx;
     color: #cf4444;
     font-size: 37rpx;
+    line-height: 1;
   }
   .small {
     font-size: 80%;

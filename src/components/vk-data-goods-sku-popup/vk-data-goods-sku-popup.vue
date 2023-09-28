@@ -96,6 +96,17 @@
         }}</view>
       </view>
       <view class="btn-wrapper" v-else-if="mode == 1">
+        <!-- <view
+          class="sure add-cart"
+          style="border-radius: 38rpx 0rpx 0rpx 38rpx"
+          :style="{
+            color: themeColorFn('addCartColor'),
+            backgroundColor: themeColorFn('addCartBackgroundColor'),
+          }"
+          @click="addCart"
+        >
+          {{ addCartText }}
+        </view> -->
         <view
           class="sure add-cart"
           style="border-radius: 38rpx 0rpx 0rpx 38rpx"
@@ -107,7 +118,6 @@
         >
           {{ addCartText }}
         </view>
-
         <view
           class="sure"
           style="border-radius: 0rpx 38rpx 38rpx 0rpx"
@@ -366,7 +376,7 @@ export default {
     // 是否使用缓存
     useCache: {
       Type: Boolean,
-      default: true,
+      default: false,
     },
     /**
      * 默认商品,设置该值可快速展示商品
@@ -397,7 +407,7 @@ export default {
   },
   data() {
     return {
-      safeBottom: 0,  // 留出底部安全距离
+      safeBottom: 0, // 留出底部安全距离
       complete: false, // 组件是否加载完成
       goodsInfo: {}, // 商品信息
       isShow: false, // true 显示 false 隐藏
@@ -502,11 +512,22 @@ export default {
       that.open()
     }
     // 获取屏幕边界到安全区域距离
-    const {safeAreaInsets} = uni.getSystemInfoSync()
+    const { safeAreaInsets } = uni.getSystemInfoSync()
     // 底部安全距离
     that.safeBottom = safeAreaInsets.bottom
   },
-  mounted() {},
+  mounted() {
+    console.log('sb')
+    this.init(true)
+    this.goodsInfo = {}
+    console.log('传来的商品信息', this.goodsInfo)
+  },
+  beforeMount() {
+    console.log('测试爱上大声地')
+    // this.init()
+    this.goodsInfo = {}
+    console.log('this.goodsInfo', this.goodsInfo)
+  },
   methods: {
     // 初始化
     init(notAutoClick) {
@@ -519,7 +540,8 @@ export default {
       that.outFoStock = false
       that.shopItemInfo = {}
       let specListName = that.specListName
-      that.goodsInfo[specListName].map((item) => {
+      console.log('that.goodsinfo', that.goodsInfo)
+      that.goodsInfo[specListName]?.map((item) => {
         that.selectArr.push('')
         that.subIndex.push(-1)
       })
@@ -606,13 +628,13 @@ export default {
     async open() {
       let that = this
       that.openTime = new Date().getTime()
-      let findGoodsInfoRun = true
+      let findGoodsInfoRun = false
       let skuListName = that.skuListName
       // 先获取缓存中的商品信息
       let useCache = false
       let goodsInfo = goodsCache[that.goodsId]
       if (goodsInfo && that.useCache) {
-        useCache = true
+        useCache = false
         that.updateGoodsInfo(goodsInfo)
       } else {
         that.complete = false
@@ -692,9 +714,11 @@ export default {
     moveHandle() {
       //禁止父元素滑动
     },
-    // sku按钮的点击事件
+    // sku按钮的点击事件，选择规格
     skuClick(value, index1, index2) {
+      console.log('value, index1, index2', value, index1, index2)
       let that = this
+
       if (value.ishow) {
         if (that.selectArr[index1] != value.name) {
           that.$set(that.selectArr, index1, value.name)
@@ -783,6 +807,7 @@ export default {
         that.outFoStock = true
       }
       // 计算有多小种可选路径
+      console.log('sbssss')
       let result = skuList.reduce(
         (arrs, items) => {
           return arrs.concat(
@@ -848,12 +873,13 @@ export default {
       let that = this
       that.checkSelectComplete({
         success: function (selectShop) {
+          console.log('选中商品为', selectShop)
           selectShop.buy_num = that.selectNum
           that.$emit('add-cart', selectShop)
           that.$emit('cart', selectShop)
-          // setTimeout(function() {
-          // 	that.init();
-          // }, 300);
+          setTimeout(function () {
+            that.init()
+          }, 300)
         },
       })
     },

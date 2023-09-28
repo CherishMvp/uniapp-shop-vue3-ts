@@ -21,3 +21,20 @@ export type HotResult = {
   /** 子类选项 */
   subTypes: SubTypeItem[]
 }
+interface Product {
+  pid: number
+  productName: string
+  baselinePrice: string
+  inventory: number
+  picture: string
+  spec: string[]
+}
+
+interface Category {
+  cid: number
+  categoryName: string
+  bannerPicture: string
+  products: Product[]
+}
+
+type Data = Category[]

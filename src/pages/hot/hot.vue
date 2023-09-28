@@ -1,24 +1,26 @@
 <script setup lang="ts">
-import type {
-  SkuPopupEvent,
-  SkuPopupInstance,
-} from '@/components/vk-data-goods-sku-popup/vk-data-goods-sku-popup'
-import { postMemberCartAPI } from '@/services/cart'
-import { getGoodsByIdAPI } from '@/services/goods'
-import { getHotRecommendAPI } from '@/services/hot'
-import type { GoodsResult } from '@/types/goods'
-import type { SubTypeItem } from '@/types/hot'
-import { onLoad } from '@dcloudio/uni-app'
-import { computed, ref } from 'vue'
+import { getPoultryRecommendAPI } from '@/services/hot'
+import type { Category } from '@/types/hot'
+import { onHide, onLoad } from '@dcloudio/uni-app'
+import { ref } from 'vue'
+import { checkLoginState } from '@/hooks/loginstate'
+import { CustomerModal } from '@/hooks/loginstate/components/tologin'
+import sbxtx from '@/components/mySkuPoup/sbxtxpoup.vue'
 
 // 热门推荐页  标题和url
 const urlMap = [
-  { type: '1', title: '鸡类', url: '/hot/preference' },
+  { type: '1', title: '鸡类', url: '/hot/preference' }, //这里面是一个大类，读取到后会分成两个子类
   { type: '2', title: '鸭类', url: '/hot/inVogue' },
   { type: '3', title: '其他类', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
+  //不传任何参数的话，可以返回所有的分类包括分类下的对应商品信息；可以进行后续的筛选;量不多，不考虑子类分页查询，直接返回全部就行
+  { type: '5', title: '商品分类', url: '/poultry/getCategory' },
+  { type: '6', title: '商品分类', url: '/poultry/getCategory' },
 ]
-
+onHide(() => {
+  console.log('onShow===hot', showPoup.value)
+  if (showPoup.value) showPoup.value = false
+})
 // uniapp 获取页面参数
 const query = defineProps<{
   type: string
@@ -31,125 +33,61 @@ uni.setNavigationBarTitle({ title: currUrlMap!.title })
 // 推荐封面图
 const bannerPicture = ref('')
 // 推荐选项
-const subTypes = ref<(SubTypeItem & { finish?: boolean })[]>([])
+const subTypes = ref<Category[]>()
 // 高亮的下标
 const activeIndex = ref(0)
 // 获取热门推荐数据
-const getHotRecommendData = async () => {
-  const res = await getHotRecommendAPI(currUrlMap!.url, {
+const getHotRecommendData = async (query: any) => {
+  const res: any = await getPoultryRecommendAPI(currUrlMap!.url, {
     // 技巧：环境变量，开发环境，修改初始页面方便测试分页结束
-    page: import.meta.env.DEV ? 30 : 1,
-    pageSize: 10,
   })
-  // console.log(res.result.title)
-  bannerPicture.value = res.result.bannerPicture
-  subTypes.value = res.result.subTypes
+  console.log('res.result', res.result)
+  const typeMapping: { [key: string]: number } = {
+    '5': 0, // 第一个选项的映射索引为0
+    '6': 1, // 第二个选项的映射索引为1
+  }
+  if (query.type in typeMapping) {
+    const index = typeMapping[query.type]
+    bannerPicture.value = res.result[index].bannerPicture
+    activeIndex.value = index
+  }
+
+  subTypes.value = res.result as any
 }
 
 // 页面加载
-onLoad(() => {
-  getHotRecommendData()
-})
-
-// 滚动触底
-const onScrolltolower = async () => {
-  // 获取当前选项
-  const currsubTypes = subTypes.value[activeIndex.value]
-  // 分页条件
-  if (currsubTypes.goodsItems.page < currsubTypes.goodsItems.pages) {
-    // 当前页码累加
-    currsubTypes.goodsItems.page++
-  } else {
-    // 标记已结束
-    currsubTypes.finish = true
-    // 退出并轻提示
-    return uni.showToast({ icon: 'none', title: '没有更多数据了~' })
-  }
-
-  // 调用API传参
-  const res = await getHotRecommendAPI(currUrlMap!.url, {
-    subType: currsubTypes.id,
-    page: currsubTypes.goodsItems.page,
-    pageSize: currsubTypes.goodsItems.pageSize,
-  })
-  // 新的列表选项
-  const newsubTypes = res.result.subTypes[activeIndex.value]
-  // 数组追加
-  currsubTypes.goodsItems.items.push(...newsubTypes.goodsItems.items)
-}
-
-// 直接在本地触发就行，poup写在本页
-const productInfo = ref()
-// uni-ui 弹出层组件 ref
-const popup = ref<{
-  open: (type?: UniHelper.UniPopupType) => void
-  close: () => void
-}>()
-const localdata = ref()
-const openPoup = async (goods_id: string) => {
-  console.log('收到本页点击的商品ID', goods_id)
+onLoad(async (query: any) => {
+  console.log('query', query)
   uni.showLoading({
     title: '加载中',
     mask: false,
   })
-  await getGoodsByIdData(goods_id)
-  uni.hideLoading()
-
-  openSkuPopup(2) //拿到数据后，开启poup
-  // popup.value?.open('bottom') //先不开启这个
-}
-// 获取商品详情信息
-const getGoodsByIdData = async (goods_id: string) => {
-  const res = await getGoodsByIdAPI(goods_id)
-  productInfo.value = res.result
-  console.log('根据传来的ID获取商品详情：', productInfo.value)
-  // SKU组件所需格式
-  localdata.value = {
-    _id: res.result.id,
-    name: res.result.name,
-    goods_thumb: res.result.mainPictures[0],
-    spec_list: res.result.specs.map((v) => {
-      return {
-        name: v.name,
-        list: v.values,
-      }
-    }),
-    sku_list: res.result.skus.map((v) => {
-      return {
-        _id: v.id,
-        goods_id: res.result.id,
-        goods_name: res.result.name,
-        image: v.picture,
-        price: v.price * 100, // 注意：需要乘以 100
-        stock: v.inventory,
-        sku_name_arr: v.specs.map((vv) => vv.valueName),
-      }
-    }),
-  }
-}
-// 控制sku商品poup
-// 打开SKU弹窗修改按钮模式
-const isShowSku = ref(false)
-const mode = ref()
-const openSkuPopup = (val: any) => {
-  // 显示SKU弹窗
-  isShowSku.value = true
-  // 修改按钮模式
-  mode.value = val
-  console.log('mode.value ', mode.value)
-}
-// SKU组件实例
-const skuPopupRef = ref<SkuPopupInstance>()
-// 计算被选中的值
-const selectArrText = computed(() => {
-  return skuPopupRef.value?.selectArr?.join(' ').trim() || '请选择商品规格'
+  await getHotRecommendData(query)
+  setTimeout(() => {
+    uni.hideLoading()
+  }, 500)
 })
-// 加入购物车事件
-const onAddCart = async (ev: SkuPopupEvent) => {
-  console.log('event', ev)
-  await postMemberCartAPI({ skuId: ev._id, count: ev.buy_num })
-  uni.showToast({ title: '添加成功' })
-  isShowSku.value = false
+const isLogin = ref(false)
+// 获取商品详情信息
+const goodsId = ref()
+const showPoup = ref(false)
+const openPoup = async (goods_id: number) => {
+  console.log(' isLogin.value', isLogin.value)
+  isLogin.value = await checkLoginState()
+  if (!isLogin.value) {
+    return CustomerModal('请先登录', '/pages/login/login')
+  }
+  console.log('hot===id', goods_id)
+  showPoup.value = true
+  goodsId.value = goods_id
+}
+
+// 切换tab
+const changeTab = (index: number, item: Category) => {
+  console.log('index', index, 'item', item)
+  bannerPicture.value = item.bannerPicture
+  console.log('bannerPicture', bannerPicture.value)
+  activeIndex.value = index
 }
 </script>
 
@@ -163,48 +101,39 @@ const onAddCart = async (ev: SkuPopupEvent) => {
     <view class="tabs">
       <text
         v-for="(item, index) in subTypes"
-        :key="item.id"
+        :key="item.cid"
         class="text"
         :class="{ active: index === activeIndex }"
-        @tap="activeIndex = index"
-        >{{ item.title }}</text
+        @tap="changeTab(index, item)"
+        >{{ item.categoryName }}</text
       >
     </view>
     <!-- 推荐列表 -->
     <scroll-view
       enable-back-to-top
       v-for="(item, index) in subTypes"
-      :key="item.id"
+      :key="item.cid"
       v-show="activeIndex === index"
       scroll-y
       class="scroll-view"
-      @scrolltolower="onScrolltolower"
     >
       <view class="goods">
-        <!-- <navigator
-          hover-class="none"
-          class="navigator"
-          v-for="goods in item.goodsItems.items"
-          :key="goods.id"
-          :url="`/pages/goods/goods?id=${goods.id}`"
-        > -->
-        <!-- 同样的，改成poup弹出的形式，没有引入子组件，是直接在当前页遍历数据。不必进入下一页 -->
-        <view
-          class="navigator"
-          v-for="goods in item.goodsItems.items"
-          :key="goods.id"
-          @click="openPoup(goods.id)"
-        >
+        <view class="navigator" v-for="goods in item.products" :key="goods.pid">
           <image class="thumb" :src="goods.picture"></image>
           <view class="right">
-            <view class="name ellipsis">{{ goods.name }}</view>
-            <view class="inventory">库存: 899</view>
+            <view class="name ellipsis">{{ goods.productName }}</view>
+            <view class="inventory">
+              <view>
+                <text> 库存 </text>
+                {{ goods.inventory }}
+              </view>
+            </view>
             <view class="price">
               <view>
                 <!-- <text class="symbol">¥</text> -->
-                <text class="number">{{ goods.price }}元/斤</text>
+                <text class="number">{{ goods.baselinePrice }}元/斤</text>
               </view>
-              <view>
+              <view @click="openPoup(goods.pid)">
                 <uni-icons type="plus-filled" color="#cf4444" size="30px" />
                 <!-- <text class="icon-cart"></text> -->
               </view>
@@ -212,34 +141,26 @@ const onAddCart = async (ev: SkuPopupEvent) => {
           </view>
         </view>
       </view>
-      <view class="loading-text">
-        {{ item.finish ? '没有更多数据了~' : '正在加载...' }}
-      </view>
     </scroll-view>
+    <navigator
+      v-if="!showPoup"
+      class="shop_cart"
+      url="/pages/cart/cart2"
+      open-type="navigate"
+      hover-class="none"
+    >
+      <uni-icons type="cart" color="#276d33" size="45" />
+    </navigator>
+    <sbxtx v-model="showPoup" :goodsId="goodsId" />
   </view>
-  <!-- 底部 弹出层 -->
-  <uni-popup ref="popup" background-color="#ffffff" @close="popup?.close()" type="bottom">
-    <span>获取信息商品信息成功</span>
-    {{ productInfo?.name }}
-  </uni-popup>
-  <!-- SKU弹窗组件 -->
-  <vk-data-goods-sku-popup
-    v-model="isShowSku"
-    :localdata="localdata"
-    :mode="mode"
-    add-cart-background-color="#FFA868"
-    buy-now-background-color="#27BA9B"
-    ref="skuPopupRef"
-    :actived-style="{
-      color: '#27BA9B',
-      borderColor: '#27BA9B',
-      backgroundColor: '#E9F8F5',
-    }"
-    @add-cart="onAddCart"
-  />
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.shop_cart {
+  position: fixed;
+  right: 5vw;
+  bottom: 20vh;
+}
 page {
   height: 100%;
   background-color: #f4f4f4;
@@ -247,7 +168,7 @@ page {
 .viewport {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
   padding: 180rpx 0 0;
   position: relative;
 }
@@ -322,11 +243,13 @@ page {
     height: 305rpx;
   }
   .name {
-    height: 88rpx;
-    font-size: 30rpx;
+    line-height: 1;
+    font-size: 35rpx;
+    width: 100%;
   }
   .inventory {
-    font-size: 26rpx;
+    font-size: 32rpx;
+    color: #333;
   }
   .price {
     line-height: 1;

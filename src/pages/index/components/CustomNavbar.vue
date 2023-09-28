@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // 获取屏幕边界到安全区域距离
+// 当前版本不需要自定义导航栏
 const { safeAreaInsets } = uni.getSystemInfoSync()
 </script>
 
@@ -7,7 +8,10 @@ const { safeAreaInsets } = uni.getSystemInfoSync()
   <view class="navbar" :style="{ paddingTop: safeAreaInsets!.top + 10 + 'px' }">
     <!-- logo文字 -->
     <view class="logo">
-      <image class="logo-image" src="@/static/images/logo.png"></image>
+      <image
+        class="logo-image"
+        src="https://poultry-image.oss-cn-huhehaote.aliyuncs.com/image/logo.png"
+      ></image>
       <text class="logo-text">新鲜 · 亲民 · 快捷</text>
     </view>
     <!-- 搜索条 -->

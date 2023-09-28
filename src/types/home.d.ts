@@ -29,7 +29,7 @@ export type HotItem = {
   /** id */
   id: string
   /** 图片集合[ 图片路径 ] */
-  pictures: string[]
+  pictures: string
   /** 跳转地址 */
   target: string
   /** 标题 */

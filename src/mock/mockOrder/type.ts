@@ -16,8 +16,10 @@ export interface Datum {
   /**
    * 最多有三个订单
    */
-  orderId: string
+  orderId?: number
+  id: number //订单id
   updateTime: string
+  totalPrice?: number
   /**
    * 这种情况，usereName要返回一样的
    */
@@ -25,7 +27,8 @@ export interface Datum {
 }
 
 export interface OrderDetail {
-  pid?: string
+  id?: number
+  pid?: number
   cid?: string
   picture?: string | undefined
   baselinePrice: number

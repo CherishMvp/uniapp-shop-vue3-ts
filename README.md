@@ -2,7 +2,7 @@
 
 ### 项目说明
 
-小兔鲜儿体系包含五个端：微信小程序端，H5 端，App 端，PC 端，管理后台。
+家禽预定体系包含五个端：微信小程序端，H5 端，App 端，PC 端，管理后台。
 
 当前仓库是 **uni-app** 开发的**微信小程序端**，通过**条件编译**能兼容 **H5 端** 和 **App 端**。
 
@@ -47,7 +47,7 @@
 
 ### 在线演示
 
-项目已上线，微信搜索小程序 **小兔鲜儿** 即可体验。
+项目已上线，微信搜索小程序 **家禽预定** 即可体验。
 
 ### 项目截图
 
@@ -70,7 +70,7 @@
   </tr>
 </table>
 
-## 小兔鲜儿-微信小程序
+## 家禽预定-微信小程序
 
 ### 项目简介
 
@@ -305,9 +305,40 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
   }
 
   &::before {
-  content: '￥';
+  content: '￥';2023-09-23 15:33:22
   font-size: 12px;
   }
   }
 
 - 要注意如果有设置 fix 底部 actionbar 此类的，屏幕高度要设为 100vh 撑满
+
+#
+
+- 本地和线上的 url 并没有完全统一，还在测试环境，其中 user/code 相关的，直接使用了 setting 中的 pro 版本
+  因为 inject 使用全局变量会有问题，可能会读不到
+
+# 2023-09-26 15:35:34
+
+- 首页 banner 图片像素推荐：1240 x 500px;分类页面像素推荐 750 x 225px;分类小图 800 x 800px
+
+# 2023-09-26 18:57:39
+
+- 一定要注意，小程序中一定要是 https 的请求。我用了 cloudflare 配的 dns，用了他们的证书，要开启代理才能用 https
+
+# 2023-09-26 19:34:48
+
+- 小程序上传需要先在 uniapp 这使用 cli 的 build 打包下，然后再通过开发者工具打开。再进行上传。
+- 如果会出现类似--- PLACEHOLDER PACKAGE ---
+  This @babel/plugin-proposal-private-property-in-object version is not meant to
+  be imported. Something is importing
+  @babel/plugin-proposal-private-property-in-object
+  这种错误，可以在源项目中先安装`pnpm i @babel/plugin-proposal-private-property-in-object`，再重新打包后运行上传就行
+
+# 2023-09-26 00:56:50
+
+- 结合 vite 新增环境变量，dev 和 prod 使用不同 apiurl
+- 打包和开发命令后加上
+
+# 2023-09-27 09:57:02
+
+- 如果加入了 uni-ui 新的组件。如 checkbox 或者 uni-file-picker 等，重新编译后要重新打开开发者工具

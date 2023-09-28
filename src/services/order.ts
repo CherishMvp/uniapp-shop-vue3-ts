@@ -1,12 +1,16 @@
-import type { OrderListResult } from '@/types/order'
+import type { PoultryCartItem } from '@/types/cart'
+import type { OrderListResult } from '@/types/order2'
 import type {
   OrderCreateParams,
   OrderListParams,
   OrderLogisticResult,
   OrderPreResult,
   OrderResult,
-} from '@/types/order'
+} from '@/types/order2'
 import { http } from '@/utils/http'
+
+import { baseUrl } from '@/utils/setting'
+
 /**
  * 填写订单-获取预付订单
  */
@@ -64,6 +68,76 @@ export const getMemberOrderByIdAPI = (id: string) => {
     method: 'GET',
     url: `/member/order/${id}`,
   })
+}
+
+/**
+ * 获取订单详情
+ * @param openId 用户openId
+ */
+export const getPoultryOrderByIdAPI = (data: any) => {
+  return http<any>(
+    {
+      method: 'GET',
+      url: `/poultry/orderinfo`,
+      data,
+    },
+    baseUrl,
+  )
+}
+
+/**
+ * 创建订单
+ */
+export const createOrderAPI = (data: any) => {
+  return http<PoultryCartItem[]>(
+    {
+      method: 'POST',
+      url: `/poultry/createOrder`,
+      data,
+    },
+    baseUrl,
+  )
+}
+
+/**
+ * 修改商品
+ */
+export const uploadPictureAPI = (data: any) => {
+  return http<any>(
+    {
+      method: 'POST',
+      url: `/poultry/user/admin/picture`,
+      data,
+    },
+    baseUrl,
+  )
+}
+
+/**
+ * 修改重量、修正价格
+ * @param updateInfo 更新信息
+ */
+export const postPoultryWeightAPI = (updateInfo: any) => {
+  return http<any>(
+    {
+      method: 'PUT',
+      url: '/poultry/orderinfo',
+      data: updateInfo,
+    },
+    baseUrl,
+  )
+}
+/**
+ * 筛选用户信息
+ */
+export const getAllUsersAPI = () => {
+  return http<any>(
+    {
+      method: 'GET',
+      url: '/poultry/user/allUsers',
+    },
+    baseUrl,
+  )
 }
 
 /**
