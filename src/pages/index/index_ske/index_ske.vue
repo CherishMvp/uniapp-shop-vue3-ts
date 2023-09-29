@@ -2,14 +2,14 @@
   <view class="sk-container">
     <view class="viewport data-v-6f3cd88d">
       <scroll-view
-        enable-back-to-top="true"
-        refresher-enabled="true"
-        scroll-y="true"
+        :enable-back-to-top="true"
+        :refresher-enabled="true"
+        :scroll-y="true"
         class="scroll-view data-v-6f3cd88d"
       >
         <view is="components/XtxSwiper" class="data-v-6f3cd88d">
           <view class="carousel XtxSwiper--carousel">
-            <swiper circular="true" interval="3000" current="0" autoplay="false">
+            <swiper :circular="true" :interval="3000" :current="0" :autoplay="true">
               <swiper-item
                 style="
                   position: absolute;

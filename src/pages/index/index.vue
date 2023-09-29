@@ -35,7 +35,7 @@ const getHomeHotData = async () => {
 }
 
 // 是否加载中标记
-const isLoading = ref(false)
+const isLoading = ref(true)
 // 判断登陆状态
 const isLogin = ref(false)
 // onload的时候判断是否登陆（根据openId）
@@ -85,7 +85,7 @@ const getGoodsByIdData = async (goods_id: number) => {
   uni.hideLoading()
 }
 onHide(() => {
-  console.log('onShow', showPoup.value)
+  console.log('onhide', showPoup.value)
   if (showPoup.value) showPoup.value = false
 })
 const goodsId = ref()
