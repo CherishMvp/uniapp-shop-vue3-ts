@@ -45,7 +45,7 @@ const onRefresherrefresh = async () => {
  * 正常加入购物车的时候，也就是创建订单的时候,都是这种数组格式[{pid:'商品id',number:'个数',spec:'规格'},{xx}]
  * 要注意加入的时候，判断库存是否充足
  **/
-const showCartList = ref(true)
+const showCartList = ref(false)
 const getPoultryCartData = async () => {
   const openId = memberStore.profile!.openId
   const res = await getPoultryCartAPI(openId)
@@ -66,6 +66,7 @@ const getPoultryCartData = async () => {
   cartList.value = res.result.cartItems
   console.log('cartList.value', cartList.value)
   showCartList.value = cartList.value.length > 0
+  console.log('是否有商品', showCartList.value)
 }
 
 // 初始化调用: 页面显示触发
@@ -416,14 +417,14 @@ const gotoPayment = () => {
 
     .name {
       height: 72rpx;
-      font-size: 26rpx;
+      font-size: 35rpx;
       color: #444;
     }
 
     .attrsText {
       line-height: 1.8;
       padding: 0 15rpx;
-      font-size: 24rpx;
+      font-size: 30rpx;
       align-self: flex-start;
       border-radius: 4rpx;
       color: #888;
@@ -433,7 +434,7 @@ const gotoPayment = () => {
 
     .price {
       line-height: 1;
-      font-size: 26rpx;
+      font-size: 35rpx;
       color: #444;
       margin-bottom: 2rpx;
       color: #cf4444;
@@ -459,7 +460,7 @@ const gotoPayment = () => {
       .text {
         height: 100%;
         padding: 0 20rpx;
-        font-size: 32rpx;
+        font-size: 35rpx;
         color: #444;
       }
 
@@ -467,7 +468,7 @@ const gotoPayment = () => {
         height: 100%;
         text-align: center;
         border-radius: 4rpx;
-        font-size: 24rpx;
+        font-size: 35rpx;
         color: #444;
         background-color: #f6f6f6;
       }
@@ -549,7 +550,7 @@ const gotoPayment = () => {
 
   .all {
     margin-left: 25rpx;
-    font-size: 14px;
+    font-size: 35rpx;
     color: #444;
     display: flex;
     align-items: center;
@@ -558,7 +559,7 @@ const gotoPayment = () => {
   .all::before {
     font-family: 'erabbit' !important;
     content: '\e6cd';
-    font-size: 40rpx;
+    font-size: 35rpx;
     margin-right: 8rpx;
   }
 
@@ -571,7 +572,7 @@ const gotoPayment = () => {
     margin-right: 8rpx;
     margin-left: 32rpx;
     color: #444;
-    font-size: 14px;
+    font-size: 33rpx;
   }
 
   .amount {
@@ -588,11 +589,11 @@ const gotoPayment = () => {
     }
   }
   .total_number {
-    font-size: 20px;
+    font-size: 45rpx;
     color: #323233;
 
     .decimal {
-      font-size: 12px;
+      font-size: 30px;
     }
   }
   .button-grounp {
@@ -612,7 +613,7 @@ const gotoPayment = () => {
 
     .payment-button {
       background-color: #27ba9b;
-
+      font-size: 35rpx;
       &.disabled {
         opacity: 0.6;
       }

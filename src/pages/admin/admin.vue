@@ -465,18 +465,22 @@ const changeTab = (index: number, item: Category) => {
 }
 //修改表单的字体大小
 .line :deep(.uni-forms-item__label) {
-  font-size: 30rpx !important;
+  font-size: 35rpx !important;
   justify-content: flex-end !important;
-  width: 140rpx !important;
+  width: 250rpx !important;
 }
 .line :deep(.uni-easyinput__content-input) {
-  font-size: 30rpx !important;
+  font-size: 35rpx !important;
 }
 .line :deep(.uni-select__input-box) {
-  font-size: 30rpx !important;
+  font-size: 35rpx !important;
+}
+
+.line :deep(.uni-select__selector-item) {
+  font-size: 35rpx;
 }
 .poup_wrap {
-  height: 55vh;
+  height: 65vh;
   //background-color: #27ba9b;
   .header {
     position: relative;
@@ -484,7 +488,7 @@ const changeTab = (index: number, item: Category) => {
     top: 0;
     padding: 10rpx;
     font-weight: 500;
-    font-size: 35rpx;
+    font-size: 40rpx;
     text-align: left;
     background-color: #f6f5f3;
   }
@@ -502,7 +506,7 @@ const changeTab = (index: number, item: Category) => {
 
       .line {
         display: flex;
-        width: 70%;
+        width: 85%;
         flex-wrap: wrap;
         flex-direction: column;
       }
@@ -514,7 +518,7 @@ const changeTab = (index: number, item: Category) => {
         padding: 15rpx 18rpx;
         line-height: 1.5;
         color: #fff;
-        font-size: 32rpx;
+        font-size: 35rpx;
         border-radius: 20rpx;
       }
 
@@ -571,7 +575,7 @@ page {
   height: 100rpx;
   line-height: 90rpx;
   margin: 0 20rpx;
-  font-size: 28rpx;
+  font-size: 40rpx;
   border-radius: 10rpx;
   box-shadow: 0 4rpx 5rpx rgba(200, 200, 200, 0.3);
   color: #333;
@@ -622,17 +626,17 @@ page {
   }
   .name {
     line-height: 1;
-    font-size: 35rpx;
+    font-size: 40rpx;
     width: 100%;
   }
   .inventory {
-    font-size: 32rpx;
+    font-size: 35rpx;
     color: #333;
   }
   .price {
     line-height: 1;
     color: #cf4444;
-    font-size: 32rpx;
+    font-size: 40rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;

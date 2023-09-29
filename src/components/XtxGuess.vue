@@ -67,7 +67,7 @@ defineExpose({
 <template>
   <!-- 猜你喜欢 -->
   <view class="caption">
-    <text class="text">猜你喜欢</text>
+    <text class="text" style="font-size: 35rpx">猜你喜欢</text>
   </view>
   <view class="guess">
     <!-- 将此处的跳转到某个链接，改为底部弹出层 -->
@@ -84,7 +84,7 @@ defineExpose({
       <view class="price">
         <!-- <text class="small">¥ </text> -->
         <text>{{ item.baselinePrice }}元/斤</text>
-        <uni-icons type="plus-filled" color="#cf4444" size="28px" />
+        <uni-icons type="plus-filled" color="#276d33" size="32px" />
       </view>
     </view>
   </view>
@@ -145,7 +145,7 @@ defineExpose({
   .name {
     height: 75rpx;
     margin: 10rpx 0;
-    font-size: 35rpx;
+    font-size: 40rpx;
     line-height: 1;
     color: #262626;
     overflow: hidden;
@@ -158,12 +158,12 @@ defineExpose({
     display: flex;
     // align-items: stretch;
     justify-content: space-between;
-    line-height: 28px;
-    height: 28px;
-    padding-top: 4rpx;
-    color: #cf4444;
-    font-size: 37rpx;
+    align-items: center;
     line-height: 1;
+    // height: 28px;
+    padding-top: 4rpx;
+    color: #e6851e;
+    font-size: 40rpx;
   }
   .small {
     font-size: 80%;

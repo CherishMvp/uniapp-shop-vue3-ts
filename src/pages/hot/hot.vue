@@ -134,7 +134,7 @@ const changeTab = (index: number, item: Category) => {
                 <text class="number">{{ goods.baselinePrice }}元/斤</text>
               </view>
               <view @click="openPoup(goods.pid)">
-                <uni-icons type="plus-filled" color="#cf4444" size="30px" />
+                <uni-icons type="plus-filled" color="#cf4444" size="31px" />
                 <!-- <text class="icon-cart"></text> -->
               </view>
             </view>
@@ -193,7 +193,7 @@ page {
   height: 100rpx;
   line-height: 90rpx;
   margin: 0 20rpx;
-  font-size: 28rpx;
+  font-size: 40rpx;
   border-radius: 10rpx;
   box-shadow: 0 4rpx 5rpx rgba(200, 200, 200, 0.3);
   color: #333;
@@ -244,17 +244,17 @@ page {
   }
   .name {
     line-height: 1;
-    font-size: 35rpx;
+    font-size: 40rpx;
     width: 100%;
   }
   .inventory {
-    font-size: 32rpx;
+    font-size: 35rpx;
     color: #333;
   }
   .price {
     line-height: 1;
     color: #cf4444;
-    font-size: 32rpx;
+    font-size: 40rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;

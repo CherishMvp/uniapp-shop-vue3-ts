@@ -99,8 +99,7 @@
   "mp-weixin": {
     "appid": "wx26729f20b9efae3a",
     "setting": {
-      "urlCheck": true,
-      "lazyCodeLoading": "requiredComponents"
+      "urlCheck": true
     },
     "requiredPrivateInfos": ["chooseAddress", "getLocation"],
     "permission": {
@@ -108,7 +107,8 @@
         "desc": "你的位置信息将用于小程序位置接口的效果展示"
       }
     },
-    "usingComponents": true
+    "usingComponents": true,
+    "lazyCodeLoading": "requiredComponents"
   },
   "mp-alipay": {
     "usingComponents": true

@@ -24,11 +24,11 @@ const onGetUserInfo = async (code: string) => {
   const res = await postLoginWxMinAPI({ code })
   console.log('返回基本信息', res)
   //这一步要拿到openId，跟手机号码注册的时候，如果没有token返回，说明没有对应的用户信息，则需要触发注册操作
-  console.log('res.result.token', res.result.token)
+  console.log('res.result.openId', res.result.openId)
   if (!res.result.openId) {
     userOpenId.value = res.result.openId
     uni.showToast({
-      title: '暂无用户信息，点击按钮进行注册',
+      title: '用户暂未注册，点击登录',
       icon: 'loading',
       mask: true,
     })

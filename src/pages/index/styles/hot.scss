@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     padding: 24rpx 24rpx 0;
-    font-size: 32rpx;
+    font-size: 40rpx;
     color: #262626;
     position: relative;
     .title-desc {
@@ -31,6 +31,12 @@
     .title {
       justify-content: center;
       font-weight: 600;
+      .title-text {
+        font-size: 40rpx;
+      }
+      .title-desc {
+        font-size: 30rpx;
+      }
     }
     &:nth-child(2n) {
       border-right: 0 none;

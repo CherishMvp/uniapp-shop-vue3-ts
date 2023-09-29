@@ -6,6 +6,8 @@ import { ref } from 'vue'
 import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from './components/HotPanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
+import IndexSkeleton from './index_ske/index_ske.vue'
+
 import { useGuessList } from '@/composables'
 import { getPoultryGoodsByIdAPI } from '@/services/goods'
 import sbxtx from '@/components/mySkuPoup/sbxtxpoup.vue'
@@ -109,7 +111,8 @@ const showPoup = ref(false)
       class="scroll-view"
       scroll-y
     >
-      <PageSkeleton v-if="isLoading" />
+      <!-- <PageSkeleton v-if="isLoading" /> -->
+      <IndexSkeleton v-if="isLoading" />
       <template v-else>
         <!-- 自定义轮播图 -->
         <XtxSwiper :list="bannerList" />

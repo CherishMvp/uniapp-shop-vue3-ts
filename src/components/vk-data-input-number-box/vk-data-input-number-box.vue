@@ -423,6 +423,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 35rpx !important;
 }
 
 .u-icon-plus,

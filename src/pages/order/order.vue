@@ -31,11 +31,11 @@
     </div>
     <scroll-view scroll-y class="scroll_view">
       <!-- 使用isOrderList代替 -->
-      <text class="header_tip">普通用户只显示最近三笔订单 </text>
+      <text class="header_tip" v-if="orderData?.length">普通用户只显示最近三笔订单 </text>
       <div class="order_wrap" v-if="orderData?.length">
         <uni-section
           :title="'客户姓名: ' + item.userName"
-          title-font-size="20"
+          title-font-size="40rpx"
           title-color="#000"
           type="circle"
           :key="index"
@@ -384,15 +384,15 @@ onShow(async () => {
 <style lang="scss" scoped>
 //修改表单的字体大小
 .line :deep(.uni-forms-item__label) {
-  font-size: 30rpx !important;
+  font-size: 35rpx !important;
   justify-content: flex-end !important;
-  width: 180rpx !important;
+  width: 250rpx !important;
 }
 .line :deep(.uni-easyinput__content-input) {
-  font-size: 30rpx !important;
+  font-size: 35rpx !important;
 }
 .line :deep(.uni-select__input-box) {
-  font-size: 30rpx !important;
+  font-size: 35rpx !important;
 }
 .poup_wrap {
   height: 55vh;
@@ -403,7 +403,7 @@ onShow(async () => {
     top: 0;
     padding: 10rpx;
     font-weight: 500;
-    font-size: 35rpx;
+    font-size: 40rpx;
     text-align: left;
     background-color: #f6f5f3;
     display: flex;
@@ -422,7 +422,7 @@ onShow(async () => {
       padding-bottom: 100rpx;
       .line {
         display: flex;
-        width: 60%;
+        width: 80%;
         flex-wrap: wrap;
         flex-direction: column;
       }
@@ -434,7 +434,7 @@ onShow(async () => {
         padding: 15rpx 18rpx;
         line-height: 1.5;
         color: #fff;
-        font-size: 32rpx;
+        font-size: 30rpx;
         border-radius: 20rpx;
       }
 
@@ -462,7 +462,7 @@ onShow(async () => {
   }
   .text {
     color: #444;
-    font-size: 26rpx;
+    font-size: 35rpx;
     margin: 20rpx 0;
   }
   .button {
@@ -470,7 +470,7 @@ onShow(async () => {
     height: 60rpx;
     line-height: 60rpx;
     margin-top: 20rpx;
-    font-size: 26rpx;
+    font-size: 30rpx;
     border-radius: 60rpx;
     color: #fff;
     background-color: #27ba9b;
@@ -514,7 +514,7 @@ page {
   overflow: hidden;
   .header_tip {
     font-weight: 600;
-    font-size: 32rpx;
+    font-size: 35rpx;
     color: #333;
     padding: 20rpx;
   }
@@ -526,9 +526,12 @@ page {
 .mycard :deep(.uni-group--card) {
   box-shadow: 0 0 5px 1px rgba(64, 64, 64, 0.5) !important;
 }
+.mycard :deep(.uni-group__title-text) {
+  font-size: 35rpx !important;
+}
 .group {
   .total {
-    font-size: 30rpx;
+    font-size: 33rpx;
     color: #000;
     line-height: 1;
     display: flex;
@@ -536,18 +539,18 @@ page {
     justify-content: flex-end;
   }
   .total text:nth-of-type(n + 2) {
-    margin-left: 30rpx;
+    margin-left: 25rpx;
   }
   .content {
     margin-bottom: 12rpx;
-    font-size: 30rpx;
+    font-size: 35rpx;
     .detail {
       display: flex;
       align-items: center;
       flex-wrap: nowrap;
       justify-content: flex-start;
       .index {
-        min-width: 40rpx;
+        min-width: 45rpx;
         margin-right: -15rpx;
         display: flex;
         align-items: center;
@@ -556,7 +559,7 @@ page {
       }
     }
     .detail view {
-      margin-left: 30rpx;
+      margin-left: 20rpx;
     }
     .last-detail {
       margin-bottom: 20px;
@@ -570,6 +573,7 @@ page {
     line-height: 60rpx;
     display: flex;
     align-items: center;
+    font-size: 30rpx;
     justify-content: flex-end;
   }
   .button {
@@ -580,7 +584,7 @@ page {
     padding: 6px;
     line-height: 1.2;
     color: #fff;
-    font-size: 26rpx;
+    font-size: 30rpx;
     margin-left: 14rpx;
     border-radius: 20rpx;
   }

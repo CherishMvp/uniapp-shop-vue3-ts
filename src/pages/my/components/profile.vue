@@ -23,7 +23,7 @@ const getCurrentUserInfo = () => {
 }
 onShow(async () => {
   console.log('能用吗')
-  await getCurrentUserInfo()
+  getCurrentUserInfo()
 })
 // 登陆逻辑,直接在当前页面处理就行
 //
@@ -39,8 +39,8 @@ onMounted(() => {})
 // 先判断有没有存储过的用户信息，后面再决定传参注册
 const onGetUserInfo = async (code: string) => {
   console.log('拿到请求openid的code', code)
-  const res: any = await postLoginWxMinAPI({ code })
-  if (!res.result) {
+  const res = await postLoginWxMinAPI({ code })
+  if (!res.result.openId) {
     uni.showModal({
       title: '提示',
       content: '是否登陆',
@@ -62,8 +62,10 @@ const onGetUserInfo = async (code: string) => {
         }
       },
     })
+    return
   }
-  console.log('拿到token相关信息', res)
+  loginSuccess(res.result) //如果有openid返回，则保存信息
+  console.log('拿到token相关信息22', res)
 }
 const loginSuccess = (profile: PolutryLoginResult) => {
   // 保存会员信息
@@ -72,11 +74,13 @@ const loginSuccess = (profile: PolutryLoginResult) => {
   //profile.role = 'operator'
   memberStore.setProfile(profile)
   // 成功提示
-  uni.showToast({ icon: 'success', title: '登录成功' })
+  // uni.showToast({ icon: 'success', title: '登录成功' })
   setTimeout(() => {
     // 页面跳转
+    getCurrentUserInfo()
+    console.log('登录成功 不必跳转;更新当前用户信息')
     // uni.switchTab({ url: '/pages/my/my' })
-    uni.navigateBack()
+    // uni.navigateBack()
   }, 500)
 }
 
@@ -243,7 +247,7 @@ page {
   text-align: center;
   line-height: 90rpx;
   margin-top: 40rpx;
-  font-size: 32rpx;
+  font-size: 35rpx;
   color: #333;
   .button {
     background-color: #fff;
@@ -310,7 +314,8 @@ page {
     margin: 30rpx 20rpx;
     color: #fff;
     border-radius: 80rpx;
-    font-size: 30rpx;
+    font-size: 35rpx;
+    min-width: 235rpx;
     background-color: #27ba9b;
   }
 }

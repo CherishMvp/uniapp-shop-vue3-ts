@@ -14,7 +14,7 @@
       @delete="delImg($event)"
     >
     </uni-file-picker>
-    <button @click="upload">上传文件</button>
+    <!-- <button @click="upload">上传文件</button> -->
   </view>
 </template>
 
