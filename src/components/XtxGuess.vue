@@ -3,6 +3,8 @@ import { getPoultryLikeAPI } from '@/services/home'
 import type { PoultryGoodsItem } from '@/types/global'
 import { onMounted, ref } from 'vue'
 import { CustomerModal } from '@/hooks/loginstate/components/tologin'
+import { baseImgUrl, baseUrl } from '@/utils/setting'
+
 // 分页参数
 const pageParams = {
   page: 1,
@@ -70,16 +72,9 @@ defineExpose({
     <text class="text" style="font-size: 35rpx">猜你喜欢</text>
   </view>
   <view class="guess">
-    <!-- 将此处的跳转到某个链接，改为底部弹出层 -->
-    <!-- <view
-      class="guess-item"
-      v-for="item in guessList"
-      :key="item.id"
-      :url="`/pages/goods/goods?id=${item.id}`"
-    > -->
     <view class="guess-item" v-for="item in guessList" :key="item.pid" @click.stop="open(item.pid)">
       <!-- <view class="guess-item" v-for="item in guessList" :key="item.id" @tap="openPopup('service')"> -->
-      <image class="image" mode="aspectFill" :src="item.picture"></image>
+      <image class="image" mode="aspectFill" :src="baseImgUrl + item.productName + '.png'"></image>
       <view class="name"> {{ item.productName }} </view>
       <view class="price">
         <!-- <text class="small">¥ </text> -->

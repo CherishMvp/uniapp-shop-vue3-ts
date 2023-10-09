@@ -33,7 +33,8 @@ const httpInterceptor = {
     const memberStore = useMemberStore()
     const token = memberStore.profile?.token
     if (token) {
-      options.header.Authorization = token
+      // Bearer标头
+      options.header.Authorization = 'Bearer ' + token
     }
   },
 }
@@ -76,10 +77,12 @@ export const http = <T>(options: UniApp.RequestOptions, baseURL?: string) => {
     uni.request({
       ...interceptorOptions,
       // 响应成功
-      success(res) {
+      success(res: any) {
+        //  console.log('res', res) //返回的是一整个请求体，res.data才是整个body返回
         // 状态码 2xx， axios 就是这样设计的
         if (res.statusCode >= 200 && res.statusCode < 300) {
           // 2.1 提取核心数据 res.data
+          // 2023-10-08 15:50:27取消提取核心数据，之前有在每个分页面处理过
           resolve(res.data as Data<T>)
         } else if (res.statusCode === 401) {
           // 401错误  -> 清理用户信息，跳转到登录页
@@ -91,7 +94,7 @@ export const http = <T>(options: UniApp.RequestOptions, baseURL?: string) => {
           // 其他错误 -> 根据后端错误信息轻提示
           uni.showToast({
             icon: 'none',
-            title: (res.data as Data<T>).msg || '请求错误',
+            title: (res.data as Data<any>).result?.error || '请求错误',
           })
           reject(res)
         }

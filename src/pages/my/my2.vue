@@ -1,8 +1,19 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import myProfile from './components/profile.vue'
+import { onHide, onShow } from '@dcloudio/uni-app'
 /**
  * TODO：只要展示基本的用户信息就行，修改也不要。只要展示memberStore中的信息即可
  **/
+const isUpdate = ref(false)
+onShow(() => {
+  console.log('onshow')
+  isUpdate.value = true
+})
+onHide(() => {
+  console.log('hide')
+  isUpdate.value = false
+})
 </script>
 
 <template>
@@ -11,7 +22,7 @@ import myProfile from './components/profile.vue'
     <view class="profile">
       <!-- 情况1：已登录 -->
       <!-- 展示个人资料 -->
-      <my-profile></my-profile>
+      <my-profile :isUpdate="isUpdate"></my-profile>
       <!-- 情况2：未登录 -->
     </view>
   </scroll-view>

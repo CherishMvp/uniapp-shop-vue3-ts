@@ -10,20 +10,37 @@ import { roleMap } from '@/types/enum'
 
 // 获取个人信息，修改个人信息需提供初始值
 const profile = ref()
+const props = defineProps(['isUpdate'])
 const isLoginPopupVisible = ref(false)
 const submit = (e: any) => {
   console.log('e', e)
 }
 const memberStore = useMemberStore()
 
-const getCurrentUserInfo = () => {
+/**
+ * 拿到最新的用户信息，同时写入token
+ **/
+const getCurrentUserInfo = async () => {
+  uni.showLoading({
+    title: '加载中',
+    mask: false,
+  })
+  // 获取最新的用户信息
+  const res = await wx.login()
+  code = res.code
+
+  const userInfo = await postLoginWxMinAPI({ code })
+  console.log('userInfo', userInfo)
   const memberStore = useMemberStore()
+  memberStore.setProfile(userInfo.result)
   console.log('profile.value', profile.value)
+  console.log('memberStore.profile', memberStore.profile)
   profile.value = memberStore.profile
+  uni.hideLoading()
 }
 onShow(async () => {
   console.log('能用吗')
-  getCurrentUserInfo()
+  await getCurrentUserInfo()
 })
 // 登陆逻辑,直接在当前页面处理就行
 //
@@ -31,16 +48,17 @@ onShow(async () => {
 // 获取 code 登录凭证
 let code = ''
 onLoad(async () => {
-  const res = await wx.login()
-  code = res.code
-  await onGetUserInfo(code)
+  console.log('profile页面不进行操作')
+  // const res = await wx.login()
+  // code = res.code
+  // await onGetUserInfo(code)
 })
 onMounted(() => {})
 // 先判断有没有存储过的用户信息，后面再决定传参注册
 const onGetUserInfo = async (code: string) => {
   console.log('拿到请求openid的code', code)
   const res = await postLoginWxMinAPI({ code })
-  if (!res.result.openId) {
+  if (!res.result.token) {
     uni.showModal({
       title: '提示',
       content: '是否登陆',
@@ -85,6 +103,12 @@ const loginSuccess = (profile: PolutryLoginResult) => {
 }
 
 // #endif
+
+// 计算手机号码格式
+function maskPhoneNumber(phoneNumber: string) {
+  return phoneNumber?.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') ?? '未知'
+}
+
 const onLogin = async () => {
   await onGetUserInfo(code)
   console.log('准备跳转到登录页面登陆')
@@ -116,6 +140,16 @@ const updateUserInfo = async (userName: any) => {
     title: '加载中',
     mask: true,
   })
+  console.log('res', res.result)
+  if (!res.result) {
+    uni.showToast({
+      title: '不能重复修改用户名',
+      icon: 'error',
+      duration: 1000,
+      mask: false,
+    })
+    return
+  }
   setTimeout(() => {
     console.log('res.result.userName', res.result.userName)
     memberStore.profile!.userName = res.result.userName
@@ -153,7 +187,7 @@ const onSubmit = async () => {
     <!-- 表单 -->
     <text class="header">用户信息</text>
 
-    <view class="form" v-if="memberStore.profile?.openId">
+    <view class="form" v-if="memberStore.profile?.token">
       <!-- 表单内容 -->
       <view class="form-content">
         <view class="form-item">
@@ -173,7 +207,7 @@ const onSubmit = async () => {
         <view class="form-item">
           <text class="label">手机号码</text>
           <text class="account placeholder" style="color: rgb(97, 195, 162)">{{
-            profile?.phoneNumber
+            maskPhoneNumber(profile?.phoneNumber)
           }}</text>
         </view>
         <hr />

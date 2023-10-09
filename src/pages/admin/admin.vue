@@ -13,6 +13,8 @@ import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import upload from '@/components/upload.vue'
 import type { ALOS } from '@/types/alos'
+import { baseImgUrl } from '@/utils/setting'
+
 // 热门推荐页 标题和url
 // 热门推荐页  标题和url
 const urlMap = [
@@ -76,6 +78,11 @@ const activeIndex = ref(0)
 const getHotRecommendData = async () => {
   const res: any = await getPoultryRecommendAPI(currUrlMap!.url, {})
   console.log('res.result', res.result)
+  if (!res.result.length) {
+    isData.value = false
+    return
+  }
+  isData.value = true
   bannerPicture.value = res.result[0].bannerPicture //默认进来给他第一个选项的宣传图
   subTypes.value = res.result as any
 }
@@ -86,7 +93,7 @@ const getMemberInfo = async () => {
   const memberStore = useMemberStore()
   console.log('memberStore.profile', memberStore.profile)
   roleValue.value = memberStore.profile?.role
-  if (memberStore.profile?.openId) isLogin.value = true
+  if (memberStore.profile?.token) isLogin.value = true
 }
 onShow(async () => {
   await getMemberInfo()
@@ -133,6 +140,9 @@ const editPoup = ref<{
   close: () => void
 }>()
 const isLogin = ref(false)
+
+const isData = ref(false)
+
 const openPoup = async (type: string, goods_id?: number) => {
   console.log('商品ID', goods_id, 'type', type)
   console.log('isLogin', isLogin.value)
@@ -324,55 +334,57 @@ const changeTab = (index: number, item: Category) => {
 <template>
   <view class="viewport" v-if="roleValue == 'admin'">
     <!-- 推荐封面图 -->
-    <view class="cover">
-      <image class="image" mode="widthFix" :src="bannerPicture"></image>
-    </view>
-    <!-- 推荐选项 -->
-    <view class="tabs">
-      <text
+    <div class="first_part" v-if="isData">
+      <view class="cover">
+        <image class="image" mode="widthFix" :src="bannerPicture"></image>
+      </view>
+      <!-- 推荐选项 -->
+      <view class="tabs">
+        <text
+          v-for="(item, index) in subTypes"
+          :key="item.cid"
+          class="text"
+          :class="{ active: index === activeIndex }"
+          @tap="changeTab(index, item)"
+          >{{ item.categoryName }}</text
+        >
+      </view>
+      <!-- 推荐列表 -->
+      <scroll-view
+        enable-back-to-top
         v-for="(item, index) in subTypes"
         :key="item.cid"
-        class="text"
-        :class="{ active: index === activeIndex }"
-        @tap="changeTab(index, item)"
-        >{{ item.categoryName }}</text
+        v-show="activeIndex === index"
+        scroll-y
+        class="scroll-view"
       >
-    </view>
-    <!-- 推荐列表 -->
-    <scroll-view
-      enable-back-to-top
-      v-for="(item, index) in subTypes"
-      :key="item.cid"
-      v-show="activeIndex === index"
-      scroll-y
-      class="scroll-view"
-    >
-      <view class="goods">
-        <view class="navigator" v-for="goods in item.products" :key="goods.pid">
-          <image class="thumb" :src="goods.picture"></image>
-          <view class="right">
-            <view class="name ellipsis">{{ goods.productName }}</view>
-            <view class="inventory">
-              <view>
-                <text> 库存 </text>
-                {{ goods.inventory }}
+        <view class="goods">
+          <view class="navigator" v-for="goods in item.products" :key="goods.pid">
+            <image class="thumb" :src="baseImgUrl + goods.productName + '.png'"></image>
+            <view class="right">
+              <view class="name ellipsis">{{ goods.productName }}</view>
+              <view class="inventory">
+                <view>
+                  <text> 库存 </text>
+                  {{ goods.inventory }}
+                </view>
               </view>
-            </view>
-            <view class="price">
-              <view>
-                <!-- <text class="symbol">¥</text> -->
-                <text class="number">{{ goods.baselinePrice }}元/斤</text>
-              </view>
-              <view @click="openPoup('edit', goods.pid)">
-                <uni-icons type="compose" color="#27ba9b" size="30px" />
+              <view class="price">
+                <view>
+                  <!-- <text class="symbol">¥</text> -->
+                  <text class="number">{{ goods.baselinePrice }}元/斤</text>
+                </view>
+                <view @click="openPoup('edit', goods.pid)">
+                  <uni-icons type="compose" color="#27ba9b" size="30px" />
 
-                <!-- <text class="icon-cart"></text> -->
+                  <!-- <text class="icon-cart"></text> -->
+                </view>
               </view>
             </view>
           </view>
         </view>
-      </view>
-    </scroll-view>
+      </scroll-view>
+    </div>
     <!-- 底部弹出的编辑商品的poup -->
     <uni-popup ref="editPoup" background-color="#fafafa" @change="handleEditPoup">
       <div class="poup_wrap">
@@ -449,9 +461,11 @@ const changeTab = (index: number, item: Category) => {
       </div>
     </uni-popup>
     <!-- 添加商品按钮 -->
-    <view class="addProductButton" @click="openPoup('add')">
-      <uni-icons type="plusempty" color="#599b7f" size="55px" />
-    </view>
+    <div class="sec_part">
+      <view class="addProductButton" @click="openPoup('add')">
+        <uni-icons type="plusempty" color="#599b7f" size="55px" />
+      </view>
+    </div>
   </view>
   <view v-else>
     <view class="customer_info"> <text>暂无权限</text> </view>

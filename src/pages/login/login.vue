@@ -24,8 +24,8 @@ const onGetUserInfo = async (code: string) => {
   const res = await postLoginWxMinAPI({ code })
   console.log('返回基本信息', res)
   //这一步要拿到openId，跟手机号码注册的时候，如果没有token返回，说明没有对应的用户信息，则需要触发注册操作
-  console.log('res.result.openId', res.result.openId)
-  if (!res.result.openId) {
+  console.log('res.result.token', res.result.token)
+  if (!res.result.token) {
     userOpenId.value = res.result.openId
     uni.showToast({
       title: '用户暂未注册，点击登录',
@@ -51,7 +51,7 @@ const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
     // 拿到手机号码
     const res: any = await postPhoneNumberAPI(ev.detail.code, { openId: userOpenId.value })
     console.log('phoenumber', res)
-    loginSuccess(res.result)
+    if (res.result.token) loginSuccess(res.result)
     // res.result.mobile=phoneNumber.result.data
   }
 }

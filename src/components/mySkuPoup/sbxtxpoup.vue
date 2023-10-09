@@ -284,7 +284,7 @@ const addToCart = async () => {
     .add_to_cart {
       .add {
         border-radius: 30rpx;
-        background: rgb(245, 182, 111);
+        background: rgb(243 150 46);
         color: #ffff;
       }
       .disable_button {

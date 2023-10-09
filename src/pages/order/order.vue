@@ -50,9 +50,9 @@
                   class="detail"
                   :class="{ 'last-detail': index2 === item.orderDetail?.length - 1 }"
                 >
-                  <div class="index">{{ index2 + 1 }} .</div>
-                  <div class="name">{{ detail.productName }} {{ detail.number }} 只</div>
-                  <div class="base_price">{{ detail.baselinePrice }} 元/斤</div>
+                  <div class="index">{{ index2 + 1 }}.</div>
+                  <div class="name">{{ detail.productName }} {{ detail.number }}只</div>
+                  <div class="base_price">{{ detail.baselinePrice }}元/斤</div>
                   <div class="spec">规格 {{ detail.spec }}</div>
                 </view>
               </view>
@@ -253,7 +253,7 @@ const saveChanges = async () => {
         duration: 1500,
         mask: false,
       })
-      await getAllOrderList()
+      await getAllOrderList(true)
       console.log('更新成功')
       return
     }
@@ -272,7 +272,7 @@ const saveChanges = async () => {
         duration: 1500,
         mask: false,
       })
-      await getAllOrderList()
+      await getAllOrderList(true)
       console.log('更新成功')
       return
     }
@@ -324,6 +324,8 @@ const handleDateeClear = () => {
   curent_searchInfo.value.orderDate = ''
 }
 const onNameChange = async (e: any) => {
+  console.log('ee', e)
+  selectedName.value = e
   curent_searchInfo.value.openId = e
   orderData.value = (await getPoultryOrderByIdAPI(curent_searchInfo.value)).result
 }
@@ -333,9 +335,16 @@ const onNameChange = async (e: any) => {
 const curent_searchInfo = ref({
   openId: '',
   orderDate: '',
+  userName: '',
 })
-const getAllOrderList = async () => {
+const getAllOrderList = async (justUpdateCurrent: boolean = false) => {
+  console.log('curent_searchInfo.valuexxx', curent_searchInfo.value)
+  console.log('memberStore.profile!.openId', memberStore.profile!.openId)
+  console.log('userRole.value ', userRole.value)
   curent_searchInfo.value.openId = userRole.value != 'customer' ? '' : memberStore.profile!.openId
+  if (justUpdateCurrent) {
+    curent_searchInfo.value.openId = selectedName.value
+  }
   console.log('curent_searchInfo', curent_searchInfo.value)
   console.log('userRole', userRole.value)
   // if (userRole.value != 'customer') openId = '456'
@@ -387,6 +396,7 @@ onShow(async () => {
   font-size: 35rpx !important;
   justify-content: flex-end !important;
   width: 250rpx !important;
+  height: 50px !important;
 }
 .line :deep(.uni-easyinput__content-input) {
   font-size: 35rpx !important;
@@ -494,7 +504,7 @@ page {
 
   .action_bar {
     position: sticky;
-    z-index: 3;
+    z-index: 1;
     display: flex;
     top: 0;
     align-items: center;

@@ -9,6 +9,25 @@ type LoginWxMinParams = {
   iv?: string
   rawData: string
 }
+type CommonRes<T> = {
+  result: T
+  code: number
+  message: string
+}
+/**
+ * 验证token有效性
+ **/
+
+export const postValidToken = (data: any) => {
+  return http<any>(
+    {
+      method: 'POST',
+      url: '/poultry/validToken',
+      data,
+    },
+    baseUrl,
+  )
+}
 /**
  * 获取用户信息
  **/

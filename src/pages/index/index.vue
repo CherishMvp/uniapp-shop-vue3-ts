@@ -42,15 +42,20 @@ const isLogin = ref(false)
 // const checkLoginState = computed(() => {
 //   return isLogin.value
 // })
-// 页面加载
-onLoad(async () => {
+const init = async () => {
   isLoading.value = true
   await Promise.all([getHomeBannerData(), getHomeHotData()])
   isLoading.value = false
+}
+// 页面加载
+onLoad(async () => {
+  // await init()
+  console.log('onshow刷新数据就行，防止有修改商品无刷新')
 })
 // onshow的时候重新获取用户信息
 onShow(async () => {
   isLogin.value = await checkLoginState()
+  await init()
 })
 // 猜你喜欢组合式函数调用
 const { guessRef, onScrolltolower } = useGuessList()

@@ -12,6 +12,7 @@ import { onShow } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 import { createOrderAPI } from '@/services/order'
 import { CustomerModal } from '@/hooks/loginstate/components/tologin'
+import { baseImgUrl } from '@/utils/setting'
 
 // 是否适配底部安全区域
 defineProps<{
@@ -49,7 +50,8 @@ const showCartList = ref(false)
 const getPoultryCartData = async () => {
   const openId = memberStore.profile!.openId
   const res = await getPoultryCartAPI(openId)
-  if (!res.result) {
+  console.log('res: ', res.result)
+  if (!res.result?.openId) {
     uni.showModal({
       title: '提示',
       content: '暂无内容，去首页看看',
@@ -73,7 +75,7 @@ const getPoultryCartData = async () => {
 onShow(async () => {
   // 如果有token，登陆了，则发起购物车请求
   console.log('memberStore.profile', memberStore.profile)
-  if (memberStore.profile?.openId) {
+  if (memberStore.profile?.token) {
     console.log('sb')
     await getPoultryCartData()
   }
@@ -101,7 +103,7 @@ const onDeleteCart = (itemId: number) => {
 
 // 修改商品数量;ev包括{value:数量,index:pid}
 const onChangeCount = (ev: InputNumberBoxEvent) => {
-  console.log('event: ', ev)
+  console.log('准备更新商品信息: ', ev)
   putPoultryCartByItemIdAPI(Number(ev.index), { number: ev.value })
 }
 
@@ -253,10 +255,10 @@ const gotoPayment = () => {
               > -->
               <view hover-class="none" class="navigator">
                 <image
-                  @click="previewImage(item.productDetail.picture)"
+                  @click="previewImage(baseImgUrl + item.productDetail.productName + '.png')"
                   mode="aspectFill"
                   class="picture"
-                  :src="item.productDetail.picture"
+                  :src="baseImgUrl + item.productDetail.productName + '.png'"
                 ></image>
                 <view class="meta">
                   <view class="name ellipsis">{{ item.productDetail.productName }}</view>
@@ -320,7 +322,7 @@ const gotoPayment = () => {
         class="button payment-button"
         :class="{ disabled: selectedCartListCount === 0 }"
       >
-        去结算({{ selectedCartListCount }})
+        去预定({{ selectedCartListCount }})
       </view>
     </view>
   </view>
