@@ -6,11 +6,13 @@ import { onLoad, onShow } from '@dcloudio/uni-app'
 import { onMounted, ref } from 'vue'
 import type { PolutryLoginResult } from '@/types/member'
 import { roleMap } from '@/types/enum'
+import getUserPoup from '@/components/login/getUserPoup.vue'
 // 获取屏幕边界到安全区域距离
 
 // 获取个人信息，修改个人信息需提供初始值
 const profile = ref()
 const props = defineProps(['isUpdate'])
+const showPopup = ref(false)
 const isLoginPopupVisible = ref(false)
 const submit = (e: any) => {
   console.log('e', e)
@@ -37,6 +39,31 @@ const getCurrentUserInfo = async () => {
   console.log('memberStore.profile', memberStore.profile)
   profile.value = memberStore.profile
   uni.hideLoading()
+}
+const mycode = ref()
+const getUserInfo1 = async () => {
+  const res = await wx.login()
+  mycode.value = res.code
+  console.log('拿到code', mycode.value)
+}
+const getUserInfo = async () => {
+  console.log('执行获取')
+  true &&
+    uni.getUserProfile({
+      desc: 'xx',
+      success(result) {
+        console.log('result', result)
+        const { encryptedData, iv, rawData } = result
+        console.log('拿到准备解密的参数', rawData, 'iv', iv, 'enc', encryptedData)
+        const res = getUserProfileAPI({
+          code: mycode.value,
+          encryptedData,
+          iv,
+          rawData,
+        })
+        console.log('resss', res)
+      },
+    })
 }
 onShow(async () => {
   console.log('能用吗')
@@ -67,16 +94,6 @@ const onGetUserInfo = async (code: string) => {
         if (confirm) {
           console.log('confirm', confirm)
           // isLoginPopupVisible.value = true
-          uni.getUserProfile({
-            desc: 'xx',
-            success(result) {
-              console.log('result', result)
-              const { encryptedData, iv, rawData } = result
-              console.log('rawData', rawData, 'iv', iv, 'enc', encryptedData)
-              const res = getUserProfileAPI({ code, encryptedData, iv, rawData })
-              console.log('resss', res)
-            },
-          })
         }
       },
     })
@@ -185,6 +202,15 @@ const onSubmit = async () => {
   <view class="viewport">
     <!-- 导航栏 -->
     <!-- 表单 -->
+    <!-- 旧版本获取用户信息 -->
+    <div class="mock_userinfo" v-if="true">
+      <text>模拟获取用户信息</text>
+      <button type="primary" color="#bfa" @click="getUserInfo1">重新拿code</button>
+
+      <button type="primary" color="#bfa" @click="getUserInfo">获取用户信息</button>
+      <!-- <get-user-poup v-model="showPopup" /> -->
+    </div>
+
     <text class="header">用户信息</text>
 
     <view class="form" v-if="memberStore.profile?.token">
@@ -232,6 +258,10 @@ const onSubmit = async () => {
 </template>
 
 <style lang="scss" scoped>
+.mock_userinfo {
+  display: flex;
+  flex-direction: column;
+}
 .form {
   background-color: #ffffff !important;
   width: 80vw;
