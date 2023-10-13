@@ -8,4 +8,7 @@ export default defineConfig({
     sourcemap: process.env.NODE_ENV === 'development',
   },
   plugins: [uni()],
+  esbuild: {
+    drop: process.env.NODE_ENV !== 'development' ? ['console', 'debugger'] : [],
+  },
 })

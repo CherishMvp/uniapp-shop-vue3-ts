@@ -21,6 +21,7 @@
 <script setup lang="ts">
 // import { getPostObjectParamsAPI } from '@/services/goods'
 import type { ALOS } from '@/types/alos'
+import { baseUploadUrl } from '@/utils/setting'
 import { onMounted, ref, watch } from 'vue'
 const imageValue = ref()
 const imagesRef = ref()
@@ -92,7 +93,7 @@ onMounted(async () => {
 const fileInfo = ref({
   imgUrl: '',
   key: '',
-  ossUrl: 'https://miniprogram.ai0626.online',
+  ossUrl: baseUploadUrl,
   imgType: '',
 })
 const selectImg = async (e: any) => {

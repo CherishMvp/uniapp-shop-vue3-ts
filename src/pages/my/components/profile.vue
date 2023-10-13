@@ -75,7 +75,7 @@ onShow(async () => {
 // 获取 code 登录凭证
 let code = ''
 onLoad(async () => {
-  console.log('profile页面不进行操作')
+  console.log('onshow处理逻辑就行')
   // const res = await wx.login()
   // code = res.code
   // await onGetUserInfo(code)
@@ -85,6 +85,7 @@ onMounted(() => {})
 const onGetUserInfo = async (code: string) => {
   console.log('拿到请求openid的code', code)
   const res = await postLoginWxMinAPI({ code })
+  console.log('res', res)
   if (!res.result.token) {
     uni.showModal({
       title: '提示',
@@ -203,7 +204,7 @@ const onSubmit = async () => {
     <!-- 导航栏 -->
     <!-- 表单 -->
     <!-- 旧版本获取用户信息 -->
-    <div class="mock_userinfo" v-if="true">
+    <div class="mock_userinfo" v-if="false">
       <text>模拟获取用户信息</text>
       <button type="primary" color="#bfa" @click="getUserInfo1">重新拿code</button>
 

@@ -13,7 +13,7 @@ import { onLoad, onShow } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import upload from '@/components/upload.vue'
 import type { ALOS } from '@/types/alos'
-import { baseImgUrl } from '@/utils/setting'
+import { baseImgUrl, baseUploadUrl } from '@/utils/setting'
 
 // 热门推荐页 标题和url
 // 热门推荐页  标题和url
@@ -215,7 +215,7 @@ const ALOSCONF = ref<ALOS>()
 const fileInfo = ref({
   imgUrl: '',
   key: '',
-  ossUrl: 'https://miniprogram.ai0626.online',
+  ossUrl: baseUploadUrl,
   imgType: '',
   productName: '',
 })
