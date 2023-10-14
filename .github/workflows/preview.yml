@@ -20,6 +20,8 @@ jobs:
           node-version: 18.x
 
       - name: Install dependencies
+        run: npm install pnpm -g
+      - name: Install dependencies2 
         run: pnpm install
 
       - name: Build
