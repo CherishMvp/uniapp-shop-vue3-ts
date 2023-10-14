@@ -3,7 +3,7 @@ name: Deploy Preview
 on:
   push:
     branches:
-      - poultry
+      - master
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: npm install pnpm -g
 
-      - name: Install dependencies2 
+      - name: Install dependencies2
         run: pnpm install
 
       - name: Build
@@ -36,6 +36,6 @@ jobs:
           export COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
       - name: Upload Mini Program
         run: |
-            npm install miniprogram-ci -g
-            # miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp $PRIVATE_KEY --appid $MINI_APP_ID --version 1.0.0 --enable-es6  --enable-es7  --uv  $COMMIT_MESSAGE
-            miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp $PRIVATE_KEY --appid $MINI_APP_ID  --uv "3.2.1"  --ud $COMMIT_MESSAGE --enable-es6 --enable-es7 --enable-minify
+          npm install miniprogram-ci -g
+          # miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp $PRIVATE_KEY --appid $MINI_APP_ID --version 1.0.0 --enable-es6  --enable-es7  --uv  $COMMIT_MESSAGE
+          miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp $PRIVATE_KEY --appid $MINI_APP_ID  --uv "3.2.1"  --ud $COMMIT_MESSAGE --enable-es6 --enable-es7 --enable-minify
