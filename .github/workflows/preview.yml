@@ -25,11 +25,16 @@ jobs:
       - name: Build
         run: pnpm run build:mp-weixin
 
-      - name: Upload
-        uses: crazyurus/miniprogram-action@1.0.0
+      - name: actions.mini-program
+        uses: actions.mini-program@main
         with:
-          action_type: upload
-          version: ${{ github.ref_name }}
+          project_type: miniProgram
+          action_type: preview
           project_path: ./dist/build/mp-weixin
+          version: 1.0.0
+          command_options:
+            --enable-es5
+            # --project-ignores=['node_modules/**/*']
         env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          MINI_APP_ID: ${{ secrets.MINI_APP_ID }}
+          MINI_APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
