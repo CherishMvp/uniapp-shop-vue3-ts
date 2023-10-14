@@ -20,3 +20,13 @@ jobs:
           echo "MINI_APP_ID: $MINI_APP_ID"
           export PRIVATE_KEY_PATH="/path/to/${{ secrets.PRIVATE_KEY }}"
           echo "PRIVATE_KEY_PATH: $PRIVATE_KEY_PATH"
+      - name: Create private key file
+        run: |
+          echo "${{ secrets.PRIVATE_KEY }}" > ./private.key
+          echo "Private key file created!"
+          ls -l  # 可选的，用于验证文件是否创建成功
+      - name: Use private key file
+        run: |
+          pwd
+
+        
