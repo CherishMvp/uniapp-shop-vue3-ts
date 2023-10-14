@@ -30,10 +30,10 @@ jobs:
         run: pnpm run build:mp-weixin
 
       - name: Set Environment Variables
-        run: |
-          export PRIVATE_KEY="${{ secrets.PRIVATE_KEY }}"
-          export MINI_APP_ID="${{ secrets.MINI_APP_ID }}"
-          export COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          MINI_APP_ID: ${{ secrets.MINI_APP_ID }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
       - name: Upload Mini Program
         run: |
           npm install miniprogram-ci -g
