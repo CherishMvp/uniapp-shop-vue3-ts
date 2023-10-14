@@ -2,7 +2,7 @@ name: 提交 Commit 预览小程序
 on:
   push:
     branches:
-      - master
+      - poultry
 jobs:
   preview:
     runs-on: ubuntu-latest
