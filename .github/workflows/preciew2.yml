@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - poultry
-# Allows you to run this workflow manually from the Actions tab
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,16 +21,24 @@ jobs:
           node-version: 16.18.1
 
       - name: Install dependencies
-        run: npm ci
+        run: yarn install
 
       - name: Build
-        run: npm run build:mp-weixin
+        run: yarn run build:mp-weixin
 
-      - name: Upload
-        uses: crazyurus/miniprogram-action@1.0.0
+      - name: actions.mini-program
+        uses: echoings/actions.mini-program@0.0.3
         with:
-          action_type: upload
-          version: ${{ github.ref_name }}
-          project_path: ./dist/build/mp-weixin/
+          project_type: miniProgram
+          action_type: preview
+          project_path: ./dist/build/mp-weixin
+          version: 1.0.0
+          command_options:
+            --enable-es5
+            --enable-es6
+            --enable-es7
+            --enable-minify
+            # --project-ignores=['node_modules/**/*']
         env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          MINI_APP_ID: ${{ secrets.MINI_APP_ID }}
+          MINI_APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
