@@ -33,7 +33,8 @@ jobs:
         run: |
           export PRIVATE_KEY="${{ secrets.PRIVATE_KEY }}"
           export MINI_APP_ID="${{ secrets.MINI_APP_ID }}"
+          export COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
       - name: Upload Mini Program
         run: |
           npm install miniprogram-ci -g
-          miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp $PRIVATE_KEY --appid $MINI_APP_ID --version 1.0.0 --enable-es6 true --uv  ${{ github.event.head_commit.message }}
+          miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp $PRIVATE_KEY --appid $MINI_APP_ID --version 1.0.0 --enable-es6 true --uv  $COMMIT_MESSAGE
