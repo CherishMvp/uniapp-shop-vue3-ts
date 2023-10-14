@@ -14,8 +14,9 @@ const urlMap = [
   { type: '3', title: '其他类', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
   //不传任何参数的话，可以返回所有的分类包括分类下的对应商品信息；可以进行后续的筛选;量不多，不考虑子类分页查询，直接返回全部就行
-  { type: '5', title: '商品分类', url: '/poultry/getCategory' },
-  { type: '6', title: '商品分类', url: '/poultry/getCategory' },
+  { type: '5', title: '商品分类', url: '/poultry/getCategory' }, //鸡类
+  { type: '6', title: '商品分类', url: '/poultry/getCategory' }, //鸭类
+  { type: '7', title: '商品分类', url: '/poultry/getCategory' }, //其他
 ]
 onHide(() => {
   console.log('onShow===hot', showPoup.value)
@@ -35,7 +36,7 @@ const bannerPicture = ref('')
 // 推荐选项
 const subTypes = ref<Category[]>()
 // 高亮的下标
-const activeIndex = ref(0)
+const activeIndex = ref(1001)
 // 获取热门推荐数据
 const getHotRecommendData = async (query: any) => {
   const res: any = await getPoultryRecommendAPI(currUrlMap!.url, {
@@ -43,16 +44,19 @@ const getHotRecommendData = async (query: any) => {
   })
   console.log('res.result', res.result)
   const typeMapping: { [key: string]: number } = {
-    '5': 0, // 第一个选项的映射索引为0
-    '6': 1, // 第二个选项的映射索引为1
+    '5': 1001, // 第一个选项的映射索引为0
+    '6': 1002, // 第二个选项的映射索引为1
+    '7': 1003, // 第三个选项的映射索引为2
   }
   if (query.type in typeMapping) {
     const index = typeMapping[query.type]
-    bannerPicture.value = res.result[index].bannerPicture
+    const currentTag = res.result.find((item: any) => item.cid == index)
+    bannerPicture.value = currentTag.bannerPicture
     activeIndex.value = index
   }
 
   subTypes.value = res.result as any
+  console.log('subTypes', subTypes.value)
 }
 
 // 页面加载
@@ -87,7 +91,7 @@ const changeTab = (index: number, item: Category) => {
   console.log('index', index, 'item', item)
   bannerPicture.value = item.bannerPicture
   console.log('bannerPicture', bannerPicture.value)
-  activeIndex.value = index
+  activeIndex.value = item.cid
 }
 </script>
 
@@ -103,7 +107,7 @@ const changeTab = (index: number, item: Category) => {
         v-for="(item, index) in subTypes"
         :key="item.cid"
         class="text"
-        :class="{ active: index === activeIndex }"
+        :class="{ active: item.cid === activeIndex }"
         @tap="changeTab(index, item)"
         >{{ item.categoryName }}</text
       >
@@ -113,7 +117,7 @@ const changeTab = (index: number, item: Category) => {
       enable-back-to-top
       v-for="(item, index) in subTypes"
       :key="item.cid"
-      v-show="activeIndex === index"
+      v-show="activeIndex === item.cid"
       scroll-y
       class="scroll-view"
     >
