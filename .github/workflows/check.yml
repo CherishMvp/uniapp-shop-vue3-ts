@@ -1,0 +1,23 @@
+name: Deploy Preview
+
+on:
+  push:
+    branches:
+      - poultry
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set Environment Variables
+        run: |
+          export PRIVATE_KEY="${{ secrets.PRIVATE_KEY }}"
+          export MINI_APP_ID="${{ secrets.MINI_APP_ID }}"
+          export COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+      - name: Output Environment Variables
+        run: |
+          echo "PRIVATE_KEY: $PRIVATE_KEY"
+          echo "MINI_APP_ID: $MINI_APP_ID"

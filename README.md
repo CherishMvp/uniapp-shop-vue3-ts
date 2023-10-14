@@ -342,3 +342,10 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
 # 2023-09-27 09:57:02
 
 - 如果加入了 uni-ui 新的组件。如 checkbox 或者 uni-file-picker 等，重新编译后要重新打开开发者工具
+
+# 2023 年 10 月 14 日 14:48:41
+
+- 加入微信小程序 ci 工具，特别要注意要开始 es7 转 es5 和 es6 转 es5 功能
+- 全局安装 ci 工具`npm install miniprogram-ci -g`
+  `miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp ./sgly.key --appid wx9f97249d67fa5353  --uv "sx"  --enable-es6 --enable-es7 --enable-minify`
+  miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp ./sgly.key --appid wx9f97249d67fa5353 --uv "1.1.1" --ud "测试 1" --enable-es6 --enable-es7 --enable-minify
