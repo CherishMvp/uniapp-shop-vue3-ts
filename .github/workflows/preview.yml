@@ -20,16 +20,23 @@ jobs:
           node-version: 16.18.1
 
       - name: Install dependencies
-        run: pnpm install
+        run: yarn install
 
       - name: Build
-        run: pnpm run build:mp-weixin
+        run: yarn run build:mp-weixin
 
-      - name: Upload
-        uses: crazyurus/miniprogram-action@1.0.0
+      - name: actions.mini-program
+        uses: echoings/actions.mini-program@0.0.3
         with:
+          project_type: miniProgram
           action_type: upload
-          version: ${{ github.ref_name }}
           project_path: ./dist/build/mp-weixin
+          version: 1.0.0
+          remark: ${{ github.event.head_commit.message }}
+          # 开启es6编译成es5
+          command_options:
+            --enable-es6
+            # --project-ignores=['node_modules/**/*']
         env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          MINI_APP_ID: ${{ secrets.MINI_APP_ID }}
+          MINI_APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
