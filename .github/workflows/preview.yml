@@ -30,6 +30,6 @@ jobs:
         with:
           action_type: upload
           version: ${{ github.ref_name }}
-          project_path: ./dist/build/mp-weixin/
+          project_path: ./dist/build/mp-weixin
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
