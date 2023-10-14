@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - poultry
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -16,29 +15,35 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3.8.1
         with:
-          node-version: 16.18.1
-
-      - name: Install dependencies1
-        run: npm  install pnpm -g
+          node-version: 18.x
 
       - name: Install dependencies
+        run: npm install pnpm -g
+
+      - name: Install dependencies2
         run: pnpm install
+
+      - name: Install mini-ci
+        run: npm install miniprogram-ci -g
+
       - name: Build
         run: pnpm run build:mp-weixin
 
-      - name: actions.mini-program
-        uses: echoings/actions.mini-program@0.0.3
+      - name: Create private key file
+        run: |
+          echo "${{ secrets.PRIVATE_KEY }}" > ./private.key
+          echo "Private key file created!"
+          ls -l  # 可选的，用于验证文件是否创建成功
+      - name: Use private key file
+        run: |
+          pwd
+      - name: Set Environment Variables and Upload Mini Program
         env:
+          PRIVATE_KEY_PATH: ${{ secrets.PRIVATE_KEY_PATH }}
           MINI_APP_ID: ${{ secrets.MINI_APP_ID }}
-          MINI_APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-        with:
-          project_type: miniProgram
-          action_type: upload
-          project_path: ./dist/build/mp-weixin
-          version: 1.0.0
-          command_options:
-            --enable-es7
-            --enable-minify
-            # --project-ignores=['node_modules/**/*']
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          PROJECT_PATH: ${{ github.workspace }}/dist/build/mp-weixin
+        run: |
+          miniprogram-ci upload --pp "${PROJECT_PATH}" --pkp ./private.key --appid "${MINI_APP_ID}" --uv "3.2.1" --ud "${COMMIT_MESSAGE}" --enable-es6 --enable-es7 --enable-minify
