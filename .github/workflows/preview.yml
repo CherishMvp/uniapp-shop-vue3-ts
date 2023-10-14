@@ -20,11 +20,13 @@ jobs:
         with:
           node-version: 16.18.1
 
-      - name: Install dependencies
-        run: yarn install
+      - name: Install dependencies1
+        run: npm  install pnpm -g
 
+      - name: Install dependencies
+        run: pnpm install
       - name: Build
-        run: yarn run build:mp-weixin
+        run: pnpm run build:mp-weixin
 
       - name: actions.mini-program
         uses: echoings/actions.mini-program@0.0.3
@@ -38,5 +40,6 @@ jobs:
           version: 1.0.0
           command_options:
             --enable-es7
+            --enable-es6
             --enable-minify
             # --project-ignores=['node_modules/**/*']
