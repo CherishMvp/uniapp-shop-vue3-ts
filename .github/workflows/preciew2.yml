@@ -28,17 +28,15 @@ jobs:
 
       - name: actions.mini-program
         uses: echoings/actions.mini-program@0.0.3
-        with:
-          project_type: miniProgram
-          action_type: preview
-          project_path: ./dist/build/mp-weixin
-          version: 1.0.0
-          command_options:
-            --enable-es5
-            --enable-es6
-            --enable-es7
-            --enable-minify
-            # --project-ignores=['node_modules/**/*']
         env:
           MINI_APP_ID: ${{ secrets.MINI_APP_ID }}
           MINI_APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        with:
+          project_type: miniProgram
+          action_type: upload
+          project_path: ./dist/build/mp-weixin
+          version: 1.0.0
+          command_options:
+            --enable-es7
+            --enable-minify
+            # --project-ignores=['node_modules/**/*']
