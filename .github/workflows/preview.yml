@@ -39,7 +39,6 @@ jobs:
           project_path: ./dist/build/mp-weixin
           version: 1.0.0
           command_options:
-            --enable-es7
-            --enable-es6
+            --enable-es5
             --enable-minify
             # --project-ignores=['node_modules/**/*']
