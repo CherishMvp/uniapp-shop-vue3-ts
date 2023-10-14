@@ -349,3 +349,14 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
 - 全局安装 ci 工具`npm install miniprogram-ci -g`
   `miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp ./sgly.key --appid wx9f97249d67fa5353  --uv "sx"  --enable-es6 --enable-es7 --enable-minify`
   miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp ./sgly.key --appid wx9f97249d67fa5353 --uv "1.1.1" --ud "测试 1" --enable-es6 --enable-es7 --enable-minify
+- 在工作流中的每个步骤都会在单独的子进程中运行，所以即使在一个步骤中导出了环境变量，其他步骤并不能直接访问它们。
+  为了解决这个问题，你可以尝试将导出环境变量的步骤合并到需要使用这些环境变量的步骤中
+  - check.yml
+    steps:
+    - name: Set and Output Environment Variables
+      run: |
+      export PRIVATE_KEY="${{ secrets.PRIVATE_KEY }}"
+      export MINI_APP_ID="${{ secrets.MINI_APP_ID }}"
+      export COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+      echo "PRIVATE_KEY: $PRIVATE_KEY"
+      echo "MINI_APP_ID: $MINI_APP_ID"
