@@ -20,10 +20,10 @@ jobs:
           node-version: 16.18.1
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Build
-        run: npm run build:mp-weixin
+        run: pnpm run build:mp-weixin
 
       - name: Upload
         uses: crazyurus/miniprogram-action@1.0.0
