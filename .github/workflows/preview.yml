@@ -32,4 +32,4 @@ jobs:
       - name: Upload Mini Program
         run: |
           npm install miniprogram-ci -g
-          npx miniprogram-ci upload --pp ./dist/build/mp-weixin --pk ${{ secrets.PRIVATE_KEY }} --appid ${{ secrets.MINI_APP_ID }} --ver 1.0.0 --es6 --es7 --condition --enhance --desc "${{ github.event.head_commit.message }}"
+          miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp ${{ secrets.PRIVATE_KEY }} --appid ${{ secrets.MINI_APP_ID }} --version true --enable-es6 true --uv  ${{ github.event.head_commit.message }}
