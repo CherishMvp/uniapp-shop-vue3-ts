@@ -6,6 +6,7 @@ on:
       - poultry
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,27 +22,14 @@ jobs:
 
       - name: Install dependencies
         run: npm install pnpm -g
+
       - name: Install dependencies2 
         run: pnpm install
 
       - name: Build
         run: pnpm run build:mp-weixin
 
-      - name: actions.mini-program
-        uses: echoings/actions.mini-program@0.0.3
-        with:
-          project_type: miniProgram
-          action_type: upload
-          project_path: ./dist/build/mp-weixin
-          version: 1.0.0
-          remark: ${{ github.event.head_commit.message }}
-          # 开启es6编译成es5
-          command_options:
-            --enable-es6
-            --enable-es7
-            --enable-condition
-            --enable-enhance
-            # --project-ignores=['node_modules/**/*']
-        env:
-          MINI_APP_ID: ${{ secrets.MINI_APP_ID }}
-          MINI_APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      - name: Upload Mini Program
+        run: |
+          npm install miniprogram-ci -g
+          npx miniprogram-ci upload --pp ./dist/build/mp-weixin --pk ${{ secrets.PRIVATE_KEY }} --appid ${{ secrets.MINI_APP_ID }} --ver 1.0.0 --es6 --es7 --condition --enhance --desc "${{ github.event.head_commit.message }}"
