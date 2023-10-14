@@ -36,6 +36,9 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           MINI_APP_ID: ${{ secrets.MINI_APP_ID }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          
         run: |
+          echo "$PRIVATE_KEY $MINI_APP_ID. Today is $COMMIT_MESSAGE!"
+          echo "sb" $COMMIT_MESSAGE
           # miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp $PRIVATE_KEY --appid $MINI_APP_ID --version 1.0.0 --enable-es6  --enable-es7  --uv  $COMMIT_MESSAGE
-          miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp ${{ secrets.PRIVATE_KEY }} --appid ${{ secrets.MINI_APP_ID }}  --uv "3.2.1"  --ud ${{ github.event.head_commit.message }} --enable-es6 --enable-es7 --enable-minify
+          miniprogram-ci upload --pp ./dist/build/mp-weixin --pkp $PRIVATE_KEY --appid $MINI_APP_ID  --uv "3.2.1"  --ud $COMMIT_MESSAGE --enable-es6 --enable-es7 --enable-minify
