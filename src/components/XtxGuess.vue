@@ -68,7 +68,7 @@ defineExpose({
 
 <template>
   <!-- 猜你喜欢 -->
-  <view class="caption">
+  <view v-if="false" class="caption">
     <text class="text" style="font-size: 35rpx">猜你喜欢</text>
   </view>
   <view class="guess">
