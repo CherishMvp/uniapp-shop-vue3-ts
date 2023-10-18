@@ -334,10 +334,10 @@ const changeTab = (index: number, item: Category) => {
 <template>
   <view class="viewport" v-if="roleValue == 'admin'">
     <!-- 推荐封面图 -->
+    <view class="cover">
+      <image class="image" mode="widthFix" :src="bannerPicture"></image>
+    </view>
     <div class="first_part" v-if="isData">
-      <view class="cover">
-        <image class="image" mode="widthFix" :src="bannerPicture"></image>
-      </view>
       <!-- 推荐选项 -->
       <view class="tabs">
         <text
@@ -356,7 +356,7 @@ const changeTab = (index: number, item: Category) => {
         :key="item.cid"
         v-show="activeIndex === index"
         scroll-y
-        class="scroll-view"
+        class="scroll-content"
       >
         <view class="goods">
           <view class="navigator" v-for="goods in item.products" :key="goods.pid">
@@ -477,6 +477,9 @@ const changeTab = (index: number, item: Category) => {
   display: flex;
   align-items: center;
 }
+.first_part {
+  height: 100vh;
+}
 //修改表单的字体大小
 .line :deep(.uni-forms-item__label) {
   font-size: 35rpx !important;
@@ -578,6 +581,10 @@ page {
   .image {
     width: 750rpx;
   }
+}
+.scroll-content {
+  height: 100%;
+  padding-bottom: 225rpx;
 }
 .scroll_view {
   height: 100%; //flex:1会出现无法滚动到底部的问题

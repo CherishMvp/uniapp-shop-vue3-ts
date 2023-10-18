@@ -66,6 +66,7 @@ import { getPoultryGoodsByIdAPI } from '@/services/goods'
 import { useMemberStore } from '@/stores'
 import type { PoultryGoodsItem } from '@/types/global'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { baseImgUrl } from '@/utils/setting'
 
 const emits = defineEmits(['update:modelValue'])
 // const props = defineProps(['goodsId', 'localdata', 'modelValue'])
@@ -81,7 +82,7 @@ const mySkuClose = () => {
   orderNum.value = undefined
 }
 const productImg = computed(() => {
-  return currentGoods.value?.picture
+  return baseImgUrl + currentGoods.value?.productName + '.png'
 })
 const specList = computed(() => {
   return currentGoods.value?.spec?.map((size: any) => ({

@@ -43,9 +43,9 @@ const isLogin = ref(false)
 //   return isLogin.value
 // })
 const init = async () => {
-  isLoading.value = true
   await Promise.all([getHomeBannerData(), getHomeHotData()])
   isLoading.value = false
+  uni.hideLoading()
 }
 // 页面加载
 onLoad(async () => {
@@ -54,6 +54,11 @@ onLoad(async () => {
 })
 // onshow的时候重新获取用户信息
 onShow(async () => {
+  isLoading.value = true
+  uni.showLoading({
+    title: '加载中',
+    mask: true,
+  })
   isLogin.value = await checkLoginState()
   await init()
 })
