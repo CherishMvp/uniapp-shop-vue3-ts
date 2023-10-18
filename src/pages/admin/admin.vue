@@ -483,6 +483,10 @@ const changeTab = (index: number, item: Category) => {
   :deep(.uni-data-checklist .checklist-group .checklist-box .checklist-content .checklist-text) {
   font-size: 35rpx !important;
 }
+.customer_checkbox :deep(.uni-data-checklist .checklist-group .checklist-box .checkbox__inner) {
+  width: 30rpx !important;
+  height: 30rpx !important;
+}
 .first_part {
   height: 100vh;
 }

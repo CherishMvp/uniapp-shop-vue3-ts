@@ -1,47 +1,31 @@
 <template name="skeleton">
   <view class="sk-container">
-    <view class="viewport data-v-6f3cd88d">
+    <view class="viewport data-v-83a5a03c">
       <scroll-view
-        :enable-back-to-top="true"
-        :refresher-enabled="true"
-        :scroll-y="true"
-        class="scroll-view data-v-6f3cd88d"
+        enable-back-to-top="true"
+        refresher-enabled="true"
+        scroll-y="true"
+        class="scroll-view data-v-83a5a03c"
       >
-        <view is="components/XtxSwiper" class="data-v-6f3cd88d">
+        <view is="components/XtxSwiper" class="data-v-83a5a03c">
           <view class="carousel XtxSwiper--carousel">
-            <swiper :circular="true" :interval="3000" :current="0" :autoplay="true">
-              <swiper-item
-                style="
-                  position: absolute;
-                  width: 100%;
-                  height: 100%;
-                  transform: translate(0%, 0px) translateZ(0px);
-                "
-              >
-                <navigator class="navigator XtxSwiper--navigator" hover-class="none">
-                  <image class="image XtxSwiper--image sk-image" mode="aspectFill"></image>
-                </navigator>
-              </swiper-item>
-            </swiper>
+            <swiper autoplay="false" circular="true" interval="3000" current="0"></swiper>
             <view class="indicator XtxSwiper--indicator">
+              <text class="dot XtxSwiper--dot"></text>
+              <text class="dot XtxSwiper--dot"></text>
               <text class="dot XtxSwiper--dot active XtxSwiper--active"></text>
-              <text class="dot XtxSwiper--dot"></text>
-              <text class="dot XtxSwiper--dot"></text>
             </view>
           </view>
         </view>
-        <view is="pages/index/components/HotPanel" class="data-v-6f3cd88d">
+        <view is="pages/index/components/HotPanel" class="data-v-83a5a03c">
           <view class="panel HotPanel--panel hot HotPanel--hot">
             <view class="item HotPanel--item">
               <view class="title HotPanel--title">
                 <text
-                  class="title-text HotPanel--title-text sk-transparent sk-text-14-2857-136 sk-text"
-                  >鸡类</text
+                  class="title-text HotPanel--title-text sk-transparent sk-text-14-2857-326 sk-text"
                 >
-                <text
-                  class="title-desc HotPanel--title-desc sk-transparent sk-text-14-2857-383 sk-text"
-                  >好吃</text
-                >
+                  鸡类
+                </text>
               </view>
               <navigator class="cards HotPanel--cards" hover-class="none">
                 <image class="image HotPanel--image sk-image" mode="aspectFit"></image>
@@ -50,13 +34,22 @@
             <view class="item HotPanel--item">
               <view class="title HotPanel--title">
                 <text
-                  class="title-text HotPanel--title-text sk-transparent sk-text-14-2857-862 sk-text"
-                  >鸭类</text
+                  class="title-text HotPanel--title-text sk-transparent sk-text-14-2857-198 sk-text"
                 >
+                  鸭类
+                </text>
+              </view>
+              <navigator class="cards HotPanel--cards" hover-class="none">
+                <image class="image HotPanel--image sk-image" mode="aspectFit"></image>
+              </navigator>
+            </view>
+            <view class="item HotPanel--item">
+              <view class="title HotPanel--title">
                 <text
-                  class="title-desc HotPanel--title-desc sk-transparent sk-text-14-2857-477 sk-text"
-                  >也好吃</text
+                  class="title-text HotPanel--title-text sk-transparent sk-text-14-2857-797 sk-text"
                 >
+                  其他
+                </text>
               </view>
               <navigator class="cards HotPanel--cards" hover-class="none">
                 <image class="image HotPanel--image sk-image" mode="aspectFit"></image>
@@ -64,20 +57,15 @@
             </view>
           </view>
         </view>
-        <view is="components/XtxGuess" class="r data-v-6f3cd88d">
-          <view class="caption XtxGuess--caption">
-            <text
-              class="text XtxGuess--text sk-transparent sk-text-0-0000-556 sk-text sk-pseudo sk-pseudo-circle"
-              style="font-size: 18px"
-              >猜你喜欢</text
-            >
-          </view>
+        <view is="components/XtxGuess" class="r data-v-83a5a03c">
           <view class="guess XtxGuess--guess">
             <view class="guess-item XtxGuess--guess-item">
               <image class="image XtxGuess--image sk-image" mode="aspectFill"></image>
-              <view class="name XtxGuess--name sk-transparent sk-text-0-0000-935 sk-text">231</view>
+              <view class="name XtxGuess--name sk-transparent sk-text-0-0000-690 sk-text"
+                >鸭子2</view
+              >
               <view class="price XtxGuess--price">
-                <text class="sk-transparent sk-text-0-0000-297 sk-text">77.00元/斤</text>
+                <text class="sk-transparent sk-text-0-0000-132 sk-text">77.00元/斤</text>
                 <view is="node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons">
                   <text
                     class="uni-icons icons--uni-icons uniui-plus-filled icons--uniui-plus-filled sk-pseudo sk-pseudo-circle"
@@ -88,11 +76,11 @@
             </view>
             <view class="guess-item XtxGuess--guess-item">
               <image class="image XtxGuess--image sk-image" mode="aspectFill"></image>
-              <view class="name XtxGuess--name sk-transparent sk-text-0-0000-1000 sk-text"
-                >测试24</view
+              <view class="name XtxGuess--name sk-transparent sk-text-0-0000-357 sk-text"
+                >黑母鸭</view
               >
               <view class="price XtxGuess--price">
-                <text class="sk-transparent sk-text-0-0000-706 sk-text">76.00元/斤</text>
+                <text class="sk-transparent sk-text-0-0000-203 sk-text">16.00元/斤</text>
                 <view is="node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons">
                   <text
                     class="uni-icons icons--uni-icons uniui-plus-filled icons--uniui-plus-filled sk-pseudo sk-pseudo-circle"
@@ -101,13 +89,11 @@
                 </view>
               </view>
             </view>
-            <view class="guess-item XtxGuess--guess-item"></view>
-            <view class="guess-item XtxGuess--guess-item"></view>
           </view>
         </view>
       </scroll-view>
-      <navigator class="shop_cart data-v-6f3cd88d" hover-class="none" open-type="navigate">
-        <view is="node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons" class="data-v-6f3cd88d">
+      <navigator class="shop_cart data-v-83a5a03c" hover-class="none" open-type="navigate">
+        <view is="node-modules/@dcloudio/uni-ui/lib/uni-icons/uni-icons" class="data-v-83a5a03c">
           <text
             class="uni-icons icons--uni-icons uniui-cart icons--uniui-cart sk-pseudo sk-pseudo-circle"
             style="color: #276d33; font-size: 45px"
