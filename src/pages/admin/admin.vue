@@ -147,7 +147,7 @@ const openPoup = async (type: string, goods_id?: number) => {
   console.log('商品ID', goods_id, 'type', type)
   console.log('isLogin', isLogin.value)
   if (!isLogin) {
-    CustomerModal('请先登录', '/pages/login/login')
+    // CustomerModal('请先登录', '/pages/login/login')
     return
   }
   if (type == 'edit') {

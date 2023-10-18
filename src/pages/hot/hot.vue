@@ -79,7 +79,7 @@ const openPoup = async (goods_id: number) => {
   console.log(' isLogin.value', isLogin.value)
   isLogin.value = await checkLoginState()
   if (!isLogin.value) {
-    return CustomerModal('请先登录', '/pages/login/login')
+    // return CustomerModal('请先登录', '/pages/login/login')
   }
   console.log('hot===id', goods_id)
   showPoup.value = true

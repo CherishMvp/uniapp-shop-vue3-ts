@@ -47,7 +47,7 @@ const open = (goods_id: any) => {
   if (props.isLogin) {
     emit('showPopup', goods_id)
   } else {
-    CustomerModal('请先登录', '/pages/login/login')
+    // CustomerModal('请先登录', '/pages/login/login')
   }
   // 通过组件定义的ref调用uni-popup方法 ,如果传入参数 ，type 属性将失效 ，仅支持 ['top','left','bottom','right','center']
 }

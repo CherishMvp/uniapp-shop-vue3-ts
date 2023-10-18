@@ -75,7 +75,7 @@ const loginSuccess = (profile: PolutryLoginResult) => {
     // 页面跳转
     // uni.switchTab({ url: '/pages/my/my' })
     uni.navigateBack()
-  }, 1500)
+  }, 500)
 }
 
 // #ifdef H5

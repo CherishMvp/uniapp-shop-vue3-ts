@@ -291,7 +291,7 @@ const isLogin = ref(false)
 const hanleOrderEdit = (id: any, info: Datum) => {
   console.log('登陆状态', isLogin)
   if (!isLogin) {
-    CustomerModal('请先登录', '/pages/login/login')
+    // CustomerModal('请先登录', '/pages/login/login')
     return
   }
   current_oid.value = info.id
