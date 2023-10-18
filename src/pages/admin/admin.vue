@@ -119,7 +119,7 @@ const baseProductInfo = {
   productName: '',
   baselinePrice: undefined,
   spec: ['小', '中', '大'],
-  inventory: undefined,
+  inventory: 999,
   picture: '',
 }
 // 直接在本地触发就行，poup写在本页
@@ -129,7 +129,7 @@ const productInfo = ref<Partial<OrderDetail>>({
   productName: '',
   baselinePrice: undefined,
   spec: ['小', '中', '大'],
-  inventory: undefined,
+  inventory: 999,
   picture: '',
 })
 
@@ -188,7 +188,7 @@ const editFormRules: UniHelper.UniFormsRules = {
   productName: { rules: [{ required: true, errorMessage: '请输入商品名称', format: 'string' }] },
   baselinePrice: { rules: [{ required: true, errorMessage: '请输入基准价格', format: 'number' }] },
   spec: { rules: [{ required: true, errorMessage: '请输入价格', format: 'string' }] },
-  inventory: { rules: [{ required: true, errorMessage: '请输入库存', format: 'number' }] },
+  // inventory: { rules: [{ required: true, errorMessage: '请输入库存', format: 'number' }] },
 }
 
 const isImgReceived = ref(false)
@@ -426,6 +426,7 @@ const changeTab = (index: number, item: Category) => {
                 <div class="align_center">
                   <uni-forms-item label="规格" name="spec">
                     <uni-data-checkbox
+                      class="customer_checkbox"
                       selectedColor="#27ba9b"
                       selectedTextColor="#27ba9b"
                       v-model="productInfo.spec"
@@ -477,6 +478,11 @@ const changeTab = (index: number, item: Category) => {
   display: flex;
   align-items: center;
 }
+
+.customer_checkbox
+  :deep(.uni-data-checklist .checklist-group .checklist-box .checklist-content .checklist-text) {
+  font-size: 35rpx !important;
+}
 .first_part {
   height: 100vh;
 }
@@ -497,7 +503,7 @@ const changeTab = (index: number, item: Category) => {
   font-size: 35rpx;
 }
 .poup_wrap {
-  height: 65vh;
+  height: 85vh;
   //background-color: #27ba9b;
   .header {
     position: relative;
