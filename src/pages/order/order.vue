@@ -65,7 +65,15 @@
               <div class="total detail">
                 <text> 小计: </text>
                 <text
-                  >总数量 {{ item.orderDetail.reduce((sum, item) => sum + item.number, 0) }}</text
+                  >总数量
+                  {{
+                    item.orderDetail.reduce((sum, item) => {
+                      if (item.productName !== '玉米' && item.productName !== '饲料') {
+                        return sum + item.number
+                      }
+                      return sum
+                    }, 0)
+                  }}只</text
                 >
                 <!-- 应该是总重量*单价 -->
                 <text v-if="Number(item.totalPrice)"
@@ -110,6 +118,7 @@
         ref="editPoup"
         @change="handlePoup"
         type="bottom"
+        @mask-click="closePoup"
       >
         <div class="poup_wrap">
           <div class="header">
@@ -149,15 +158,27 @@
                   :modelValue="editItem"
                   v-if="editHeaderInfo.type == 'fixedPrice'"
                 >
+                  <!-- 使用v-if配合默认值使用，未输入价格的时候 就使用默认值就行 -->
                   <uni-forms-item
                     :label="editItem.productName + '(' + editItem.spec + ')'"
                     name="fixedPrice"
                   >
+                    <!-- 此处可知，:value就是可用作默认值，v-model是双向绑定的内容 -->
+                    <!--  Number(editItem.fixedPrice) ? editItem.fixedPrice :editItem.baselinePrice这种写法可以在清除v-model内容的时候，使用:value的默认值  -->
                     <uni-easyinput
                       :clear-size="('18px' as any)"
                       :clearable="true"
-                      type="digit"
                       v-model="editItem.fixedPrice"
+                      type="digit"
+                      placeholder="请输入价格"
+                      v-if="Number(editItem.fixedPrice)"
+                    />
+                    <uni-easyinput
+                      v-else
+                      :clear-size="('18px' as any)"
+                      :clearable="true"
+                      v-model="editItem.baselinePrice"
+                      type="digit"
                       placeholder="请输入价格"
                     />
                   </uni-forms-item>
@@ -216,7 +237,7 @@ const editHeaderInfo = ref({
 const editFormRules: UniHelper.UniFormsRules = {
   // 对name字段进行必填验证
   weight: { rules: [{ required: true, errorMessage: '请输入重量', format: 'number' }] },
-  fixedPrice: { rules: [{ required: true, errorMessage: '请输入价格', format: 'number' }] },
+  fixedPrice: { rules: [{ required: false, errorMessage: '请输入价格', format: 'number' }] }, //改为false
 }
 const isCustomer = computed(() => {
   return userRole.value == 'admin' || userRole.value == 'operator' ? false : true
@@ -263,9 +284,9 @@ const saveChanges = async () => {
       return
     }
     if (editHeaderInfo.value.type == 'fixedPrice') {
-      const newItems = editPoupData.value!.map(({ id, fixedPrice }) => ({
+      const newItems = editPoupData.value!.map(({ id, fixedPrice, baselinePrice }) => ({
         id,
-        fixedPrice,
+        fixedPrice: Number(fixedPrice) ? fixedPrice : baselinePrice,
         oid: current_oid.value,
       }))
       console.log('newItems', newItems)
@@ -282,6 +303,10 @@ const saveChanges = async () => {
       return
     }
   }
+}
+const closePoup = async () => {
+  await getAllOrderList()
+  // editPoup.value?.close()
 }
 const handlePoup = (e: any) => {
   console.log('poup状态', e)
@@ -414,6 +439,7 @@ onShow(async () => {
   //background-color: #27ba9b;
   .header {
     position: relative;
+    line-height: 1.2;
     widows: 100%;
     top: 0;
     padding: 10rpx;
