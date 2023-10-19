@@ -39,6 +39,12 @@ const getCurrentUserInfo = async () => {
   console.log('memberStore.profile', memberStore.profile)
   profile.value = memberStore.profile
   uni.hideLoading()
+  // check userName whether is default
+  if (userInfo.result.userName == '微信用户') await checkUserInfo()
+}
+const checkUserInfo = async () => {
+  console.log('sb')
+  await onSubmit()
 }
 const mycode = ref()
 const getUserInfo1 = async () => {
@@ -184,7 +190,7 @@ const updateUserInfo = async (userName: any) => {
 // 点击保存提交表单
 const onSubmit = async () => {
   uni.showModal({
-    title: '输入用户名',
+    title: '为了更好的用户体验，输入您的姓名',
     editable: true,
     showCancel: true,
     placeholderText: '请输入你的名字',
@@ -193,6 +199,11 @@ const onSubmit = async () => {
       if (confirm) {
         console.log('得到新的用户名', content)
         updateUserInfo(content)
+        return
+      }
+      if (cancel) {
+        console.log('取消修改用户名', cancel)
+        return
       }
     },
   })
