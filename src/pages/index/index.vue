@@ -137,8 +137,9 @@ const showPoup = ref(false)
     <sbxtx v-model="showPoup" :goodsId="goodsId" />
 
     <!-- 悬浮购物车 -->
+    <!-- 2023-10-19 13:54:11 关闭悬浮购物车 -->
     <navigator
-      v-if="!showPoup"
+      v-if="false && !showPoup"
       class="shop_cart"
       url="/pages/cart/cart2"
       open-type="navigate"

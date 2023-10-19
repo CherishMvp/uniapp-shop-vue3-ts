@@ -323,6 +323,10 @@ const handleEditPoup = (e: any) => {
     editFormRef.value?.clearValidate?.()
   }
 }
+// TODO:删除商品
+const handleDelete = (id: number | string) => {
+  console.log('id', id)
+}
 // 切换tab
 const changeTab = (index: number, item: Category) => {
   bannerPicture.value = item.bannerPicture
@@ -373,6 +377,9 @@ const changeTab = (index: number, item: Category) => {
                 <view>
                   <!-- <text class="symbol">¥</text> -->
                   <text class="number">{{ goods.baselinePrice }}元/斤</text>
+                </view>
+                <view v-if="false" @click="handleDelete(goods.pid)">
+                  <uni-icons type="trash" color="#27ba9b" size="30px" />
                 </view>
                 <view @click="openPoup('edit', goods.pid)">
                   <uni-icons type="compose" color="#27ba9b" size="30px" />
@@ -507,7 +514,7 @@ const changeTab = (index: number, item: Category) => {
   font-size: 35rpx;
 }
 .poup_wrap {
-  height: 85vh;
+  height: 70vh;
   //background-color: #27ba9b;
   .header {
     position: relative;

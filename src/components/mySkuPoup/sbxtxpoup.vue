@@ -9,12 +9,13 @@
     <div class="cartPoup">
       <div class="first_line">
         <div class="left">
-          <div class="picture">
+          <div v-if="currentGoods?.productName" class="picture">
             <image
               class="img"
               :src="productImg"
               mode="aspectFill"
               @click="previewImage(productImg)"
+              :lazy-load="true"
             ></image>
           </div>
           <div class="content">
@@ -90,6 +91,10 @@ import { baseImgUrl } from '@/utils/setting'
 
 const popupClose = () => {
   emits('update:modelValue', false)
+  console.log('重置嘻嘻')
+  currentGoods.value = undefined
+  selectedSpec.value = undefined
+  orderNum.value = undefined
 }
 const emits = defineEmits(['update:modelValue'])
 // const props = defineProps(['goodsId', 'localdata', 'modelValue'])
@@ -106,12 +111,7 @@ watch(props, () => {
 })
 const mySkuClose = () => {
   popupOrder.value?.close()
-
-  emits('update:modelValue', false)
-  console.log('重置嘻嘻')
-  currentGoods.value = undefined
-  selectedSpec.value = undefined
-  orderNum.value = undefined
+  popupClose()
 }
 const productImg = computed(() => {
   return baseImgUrl + currentGoods.value?.productName + '.png'
@@ -300,6 +300,11 @@ const addToCart = async () => {
       justify-content: flex-start;
       width: 80%;
     }
+  }
+  .second_line
+    :deep(.uni-data-checklist .checklist-group .checklist-box .checklist-content .checklist-text) {
+    font-size: 35rpx !important;
+    color: #333 !important;
   }
   .third_line {
     display: flex;
