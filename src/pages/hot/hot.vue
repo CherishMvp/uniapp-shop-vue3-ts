@@ -2,10 +2,19 @@
 import { getPoultryRecommendAPI } from '@/services/hot'
 import type { Category } from '@/types/hot'
 import { onHide, onLoad } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { ref, type Directive, type DirectiveBinding } from 'vue'
 import { checkLoginState } from '@/hooks/loginstate'
 import { CustomerModal } from '@/hooks/loginstate/components/tologin'
 import sbxtx from '@/components/mySkuPoup/sbxtxpoup.vue'
+import { baseImgUrl } from '@/utils/setting'
+
+// 在模板中启用 v-focus
+const vSrc = (el: HTMLElement, binding: DirectiveBinding) => {
+  // 这会在 `mounted` 和 `updated` 时都调用
+  console.log('bing', binding.value)
+  const productName = binding.value
+  el.setAttribute('src', baseImgUrl + productName + '.png')
+}
 
 // 热门推荐页  标题和url
 const urlMap = [
@@ -123,7 +132,7 @@ const changeTab = (index: number, item: Category) => {
     >
       <view class="goods">
         <view class="navigator" v-for="goods in item.products" :key="goods.pid">
-          <image class="thumb" :src="goods.picture"></image>
+          <image class="thumb" :src="baseImgUrl + goods.productName + '.png'"></image>
           <view class="right">
             <view class="name ellipsis">{{ goods.productName }}</view>
             <view class="inventory">

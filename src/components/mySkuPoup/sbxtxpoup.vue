@@ -1,63 +1,83 @@
 <template>
-  <div class="cartPoup" v-if="modelValue">
-    <div class="first_line">
-      <div class="left">
-        <div class="picture">
-          <image
-            class="img"
-            :src="productImg"
-            mode="aspectFill"
-            @click="previewImage(productImg)"
-          ></image>
-        </div>
-        <div class="content">
-          <div class="desc">
-            <div class="price">{{ currentGoods?.baselinePrice }}</div>
-            <div class="stock">{{ currentGoods?.inventory }}</div>
-            <div class="selectattr">{{ JSON.stringify(selectedSpec) }}</div>
+  <uni-popup
+    ref="popupOrder"
+    type="bottom"
+    background-color="#fafafa"
+    @maskClick="popupClose"
+    :safeArea="false"
+  >
+    <div class="cartPoup">
+      <div class="first_line">
+        <div class="left">
+          <div class="picture">
+            <image
+              class="img"
+              :src="productImg"
+              mode="aspectFill"
+              @click="previewImage(productImg)"
+            ></image>
+          </div>
+          <div class="content">
+            <div class="desc">
+              <div class="price">{{ currentGoods?.baselinePrice }}</div>
+              <div class="stock">{{ currentGoods?.inventory }}</div>
+              <div class="selectattr">{{ JSON.stringify(selectedSpec) }}</div>
+            </div>
           </div>
         </div>
+        <div class="right">
+          <view @click="mySkuClose">
+            <uni-icons type="close" color="#8cd4e4" size="85rpx" />
+          </view>
+        </div>
       </div>
-      <div class="right">
-        <view @click="mySkuClose">
-          <uni-icons type="close" color="#8cd4e4" size="65rpx" />
+      <div class="second_line">
+        <div class="spec_name">规格</div>
+        <view class="uni-px-5 uni-pb-5">
+          <uni-data-checkbox
+            @change="selectSpec"
+            mode="tag"
+            selectedColor="rgb(235, 131, 41)"
+            v-model="selectedSpec"
+            :localdata="specList"
+          ></uni-data-checkbox>
         </view>
       </div>
-    </div>
-    <div class="second_line">
-      <div class="spec_name">规格</div>
-      <view class="uni-px-5 uni-pb-5">
-        <uni-data-checkbox
-          @change="selectSpec"
-          mode="tag"
-          selectedColor="rgb(235, 131, 41)"
-          v-model="selectedSpec"
-          :localdata="specList"
-        ></uni-data-checkbox>
-      </view>
-    </div>
-    <div class="third_line">
-      <div class="num_step">
-        <div class="name">数量 {{ calOrderNum }}</div>
-        <uni-number-box
+      <div class="third_line">
+        <div class="num_step">
+          <div class="name">数量 {{ calOrderNum }}</div>
+          <!-- <uni-number-box
           :max="currentGoods?.inventory"
+          class="num_step2"
           v-model="orderNum"
           :disabled="!checkStock"
           @change="changeOrderNum"
-        />
-      </div>
-      <div class="add_to_cart">
-        <button
-          :disabled="!checkStock"
-          :class="{ disable_button: !checkStock }"
-          class="add"
-          @click="addToCart"
-        >
-          {{ checkStock ? '加入购物车' : '库存不足' }}
-        </button>
+        /> -->
+          <view class="count">
+            <vk-data-input-number-box
+              v-model="orderNum"
+              :min="1"
+              :size="30"
+              :color="'#000'"
+              :max="currentGoods?.inventory"
+              @change="changeOrderNum"
+            />
+          </view>
+        </div>
+
+        <div class="add_to_cart">
+          <button
+            :disabled="!checkStock"
+            :class="{ disable_button: !checkStock }"
+            class="add"
+            @click="addToCart"
+          >
+            {{ checkStock ? '加入购物车' : '库存不足' }}
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  </uni-popup>
 </template>
 
 <script setup lang="ts">
@@ -68,13 +88,25 @@ import type { PoultryGoodsItem } from '@/types/global'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { baseImgUrl } from '@/utils/setting'
 
+const popupClose = () => {
+  emits('update:modelValue', false)
+}
 const emits = defineEmits(['update:modelValue'])
 // const props = defineProps(['goodsId', 'localdata', 'modelValue'])
 const props = defineProps<{
   goodsId: number
   modelValue: boolean
 }>()
+const popupOrder = ref()
+watch(props, () => {
+  if (props.modelValue) {
+    console.log('modelValue: ', props)
+    popupOrder.value?.open()
+  }
+})
 const mySkuClose = () => {
+  popupOrder.value?.close()
+
   emits('update:modelValue', false)
   console.log('重置嘻嘻')
   currentGoods.value = undefined
@@ -92,6 +124,7 @@ const specList = computed(() => {
   }))
 })
 const calOrderNum = computed(() => {
+  console.log('orderNum.value', orderNum.value)
   if (orderNum.value == 0) {
     return ''
   } else return orderNum.value ?? 1
@@ -127,7 +160,8 @@ const checkStock = computed(() => {
   return currentGoods.value?.inventory ? true : false
 })
 const changeOrderNum = (val: any) => {
-  orderNum.value = val
+  console.log('val: ', val)
+  orderNum.value = val.value
   // currentGoods.value!.orderNum = val
 }
 const errorTip = (msg: string, icon: 'success' | 'error' | 'loading') => {
@@ -188,6 +222,8 @@ const addToCart = async () => {
 </script>
 
 <style lang="scss" scoped>
+// 商品数量
+
 .cartPoup {
   height: 55vh;
   display: flex;

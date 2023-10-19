@@ -14,7 +14,13 @@
       @touchstart.prevent="btnTouchStart('minus')"
       @touchend.stop.prevent="clearTimer"
     >
-      <view :style="'font-size:' + (Number(size) + 10) + 'rpx'" class="num-btn">－</view>
+      <view
+        :style="{
+          color: color,
+        }"
+        class="num-btn"
+        >−
+      </view>
     </view>
     <input
       v-model="inputVal"
@@ -45,7 +51,7 @@
       @touchstart.prevent="btnTouchStart('plus')"
       @touchend.stop.prevent="clearTimer"
     >
-      <view :style="'font-size:' + (Number(size) + 10) + 'rpx'" class="num-btn">＋</view>
+      <view :style="'font-size:' + (Number(size) + 10) + 'rpx'" class="num-btn">+</view>
     </view>
   </view>
 </template>

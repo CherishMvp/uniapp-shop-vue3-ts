@@ -51,7 +51,12 @@
                   :class="{ 'last-detail': index2 === item.orderDetail?.length - 1 }"
                 >
                   <div class="index">{{ index2 + 1 }}.</div>
-                  <div class="name">{{ detail.productName }} {{ detail.number }}只</div>
+                  <div class="name">
+                    {{ detail.productName }} {{ detail.number
+                    }}{{
+                      detail.productName == '饲料' || detail.productName == '玉米' ? '份' : '只'
+                    }}
+                  </div>
                   <div class="base_price">{{ detail.baselinePrice }}元/斤</div>
                   <div class="spec">规格 {{ detail.spec }}</div>
                 </view>
@@ -60,8 +65,7 @@
               <div class="total detail">
                 <text> 小计: </text>
                 <text
-                  >总数量
-                  {{ item.orderDetail.reduce((sum, item) => sum + item.number, 0) }} 只</text
+                  >总数量 {{ item.orderDetail.reduce((sum, item) => sum + item.number, 0) }}</text
                 >
                 <!-- 应该是总重量*单价 -->
                 <text v-if="Number(item.totalPrice)"
@@ -151,6 +155,7 @@
                   >
                     <uni-easyinput
                       :clear-size="('18px' as any)"
+                      :clearable="true"
                       type="digit"
                       v-model="editItem.fixedPrice"
                       placeholder="请输入价格"
