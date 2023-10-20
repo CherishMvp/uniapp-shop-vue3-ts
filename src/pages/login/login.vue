@@ -5,6 +5,7 @@ import {
   postLoginWxMinSimpleAPI,
   postPhoneNumberAPI,
 } from '@/services/login'
+import { putUserProfileAPI } from '@/services/profile'
 import { useMemberStore } from '@/stores'
 import type { PolutryLoginResult } from '@/types/member'
 import { onLoad } from '@dcloudio/uni-app'
@@ -51,7 +52,7 @@ const onGetphonenumber: UniHelper.ButtonOnGetphonenumber = async (ev) => {
     // 拿到手机号码
     const res: any = await postPhoneNumberAPI(ev.detail.code, { openId: userOpenId.value })
     console.log('phoenumber', res)
-    if (res.result.token) loginSuccess(res.result)
+    if (res.result.token) await loginSuccess(res.result)
     // res.result.mobile=phoneNumber.result.data
   }
 }
@@ -62,20 +63,58 @@ const onGetphonenumberSimple = async () => {
   const res = await postLoginWxMinSimpleAPI('13123456789')
   // loginSuccess(res.result)
 }
-
-const loginSuccess = (profile: PolutryLoginResult) => {
-  // 保存会员信息
-  const memberStore = useMemberStore()
-  // TODO 设为admin用户
-  //profile.role = 'operator'
-  memberStore.setProfile(profile)
-  // 成功提示
+const loginToBack = () => {
   uni.showToast({ icon: 'success', title: '登录成功' })
   setTimeout(() => {
     // 页面跳转
     // uni.switchTab({ url: '/pages/my/my' })
-    uni.navigateBack()
+    // uni.navigateBack()
+    uni.switchTab({ url: '/pages/index/index' })
   }, 500)
+}
+const loginSuccess = async (profile: PolutryLoginResult) => {
+  // 保存会员信息
+  const memberStore = useMemberStore()
+  // TODO 设为admin用户
+  //profile.role = 'operator'
+  if (profile.userName == '微信用户') {
+    uni.showModal({
+      title: '为了更好的用户体验，输入您的姓名',
+      editable: true,
+      showCancel: true,
+      placeholderText: '请输入你的姓名',
+      success: async ({ confirm, cancel, content }) => {
+        console.log('confirm', confirm)
+        if (confirm) {
+          console.log('得到新的用户名', content)
+          profile.userName = content!
+          const newUserInfo = { userName: content, openId: memberStore.profile?.openId }
+          const res: any = await putUserProfileAPI({
+            ...newUserInfo,
+          })
+          memberStore.setProfile(res.result)
+          loginToBack()
+          return
+        }
+        if (cancel) {
+          console.log('取消修改用户名', cancel)
+          loginToBack()
+
+          return
+        }
+      },
+    })
+  } else {
+    memberStore.setProfile(profile)
+    // 成功提示
+    uni.showToast({ icon: 'success', title: '登录成功' })
+    setTimeout(() => {
+      // 页面跳转
+      // uni.switchTab({ url: '/pages/my/my' })
+      // uni.navigateBack()
+      uni.switchTab({ url: '/pages/index/index' })
+    }, 500)
+  }
 }
 
 // #ifdef H5

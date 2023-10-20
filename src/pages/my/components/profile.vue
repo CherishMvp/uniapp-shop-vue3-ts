@@ -203,10 +203,20 @@ const onSubmit = async () => {
       }
       if (cancel) {
         console.log('取消修改用户名', cancel)
+        // loginToBack()
         return
       }
     },
   })
+}
+const loginToBack = () => {
+  uni.showToast({ icon: 'success', title: '登录成功' })
+  setTimeout(() => {
+    // 页面跳转
+    // uni.switchTab({ url: '/pages/my/my' })
+    // uni.navigateBack()
+    uni.switchTab({ url: '/pages/index/index' })
+  }, 500)
 }
 </script>
 
@@ -223,7 +233,8 @@ const onSubmit = async () => {
       <!-- <get-user-poup v-model="showPopup" /> -->
     </div>
 
-    <text class="header">用户信息</text>
+    <text class="header">{{ memberStore.profile?.token ? '用户信息' : '登陆提示' }}</text>
+    <text class="tip" v-if="!memberStore.profile?.token"> 为了更好的用户体验，请您先登陆 </text>
 
     <view class="form" v-if="memberStore.profile?.token">
       <!-- 表单内容 -->
@@ -316,6 +327,13 @@ page {
     line-height: 1;
     margin: 55rpx;
     font-weight: 600;
+  }
+  .tip {
+    margin: 10px 0;
+    width: 80%;
+    text-align: center;
+    font-size: 28rpx;
+    color: #999;
   }
 }
 /* 操作按钮 */
