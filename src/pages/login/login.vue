@@ -72,11 +72,12 @@ const loginToBack = () => {
     uni.switchTab({ url: '/pages/index/index' })
   }, 500)
 }
+//先写入token后，再修改用户名
 const loginSuccess = async (profile: PolutryLoginResult) => {
   // 保存会员信息
   const memberStore = useMemberStore()
-  // TODO 设为admin用户
-  //profile.role = 'operator'
+  memberStore.setProfile(profile) //先确保有token
+  console.log('memberStore', memberStore.profile)
   if (profile.userName == '微信用户') {
     uni.showModal({
       title: '为了更好的用户体验，输入您的姓名',
@@ -92,28 +93,23 @@ const loginSuccess = async (profile: PolutryLoginResult) => {
           const res: any = await putUserProfileAPI({
             ...newUserInfo,
           })
-          memberStore.setProfile(res.result)
+          // memberStore.setProfile(res.result)
+          const { userName } = res.result
+          console.log('修改用户名', userName)
+          memberStore.profile!.userName = userName
           loginToBack()
           return
         }
         if (cancel) {
           console.log('取消修改用户名', cancel)
           loginToBack()
-
           return
         }
       },
     })
+    console.log('最终的member', memberStore.profile)
   } else {
-    memberStore.setProfile(profile)
-    // 成功提示
-    uni.showToast({ icon: 'success', title: '登录成功' })
-    setTimeout(() => {
-      // 页面跳转
-      // uni.switchTab({ url: '/pages/my/my' })
-      // uni.navigateBack()
-      uni.switchTab({ url: '/pages/index/index' })
-    }, 500)
+    loginToBack()
   }
 }
 
