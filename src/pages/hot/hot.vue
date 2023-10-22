@@ -132,7 +132,11 @@ const changeTab = (index: number, item: Category) => {
     >
       <view class="goods">
         <view class="navigator" v-for="goods in item.products" :key="goods.pid">
-          <image class="thumb" :src="baseImgUrl + goods.productName + '.png'"></image>
+          <image
+            class="thumb"
+            :lazy-load="true"
+            :src="baseImgUrl + goods.productName + '.png'"
+          ></image>
           <view class="right">
             <view class="name ellipsis">{{ goods.productName }}</view>
             <view class="inventory">

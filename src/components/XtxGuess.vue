@@ -74,7 +74,12 @@ defineExpose({
   <view class="guess">
     <view class="guess-item" v-for="item in guessList" :key="item.pid" @click.stop="open(item.pid)">
       <!-- <view class="guess-item" v-for="item in guessList" :key="item.id" @tap="openPopup('service')"> -->
-      <image class="image" mode="aspectFill" :src="baseImgUrl + item.productName + '.png'"></image>
+      <image
+        class="image"
+        :lazy-load="true"
+        mode="aspectFill"
+        :src="baseImgUrl + item.productName + '.png'"
+      ></image>
       <view class="name"> {{ item.productName }} </view>
       <view class="price">
         <!-- <text class="small">¥ </text> -->

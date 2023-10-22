@@ -88,8 +88,8 @@ export const http = <T>(options: UniApp.RequestOptions, baseURL?: string) => {
           // 401错误  -> 清理用户信息，跳转到登录页
           const memberStore = useMemberStore()
           memberStore.clearProfile()
-          uni.switchTab({ url: '/pages/my/my2' })
-          return
+          return uni.switchTab({ url: '/pages/my/my2' })
+
           reject(res)
         } else {
           // 其他错误 -> 根据后端错误信息轻提示
