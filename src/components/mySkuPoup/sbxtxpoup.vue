@@ -34,7 +34,7 @@
       </div>
       <div class="second_line">
         <div class="spec_name">规格</div>
-        <view class="uni-px-5 uni-pb-5">
+        <view class="uni-px-5 uni-pb-5 mycheck">
           <uni-data-checkbox
             @change="selectSpec"
             mode="tag"
@@ -80,7 +80,12 @@
     </div>
   </uni-popup>
 </template>
-
+<!-- 一定要开启样式隔离为shared，因为我是一个子组件，父亲调用我的时候我需要把我的样式给他-->
+<script lang="ts">
+export default {
+  options: { styleIsolation: 'shared' },
+}
+</script>
 <script setup lang="ts">
 import { addToUserCart } from '@/services/cart'
 import { getPoultryGoodsByIdAPI } from '@/services/goods'
@@ -301,7 +306,7 @@ const addToCart = async () => {
       width: 80%;
     }
   }
-  .second_line
+  .mycheck
     :deep(.uni-data-checklist .checklist-group .checklist-box .checklist-content .checklist-text) {
     font-size: 35rpx !important;
     color: #333 !important;

@@ -21,7 +21,7 @@ defineProps<{
         <text class="title-text">{{ item.title }}</text>
         <text v-if="false" class="title-desc">{{ item.alt }}</text>
       </view>
-      <navigator class="cards">
+      <view class="cards">
         <!-- <image
           v-for="src in item.pictures"
           :key="src"
@@ -30,7 +30,7 @@ defineProps<{
           :src="src"
         ></image> -->
         <image class="image" mode="aspectFit" :src="item.pictures"></image>
-      </navigator>
+      </view>
     </navigator>
   </view>
 </template>

@@ -31,7 +31,7 @@
     </div>
     <scroll-view scroll-y class="scroll_view">
       <!-- 使用isOrderList代替 -->
-      <text class="header_tip" v-if="orderData?.length">普通用户只显示最近三笔订单 </text>
+      <!-- <text class="header_tip" v-if="orderData?.length">普通用户只显示最近三笔订单 </text> -->
       <div class="order_wrap" v-if="orderData?.length">
         <uni-section
           :title="'客户姓名: ' + item.userName"
@@ -54,7 +54,7 @@
                   <div class="name">
                     {{ detail.productName }} {{ detail.number
                     }}{{
-                      detail.productName == '饲料' || detail.productName == '玉米' ? '份' : '只'
+                      detail.productName == '饲料' || detail.productName == '玉米' ? '斤' : '只'
                     }}
                   </div>
                   <div class="base_price">{{ detail.baselinePrice }}元/斤</div>
@@ -146,6 +146,7 @@
                     <uni-easyinput
                       :clear-size="('18px' as any)"
                       type="digit"
+                      :clearable="true"
                       v-model="editItem.weight"
                       placeholder="请输入重量"
                     />
@@ -328,10 +329,22 @@ const hanleOrderEdit = (id: any, info: Datum) => {
   console.log('id', id, 'info', info, 'current_oid', current_oid.value)
   editHeaderInfo.value.orderInfo = { date: info.orderDate, name: info.userName }
   editPoupData.value = info.orderDetail
+  console.log('当前编辑信息', editPoupData.value)
+
   const typeMap: { [key: number]: string } = {
     0: 'weight',
     1: 'fixedPrice',
   }
+  if (id == 0) {
+    // 处理editPoupData数组对象中的weight属性，设为undefined
+    editPoupData.value.forEach((item: any) => {
+      if (!Number(item.weight)) {
+        item.weight = undefined
+      }
+    })
+  }
+  console.log('当前编辑信息22', editPoupData.value)
+
   if (typeMap[id]) {
     editHeaderInfo.value.type = typeMap[id]
     editPoup.value?.open('bottom')
