@@ -57,7 +57,7 @@
                       detail.productName == '饲料' || detail.productName == '玉米' ? '斤' : '只'
                     }}
                   </div>
-                  <div class="base_price">{{ detail.baselinePrice }}元/斤</div>
+                  <div class="base_price">{{ calDetailPrice(detail) }}</div>
                   <div class="spec">规格 {{ detail.spec }}</div>
                 </view>
               </view>
@@ -117,7 +117,7 @@
         :safe-area="false"
         ref="editPoup"
         @change="handlePoup"
-        type="bottom"
+        type="top"
         @mask-click="closePoup"
       >
         <div class="poup_wrap">
@@ -140,7 +140,9 @@
                   v-if="editHeaderInfo.type == 'weight'"
                 >
                   <uni-forms-item
-                    :label="editItem.productName + '(' + editItem.spec + ')'"
+                    :label="
+                      editItem.productName + '(' + editItem.spec + ')' + editItem.number + '只'
+                    "
                     name="weight"
                   >
                     <uni-easyinput
@@ -234,6 +236,19 @@ const editHeaderInfo = ref({
     date: '',
     name: '',
   },
+})
+/**
+ * 计算最终价格
+ **/
+const calDetailPrice = computed(() => {
+  return (detail: OrderDetail) => {
+    if (Number(detail.weight) && Number(detail.fixedPrice)) {
+      const { weight, fixedPrice } = detail
+      return `${weight}斤X${fixedPrice}=${(fixedPrice * weight).toFixed(1)}元`
+    } else {
+      return '价格未录入'
+    }
+  }
 })
 const editFormRules: UniHelper.UniFormsRules = {
   // 对name字段进行必填验证
@@ -347,7 +362,7 @@ const hanleOrderEdit = (id: any, info: Datum) => {
 
   if (typeMap[id]) {
     editHeaderInfo.value.type = typeMap[id]
-    editPoup.value?.open('bottom')
+    editPoup.value?.open()
   }
 }
 
@@ -438,8 +453,13 @@ onShow(async () => {
 .line :deep(.uni-forms-item__label) {
   font-size: 35rpx !important;
   justify-content: flex-end !important;
-  width: 250rpx !important;
+  //width: 250rpx !important;
+  flex: 1;
   height: 50px !important;
+}
+//居中对齐label和form
+.line :deep(.uni-forms-item) {
+  align-items: center !important;
 }
 .line :deep(.uni-easyinput__content-input) {
   font-size: 35rpx !important;
@@ -449,6 +469,7 @@ onShow(async () => {
 }
 .poup_wrap {
   height: 55vh;
+  overflow: hidden;
   //background-color: #27ba9b;
   .header {
     position: relative;
@@ -596,12 +617,12 @@ page {
     margin-left: 25rpx;
   }
   .content {
-    margin-bottom: 12rpx;
+    margin-bottom: 32rpx;
     font-size: 35rpx;
     .detail {
       display: flex;
       align-items: center;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       justify-content: flex-start;
       .index {
         min-width: 45rpx;

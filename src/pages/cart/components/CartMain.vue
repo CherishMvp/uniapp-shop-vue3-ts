@@ -173,10 +173,11 @@ const handleOrder = async () => {
   })
   const { openId, userName } = memberStore.profile!
   // console.log('orderList', orderList, 'openId', openId, 'userName', userName)
-  console.log('currentSelectedIdList', currentSelectedIdList)
-  const orderInfo = { openId, userName, cartInfo: orderList }
+  console.log('当前选中的商品', currentSelectedIdList)
+  const orderInfo = { openId, userName, orderDate: selectedDate.value, cartInfo: orderList }
+  console.log('准备发起请求的数据', orderInfo)
   const res: any = await createOrderAPI(orderInfo)
-  console.log('x', res.result)
+  console.log('下单成功', res.result)
   if (res.result.orderDetail) {
     uni.showToast({
       title: '下单成功',
@@ -184,6 +185,8 @@ const handleOrder = async () => {
       mask: true,
       duration: 500,
     })
+    // 重置预定日期
+    selectedDate.value = ''
     // 清除这一项
     await deletePoultryCartAPI({ itemIds: currentSelectedIdList })
     await getPoultryCartData() //重新获取
@@ -193,14 +196,61 @@ const handleOrder = async () => {
   // uni.navigateBack()
 }
 
+// 预定日期相关
+
+/**
+ * 获取开始结束时间
+ **/
+const getDate = (type: string) => {
+  const date = new Date()
+  let year = date.getFullYear()
+  let month: string | number = date.getMonth() + 1
+  let day: string | number = date.getDate()
+
+  if (type === 'start') {
+    year = year
+  } else if (type === 'end') {
+    year = year + 2
+  }
+  month = month > 9 ? month : '0' + month
+  day = day > 9 ? day : '0' + day
+  const final = `${year}-${month}-${day}`
+  console.log('final', final)
+  return final
+}
+const startDate = computed(() => {
+  return getDate('start')
+})
+const endDate = computed(() => {
+  return getDate('end')
+})
+const changeOrderDate = ({ detail }: any) => {
+  console.log('details change', detail)
+  selectedDate.value = detail.value
+  isSelectedDate.value = true
+}
+const selectedDate = ref<string>('')
+const isSelectedDate = ref(false)
 // 结算按钮
 const gotoPayment = () => {
+  // TODO:加一步选择预定时间
+
   if (selectedCartListCount.value === 0) {
     return uni.showToast({
       icon: 'none',
       title: '请选择商品',
     })
   }
+  if (!isSelectedDate.value) {
+    // 对话框modal
+    return uni.showToast({
+      title: '点击右上角选择预定时间',
+      icon: 'error',
+      duration: 2000,
+      mask: false,
+    })
+  }
+
   // TODO:直接进行下单结算就行
   uni.showModal({
     content: '是否下单？',
@@ -235,6 +285,18 @@ const gotoPayment = () => {
         <view class="tips">
           <text class="label">提示</text>
           <text class="desc">请仔细检查商品数量</text>
+          <picker
+            class="date_picker"
+            mode="date"
+            :value="selectedDate"
+            :start="startDate"
+            :end="endDate"
+            @change="changeOrderDate"
+          >
+            <view class="order_date"
+              >{{ selectedDate ? '预定日期:' : '请选择预定日期' }}{{ selectedDate }}</view
+            >
+          </picker>
         </view>
         <!-- 滑动操作分区 -->
         <uni-swipe-action>
@@ -365,6 +427,13 @@ const gotoPayment = () => {
       font-size: 24rpx;
       background-color: #27ba9b;
       margin-right: 10rpx;
+    }
+    .date_picker {
+      display: flex;
+      flex: 1;
+      justify-content: flex-end;
+      font-size: 32rpx;
+      color: #323233;
     }
   }
 
