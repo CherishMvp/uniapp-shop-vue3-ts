@@ -112,86 +112,6 @@
           <button class="button">去添加</button>
         </navigator>
       </view>
-      <uni-popup
-        background-color="#fafafa"
-        :safe-area="false"
-        ref="editPoup"
-        @change="handlePoup"
-        type="top"
-        @mask-click="closePoup"
-      >
-        <div class="poup_wrap">
-          <div class="header">
-            <div class="left">
-              {{ editHeaderInfo.type != 'weight' ? '修改价格' : '修改重量' }}
-            </div>
-            <div class="right">
-              {{ editHeaderInfo.orderInfo.name }} — {{ editHeaderInfo.orderInfo.date }}
-            </div>
-          </div>
-          <scroll-view scroll-y class="scroll_view">
-            <div class="poup_content">
-              <div class="line" v-for="(editItem, editIndex) in editPoupData" :key="editIndex">
-                <uni-forms
-                  ref="editFormRef"
-                  :rules="editFormRules"
-                  label-position="left"
-                  :modelValue="editItem"
-                  v-if="editHeaderInfo.type == 'weight'"
-                >
-                  <uni-forms-item
-                    :label="
-                      editItem.productName + '(' + editItem.spec + ')' + editItem.number + '只'
-                    "
-                    name="weight"
-                  >
-                    <uni-easyinput
-                      :clear-size="('18px' as any)"
-                      type="digit"
-                      :clearable="true"
-                      v-model="editItem.weight"
-                      placeholder="请输入重量"
-                    />
-                  </uni-forms-item>
-                </uni-forms>
-                <uni-forms
-                  ref="editFormRef"
-                  :rules="editFormRules"
-                  label-position="left"
-                  :modelValue="editItem"
-                  v-if="editHeaderInfo.type == 'fixedPrice'"
-                >
-                  <!-- 使用v-if配合默认值使用，未输入价格的时候 就使用默认值就行 -->
-                  <uni-forms-item
-                    :label="editItem.productName + '(' + editItem.spec + ')'"
-                    name="fixedPrice"
-                  >
-                    <!-- 此处可知，:value就是可用作默认值，v-model是双向绑定的内容 -->
-                    <!--  Number(editItem.fixedPrice) ? editItem.fixedPrice :editItem.baselinePrice这种写法可以在清除v-model内容的时候，使用:value的默认值  -->
-                    <uni-easyinput
-                      :clear-size="('18px' as any)"
-                      :clearable="true"
-                      v-model="editItem.fixedPrice"
-                      type="digit"
-                      placeholder="请输入价格"
-                      v-if="Number(editItem.fixedPrice)"
-                    />
-                    <uni-easyinput
-                      v-else
-                      :clear-size="('18px' as any)"
-                      :clearable="true"
-                      v-model="editItem.baselinePrice"
-                      type="digit"
-                      placeholder="请输入价格"
-                    />
-                  </uni-forms-item>
-                </uni-forms>
-              </div>
-              <view class="button edit_weight_button" @click="saveChanges">提交</view>
-            </div>
-          </scroll-view>
-        </div>
-      </uni-popup>
     </scroll-view>
   </view>
   <!-- 未登录: 提示登录 -->
@@ -201,6 +121,85 @@
       <button class="button">去登录</button>
     </navigator>
   </view>
+  <uni-popup
+    style="z-index: 2"
+    background-color="#fafafa"
+    :safe-area="false"
+    ref="editPoup"
+    @change="handlePoup"
+    type="bottom"
+    @mask-click="closePoup"
+  >
+    <div class="poup_wrap">
+      <div class="header">
+        <div class="left">
+          {{ editHeaderInfo.type != 'weight' ? '修改价格' : '修改重量' }}
+        </div>
+        <div class="right">
+          {{ editHeaderInfo.orderInfo.name }} — {{ editHeaderInfo.orderInfo.date }}
+        </div>
+      </div>
+      <scroll-view scroll-y class="scroll_view">
+        <div class="poup_content">
+          <div class="line" v-for="(editItem, editIndex) in editPoupData" :key="editIndex">
+            <uni-forms
+              ref="editFormRef"
+              :rules="editFormRules"
+              label-position="left"
+              :modelValue="editItem"
+              v-if="editHeaderInfo.type == 'weight'"
+            >
+              <uni-forms-item
+                :label="editItem.productName + '(' + editItem.spec + ')' + editItem.number + '只'"
+                name="weight"
+              >
+                <uni-easyinput
+                  :clear-size="('18px' as any)"
+                  type="digit"
+                  :clearable="true"
+                  v-model="editItem.weight"
+                  placeholder="请输入重量"
+                />
+              </uni-forms-item>
+            </uni-forms>
+            <uni-forms
+              ref="editFormRef"
+              :rules="editFormRules"
+              label-position="left"
+              :modelValue="editItem"
+              v-if="editHeaderInfo.type == 'fixedPrice'"
+            >
+              <!-- 使用v-if配合默认值使用，未输入价格的时候 就使用默认值就行 -->
+              <uni-forms-item
+                :label="editItem.productName + '(' + editItem.spec + ')'"
+                name="fixedPrice"
+              >
+                <!-- 此处可知，:value就是可用作默认值，v-model是双向绑定的内容 -->
+                <!--  Number(editItem.fixedPrice) ? editItem.fixedPrice :editItem.baselinePrice这种写法可以在清除v-model内容的时候，使用:value的默认值  -->
+                <uni-easyinput
+                  :clear-size="('18px' as any)"
+                  :clearable="true"
+                  v-model="editItem.fixedPrice"
+                  type="digit"
+                  placeholder="请输入价格"
+                  v-if="Number(editItem.fixedPrice)"
+                />
+                <uni-easyinput
+                  v-else
+                  :clear-size="('18px' as any)"
+                  :clearable="true"
+                  v-model="editItem.baselinePrice"
+                  type="digit"
+                  placeholder="请输入价格"
+                />
+              </uni-forms-item>
+            </uni-forms>
+          </div>
+          <view class="button edit_weight_button" @click="saveChanges">提交</view>
+        </div>
+      </scroll-view>
+    </div>
+  </uni-popup>
 </template>
 
 <script setup lang="ts">
@@ -468,7 +467,7 @@ onShow(async () => {
   font-size: 35rpx !important;
 }
 .poup_wrap {
-  height: 55vh;
+  height: 70vh;
   overflow: hidden;
   //background-color: #27ba9b;
   .header {
