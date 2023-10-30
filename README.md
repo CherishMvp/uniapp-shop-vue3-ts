@@ -360,3 +360,7 @@ git Husky 搭配 commitizen ，规范代码提交;参考链接`https://blog.csdn
       export COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
       echo "PRIVATE_KEY: $PRIVATE_KEY"
       echo "MINI_APP_ID: $MINI_APP_ID"
+
+# 2023-10-30 20:55:35
+
+- 修改注释内容

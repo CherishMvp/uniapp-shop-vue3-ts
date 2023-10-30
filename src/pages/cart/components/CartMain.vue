@@ -14,38 +14,26 @@ import { createOrderAPI } from '@/services/order'
 import { CustomerModal } from '@/hooks/loginstate/components/tologin'
 import { baseImgUrl } from '@/utils/setting'
 
-// 是否适配底部安全区域
 defineProps<{
   safeAreaInsetBottom?: boolean
 }>()
 
-// 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
-// 获取会员Store
 const memberStore = useMemberStore()
 
-// 获取购物车数据
 const cartList = ref<PoultryCartItem[]>([])
 
-// 下拉刷新相关逻辑
-// 当前下拉刷新状态
 const isTriggered = ref(false)
-// 自定义下拉刷新被触发
+
 const onRefresherrefresh = async () => {
-  // 开始动画
   isTriggered.value = true
-  // 加载数据
+
   await getPoultryCartData()
-  // 关闭动画
+
   isTriggered.value = false
 }
 
-// 优化购物车空列表状态，默认展示列表
-/**
- * 正常加入购物车的时候，也就是创建订单的时候,都是这种数组格式[{pid:'商品id',number:'个数',spec:'规格'},{xx}]
- * 要注意加入的时候，判断库存是否充足
- **/
 const showCartList = ref(false)
 const getPoultryCartData = async () => {
   const openId = memberStore.profile!.openId
@@ -71,9 +59,7 @@ const getPoultryCartData = async () => {
   console.log('是否有商品', showCartList.value)
 }
 
-// 初始化调用: 页面显示触发
 onShow(async () => {
-  // 如果有token，登陆了，则发起购物车请求
   console.log('memberStore.profile', memberStore.profile)
   if (memberStore.profile?.token) {
     console.log('sb')
@@ -84,48 +70,40 @@ const previewImage = (src: any) => {
   uni.previewImage({ urls: [src] })
 }
 
-// 点击删除按钮
 const onDeleteCart = (itemId: number) => {
-  // 弹窗二次确认
   uni.showModal({
     content: '是否删除',
     confirmColor: '#27BA9B',
     success: async (res) => {
       if (res.confirm) {
-        // 后端删除单品
         await deletePoultryCartAPI({ itemIds: [itemId] })
-        // 重新获取列表
+
         await getPoultryCartData()
       }
     },
   })
 }
 
-// 修改商品数量;ev包括{value:数量,index:pid}
 const onChangeCount = (ev: InputNumberBoxEvent) => {
   console.log('准备更新商品信息: ', ev)
   putPoultryCartByItemIdAPI(Number(ev.index), { number: ev.value })
 }
 
-// 修改选中状态-单品修改
 const onChangeSelected = (item: PoultryCartItem) => {
   console.log('item', item)
-  // 前端数据更新-是否选中取反
+
   item.selected = !item.selected
-  // 后端数据更新
+
   putPoultryCartByItemIdAPI(item.itemId, { selected: item.selected })
 }
 
-// 计算全选状态
 const isSelectedAll = computed(() => {
   return cartList.value.length && cartList.value.every((v) => v.selected)
 })
 
-// 修改选中状态-全选修改
 const onChangeSelectedAll = () => {
-  // 全选状态取反
   const _isSelectedAll = !isSelectedAll.value
-  // 前端数据更新
+
   cartList.value.forEach((item) => {
     item.selected = _isSelectedAll
   })
@@ -135,44 +113,34 @@ const onChangeSelectedAll = () => {
     'memberStore.profile!.openId',
     memberStore.profile!.openId,
   )
-  // 后端数据更新
+
   putPoultryCartSelectedAPI({ selected: _isSelectedAll, openId: memberStore.profile!.openId })
 }
 
-// 计算选中单品列表
 const selectedCartList = computed(() => {
   return cartList.value.filter((v) => v.selected)
 })
 
-// 计算选中总件数
 const selectedCartListCount = computed(() => {
   return selectedCartList.value.reduce((sum, item) => sum + item.number, 0)
 })
-// 主页
+
 const goHome = (url: string) => {
   uni.switchTab({ url })
 }
-// 计算选中总金额;这个地方只要计算总数就行
-// const selectedCartListMoney = computed(() => {
-//   return selectedCartList.value
-//     .reduce((sum, item) => sum + item.number * item.nowPrice, 0)
-//     .toFixed(2)
-// })
 
 const handleOrder = async () => {
-  // 清理用户信息
-  // memberStore.clearProfile()
   console.log('订单创建操作')
   console.log('当前cartInfo信息', cartList.value)
   const orderList: any[] = []
-  const currentSelectedIdList: number[] = [] //当前提交订单的购物车itemId，提交成功后需要将购物车内容删除
+  const currentSelectedIdList: number[] = []
   selectedCartList.value.map((v: PoultryCartItem) => {
     const { pid, spec, number, itemId } = v
     orderList.push({ pid, spec, number })
     currentSelectedIdList.push(itemId)
   })
   const { openId, userName } = memberStore.profile!
-  // console.log('orderList', orderList, 'openId', openId, 'userName', userName)
+
   console.log('当前选中的商品', currentSelectedIdList)
   const orderInfo = { openId, userName, orderDate: selectedDate.value, cartInfo: orderList }
   console.log('准备发起请求的数据', orderInfo)
@@ -185,22 +153,16 @@ const handleOrder = async () => {
       mask: true,
       duration: 500,
     })
-    // 重置预定日期
-    selectedDate.value = ''
-    // 清除这一项
+
+    selectedDate.value = undefined
+    isSelectedDate.value = false
+
     await deletePoultryCartAPI({ itemIds: currentSelectedIdList })
-    await getPoultryCartData() //重新获取
+    await getPoultryCartData()
     CustomerModal('查看订单', '/pages/order/order', true)
   }
-  // 返回上一页
-  // uni.navigateBack()
 }
 
-// 预定日期相关
-
-/**
- * 获取开始结束时间
- **/
 const getDate = (type: string) => {
   const date = new Date()
   let year = date.getFullYear()
@@ -229,12 +191,10 @@ const changeOrderDate = ({ detail }: any) => {
   selectedDate.value = detail.value
   isSelectedDate.value = true
 }
-const selectedDate = ref<string>('')
+const selectedDate = ref()
 const isSelectedDate = ref(false)
-// 结算按钮
-const gotoPayment = () => {
-  // TODO:加一步选择预定时间
 
+const gotoPayment = () => {
   if (selectedCartListCount.value === 0) {
     return uni.showToast({
       icon: 'none',
@@ -242,7 +202,6 @@ const gotoPayment = () => {
     })
   }
   if (!isSelectedDate.value) {
-    // 对话框modal
     return uni.showToast({
       title: '点击右上角选择预定时间',
       icon: 'error',
@@ -251,7 +210,6 @@ const gotoPayment = () => {
     })
   }
 
-  // TODO:直接进行下单结算就行
   uni.showModal({
     content: '是否下单？',
     confirmColor: '#27BA9B',
@@ -261,11 +219,7 @@ const gotoPayment = () => {
       }
     },
   })
-  // 跳转到结算页
-  // uni.navigateTo({ url: '/pagesOrder/create/create' })
 }
-
-// 猜你喜欢
 </script>
 
 <template>
@@ -391,7 +345,6 @@ const gotoPayment = () => {
 </template>
 
 <style lang="scss">
-// 根元素
 :host {
   height: 100vh;
   display: flex;
@@ -400,18 +353,15 @@ const gotoPayment = () => {
   background-color: #f7f7f8;
 }
 
-// 滚动容器
 .scroll-view {
-  flex: none; //同样的，使用flex:1会出问题
-  height: 95vh; //底部有一个action_bar
+  flex: none;
+  height: 95vh;
   background-color: #f7f7f8;
 }
 
-// 购物车列表
 .cart-list {
   padding: 0 20rpx;
 
-  // 优惠提示
   .tips {
     display: flex;
     align-items: center;
@@ -437,7 +387,6 @@ const gotoPayment = () => {
     }
   }
 
-  // 购物车商品
   .goods {
     display: flex;
     padding: 20rpx 20rpx 20rpx 80rpx;
@@ -516,7 +465,6 @@ const gotoPayment = () => {
       }
     }
 
-    // 商品数量
     .count {
       position: absolute;
       bottom: 10rpx;
@@ -573,7 +521,6 @@ const gotoPayment = () => {
   }
 }
 
-// 空状态
 .cart-blank,
 .login-blank {
   display: flex;
@@ -602,7 +549,6 @@ const gotoPayment = () => {
   }
 }
 
-// 吸底工具栏
 .toolbar {
   position: fixed;
   left: 0;
@@ -691,7 +637,7 @@ const gotoPayment = () => {
     }
   }
 }
-// 底部占位空盒子
+
 .toolbar-height {
   height: 100rpx;
 }

@@ -15,34 +15,26 @@ import upload from '@/components/upload.vue'
 import type { ALOS } from '@/types/alos'
 import { baseImgUrl, baseUploadUrl } from '@/utils/setting'
 
-// 热门推荐页 标题和url
-// 热门推荐页  标题和url
 const urlMap = [
-  { type: '1', title: '鸡类', url: '/hot/preference' }, //这里面是一个大类，读取到后会分成两个子类
+  { type: '1', title: '鸡类', url: '/hot/preference' },
   { type: '2', title: '鸭类', url: '/hot/inVogue' },
   { type: '3', title: '其他类', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
-  //不传任何参数的话，可以返回所有的分类包括分类下的对应商品信息；可以进行后续的筛选;量不多，不考虑子类分页查询，直接返回全部就行
+
   { type: '5', title: '商品分类', url: '/poultry/getCategory' },
 ]
 
-/**
- * @description 商品分类数组
- **/
 const range = [
   { value: '鸡类', text: '鸡类' },
   { value: '鸭类', text: '鸭类' },
   { value: '其他', text: '其他' },
 ]
 const inputClearSize = ref<any>('18px')
-/**
- * @description 处理分类选择
- **/
+
 const categoryChange = (e: any) => {
   console.log('已选择分类', e)
 }
 
-// 多选数据源
 const specList = [
   { text: '小', value: '小' },
   { text: '中', value: '中' },
@@ -51,12 +43,6 @@ const specList = [
 
 const uploadState = ref(false)
 
-// uniapp 获取页面参数
-/**
- * TODO:
- * 假设用type=1作为全部商品的页面，作为基准用于增删改
- * subTypes可以作为鸡和鸭类等的子分类
- **/
 const query = defineProps({
   type: {
     type: String,
@@ -65,16 +51,15 @@ const query = defineProps({
 })
 console.log(query)
 const currUrlMap = urlMap.find((v) => v.type === query.type)
-// 动态设置标题
+
 uni.setNavigationBarTitle({ title: currUrlMap!.title })
 
-// 推荐封面图
 const bannerPicture = ref('')
-// 推荐选项
+
 const subTypes = ref<Category[]>()
-// 高亮的下标
+
 const activeIndex = ref(0)
-// 获取热门推荐数据
+
 const getHotRecommendData = async () => {
   const res: any = await getPoultryRecommendAPI(currUrlMap!.url, {})
   console.log('res.result', res.result)
@@ -83,11 +68,10 @@ const getHotRecommendData = async () => {
     return
   }
   isData.value = true
-  bannerPicture.value = res.result[0].bannerPicture //默认进来给他第一个选项的宣传图
+  bannerPicture.value = res.result[0].bannerPicture
   subTypes.value = res.result as any
 }
 
-// 判断用户角色
 const roleValue = ref()
 const getMemberInfo = async () => {
   const memberStore = useMemberStore()
@@ -99,7 +83,7 @@ onShow(async () => {
   await getMemberInfo()
   console.log('rooleValue: ', roleValue.value)
 })
-// 页面加载
+
 onLoad(async () => {
   uni.showLoading({
     title: '加载中',
@@ -122,7 +106,7 @@ const baseProductInfo = {
   inventory: 999,
   picture: '',
 }
-// 直接在本地触发就行，poup写在本页
+
 const productInfo = ref<Partial<OrderDetail>>({
   pid: undefined,
   categoryName: '',
@@ -133,7 +117,6 @@ const productInfo = ref<Partial<OrderDetail>>({
   picture: '',
 })
 
-// uni-ui 弹出层组件 ref
 const isEditPoup = ref(false)
 const editPoup = ref<{
   open: (type?: UniHelper.UniPopupType) => void
@@ -147,7 +130,6 @@ const openPoup = async (type: string, goods_id?: number) => {
   console.log('商品ID', goods_id, 'type', type)
   console.log('isLogin', isLogin.value)
   if (!isLogin) {
-    // CustomerModal('请先登录', '/pages/login/login')
     return
   }
   if (type == 'edit') {
@@ -157,7 +139,7 @@ const openPoup = async (type: string, goods_id?: number) => {
     })
     productInfo.value = await getGoodsByIdData(goods_id!)
     console.log('productInfo.value', productInfo.value)
-    // 读取对应ID的数据，进行编辑
+
     isEditPoup.value = true
     uni.hideLoading()
     editPoup.value?.open('bottom')
@@ -169,14 +151,14 @@ const openPoup = async (type: string, goods_id?: number) => {
       title: '加载中',
       mask: false,
     })
-    // 使用默认的表单数据进行添加商品的操作
+
     isEditPoup.value = false
     uni.hideLoading()
     editPoup.value?.open('bottom')
     return
   }
 }
-// 获取商品详情信息
+
 const getGoodsByIdData = async (goods_id: number) => {
   console.log('goods_id: ' + goods_id)
   const res: any = await getPoultryGoodsByIdAPI(goods_id)
@@ -188,17 +170,14 @@ const editFormRules: UniHelper.UniFormsRules = {
   productName: { rules: [{ required: true, errorMessage: '请输入商品名称', format: 'string' }] },
   baselinePrice: { rules: [{ required: true, errorMessage: '请输入基准价格', format: 'number' }] },
   spec: { rules: [{ required: true, errorMessage: '请输入价格', format: 'string' }] },
-  // inventory: { rules: [{ required: true, errorMessage: '请输入库存', format: 'number' }] },
 }
 
 const isImgReceived = ref(false)
-/**
- * 处理图片url
- **/
+
 const receiveTmpImgUrl = (e: { imgUrl: string }) => {
   console.log('e.imgUrl', e.imgUrl)
   if (e.imgUrl) {
-    isImgReceived.value = true //有改变图片就重新上传
+    isImgReceived.value = true
     fileInfo.value.imgUrl = e.imgUrl
     fileInfo.value.imgType = e.imgUrl.split('.').pop()!
     console.log('获得临时路径图片', fileInfo.value.imgUrl)
@@ -206,10 +185,6 @@ const receiveTmpImgUrl = (e: { imgUrl: string }) => {
     isImgReceived.value = false
   }
 }
-
-/**
- * @description 编辑校验表单
- **/
 
 const ALOSCONF = ref<ALOS>()
 const fileInfo = ref({
@@ -219,36 +194,31 @@ const fileInfo = ref({
   imgType: '',
   productName: '',
 })
-/**
- * 获取上传参数
- **/
+
 const getUploadConfig = async () => {
   ALOSCONF.value = (await getPostObjectParamsAPI()).result
   console.log(' ALOSCONF.value', ALOSCONF.value)
 }
 const handleImgUpload = async () => {
-  //获取图片临时路径
   const imgUrl = fileInfo.value.imgUrl
   const productName = fileInfo.value.productName
   fileInfo.value.key = `poultry-image/${productName}.${fileInfo.value.imgType}`
   uni.showLoading({ title: '正在上传图片中...' })
   console.log('alcon', ALOSCONF.value)
   uni.uploadFile({
-    //图片上传地址
     url: fileInfo.value.ossUrl,
     filePath: imgUrl,
-    //上传名字，注意与后台接收的参数名一致
+
     name: 'file',
-    // fileType: 'image',
-    //设置请求头
+
     header: { 'Content-Type': 'image/png' },
     formData: {
       name: productName ?? '',
       key: fileInfo.value.key,
-      policy: ALOSCONF.value!.policy, // 输入你获取的的policy
-      OSSAccessKeyId: ALOSCONF.value!.OSSAccessKeyId, // 输入你的AccessKeyId
-      success_action_status: '200', // 让服务端返回200,不然，默认会返回204
-      signature: ALOSCONF.value!.signature, // 输入你获取的的signature
+      policy: ALOSCONF.value!.policy,
+      OSSAccessKeyId: ALOSCONF.value!.OSSAccessKeyId,
+      success_action_status: '200',
+      signature: ALOSCONF.value!.signature,
     },
     success: (res: any) => {
       console.log('res', res)
@@ -268,9 +238,9 @@ const submitForm = async () => {
 }
 const editFormRef = ref<UniHelper.UniFormsInstance>()
 const saveChanges = async () => {
-  let isValid = true // 校验状态标志
-  const formRef = editFormRef.value // 获取表单引用
-  const isFormValid = await formRef?.validate?.() // 校验表单
+  let isValid = true
+  const formRef = editFormRef.value
+  const isFormValid = await formRef?.validate?.()
   if (!isFormValid) {
     console.log('表单错误信息')
     isValid = false
@@ -279,14 +249,13 @@ const saveChanges = async () => {
   if (isValid) {
     fileInfo.value.productName = productInfo.value.productName!
     const { pid, picture, ...rest } = productInfo.value
-    // 判断是否需要修改图片
+
     let res: any
     console.log('isImgReceived.value', isImgReceived.value)
     if (!isImgReceived.value) {
       console.log('不修改图片')
       res = await updatePoultryGoodsAPI(rest, pid)
     } else {
-      // 更新数据库,包括图片
       console.log('修改图片')
       await handleImgUpload()
       res = await updatePoultryGoodsAPI(
@@ -311,7 +280,7 @@ const saveChanges = async () => {
         mask: false,
       })
     }
-    // TODO 更新成功后，恢复表单表单默认数据
+
     uploadState.value = true
     isImgReceived.value = false
     productInfo.value = { ...productInfo.value, ...baseProductInfo }
@@ -323,11 +292,11 @@ const handleEditPoup = (e: any) => {
     editFormRef.value?.clearValidate?.()
   }
 }
-// TODO:删除商品
+
 const handleDelete = (id: number | string) => {
   console.log('id', id)
 }
-// 切换tab
+
 const changeTab = (index: number, item: Category) => {
   bannerPicture.value = item.bannerPicture
   console.log('bannerPicture', bannerPicture.value)
@@ -501,7 +470,7 @@ const changeTab = (index: number, item: Category) => {
 .first_part {
   height: 100vh;
 }
-//修改表单的字体大小
+
 .line :deep(.uni-forms-item__label) {
   font-size: 35rpx !important;
   justify-content: flex-end !important;
@@ -519,7 +488,7 @@ const changeTab = (index: number, item: Category) => {
 }
 .poup_wrap {
   height: 70vh;
-  //background-color: #27ba9b;
+
   .header {
     position: relative;
     widows: 100%;
@@ -608,7 +577,7 @@ page {
   padding-bottom: 225rpx;
 }
 .scroll_view {
-  height: 100%; //flex:1会出现无法滚动到底部的问题
+  height: 100%;
   overflow: hidden;
 }
 .tabs {
@@ -647,7 +616,6 @@ page {
   justify-content: space-between;
   padding: 0 20rpx 20rpx;
   .navigator {
-    //width: 345rpx;
     width: 100%;
     padding: 20rpx;
     margin-top: 20rpx;

@@ -8,54 +8,48 @@ import { CustomerModal } from '@/hooks/loginstate/components/tologin'
 import sbxtx from '@/components/mySkuPoup/sbxtxpoup.vue'
 import { baseImgUrl } from '@/utils/setting'
 
-// 在模板中启用 v-focus
 const vSrc = (el: HTMLElement, binding: DirectiveBinding) => {
-  // 这会在 `mounted` 和 `updated` 时都调用
   console.log('bing', binding.value)
   const productName = binding.value
   el.setAttribute('src', baseImgUrl + productName + '.png')
 }
 
-// 热门推荐页  标题和url
 const urlMap = [
-  { type: '1', title: '鸡类', url: '/hot/preference' }, //这里面是一个大类，读取到后会分成两个子类
+  { type: '1', title: '鸡类', url: '/hot/preference' },
   { type: '2', title: '鸭类', url: '/hot/inVogue' },
   { type: '3', title: '其他类', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
-  //不传任何参数的话，可以返回所有的分类包括分类下的对应商品信息；可以进行后续的筛选;量不多，不考虑子类分页查询，直接返回全部就行
-  { type: '5', title: '商品分类', url: '/poultry/getCategory' }, //鸡类
-  { type: '6', title: '商品分类', url: '/poultry/getCategory' }, //鸭类
-  { type: '7', title: '商品分类', url: '/poultry/getCategory' }, //其他
+
+  { type: '5', title: '商品分类', url: '/poultry/getCategory' },
+  { type: '6', title: '商品分类', url: '/poultry/getCategory' },
+  { type: '7', title: '商品分类', url: '/poultry/getCategory' },
 ]
 onHide(() => {
   console.log('onShow===hot', showPoup.value)
   if (showPoup.value) showPoup.value = false
 })
-// uniapp 获取页面参数
+
 const query = defineProps<{
   type: string
 }>()
 console.log(query)
 const currUrlMap = urlMap.find((v) => v.type === query.type)
-// 动态设置标题
+
 uni.setNavigationBarTitle({ title: currUrlMap!.title })
 
-// 推荐封面图
 const bannerPicture = ref('')
-// 推荐选项
+
 const subTypes = ref<Category[]>()
-// 高亮的下标
+
 const activeIndex = ref(1001)
-// 获取热门推荐数据
+
 const getHotRecommendData = async (query: any) => {
-  const res: any = await getPoultryRecommendAPI(currUrlMap!.url, {
-    // 技巧：环境变量，开发环境，修改初始页面方便测试分页结束
-  })
+  const res: any = await getPoultryRecommendAPI(currUrlMap!.url, {})
   console.log('res.result', res.result)
   const typeMapping: { [key: string]: number } = {
-    '5': 1001, // 第一个选项的映射索引为0
-    '6': 1002, // 第二个选项的映射索引为1
-    '7': 1003, // 第三个选项的映射索引为2
+    '5': 1001,
+    '6': 1002,
+    '7': 1003,
   }
   if (query.type in typeMapping) {
     const index = typeMapping[query.type]
@@ -68,7 +62,6 @@ const getHotRecommendData = async (query: any) => {
   console.log('subTypes', subTypes.value)
 }
 
-// 页面加载
 onLoad(async (query: any) => {
   console.log('query', query)
   uni.showLoading({
@@ -81,21 +74,19 @@ onLoad(async (query: any) => {
   }, 500)
 })
 const isLogin = ref(false)
-// 获取商品详情信息
+
 const goodsId = ref()
 const showPoup = ref(false)
 const openPoup = async (goods_id: number) => {
   console.log(' isLogin.value', isLogin.value)
   isLogin.value = await checkLoginState()
   if (!isLogin.value) {
-    // return CustomerModal('请先登录', '/pages/login/login')
   }
   console.log('hot===id', goods_id)
   showPoup.value = true
   goodsId.value = goods_id
 }
 
-// 切换tab
 const changeTab = (index: number, item: Category) => {
   console.log('index', index, 'item', item)
   bannerPicture.value = item.bannerPicture
@@ -240,7 +231,6 @@ page {
   justify-content: space-between;
   padding: 0 20rpx 20rpx;
   .navigator {
-    //width: 345rpx;
     width: 100%;
     padding: 20rpx;
     margin-top: 20rpx;

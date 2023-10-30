@@ -7,9 +7,7 @@ import { onMounted, ref } from 'vue'
 import type { PolutryLoginResult } from '@/types/member'
 import { roleMap } from '@/types/enum'
 import getUserPoup from '@/components/login/getUserPoup.vue'
-// 获取屏幕边界到安全区域距离
 
-// 获取个人信息，修改个人信息需提供初始值
 const profile = ref()
 const props = defineProps(['isUpdate'])
 const showPopup = ref(false)
@@ -19,15 +17,12 @@ const submit = (e: any) => {
 }
 const memberStore = useMemberStore()
 
-/**
- * 拿到最新的用户信息，同时写入token
- **/
 const getCurrentUserInfo = async () => {
   uni.showLoading({
     title: '加载中',
     mask: false,
   })
-  // 获取最新的用户信息
+
   const res = await wx.login()
   code = res.code
 
@@ -39,7 +34,7 @@ const getCurrentUserInfo = async () => {
   console.log('memberStore.profile', memberStore.profile)
   profile.value = memberStore.profile
   uni.hideLoading()
-  // check userName whether is default
+
   if (userInfo.result.userName == '微信用户') await checkUserInfo()
 }
 const checkUserInfo = async () => {
@@ -75,19 +70,13 @@ onShow(async () => {
   console.log('能用吗')
   await getCurrentUserInfo()
 })
-// 登陆逻辑,直接在当前页面处理就行
-//
-// #ifdef MP-WEIXIN
-// 获取 code 登录凭证
+
 let code = ''
 onLoad(async () => {
   console.log('onshow处理逻辑就行')
-  // const res = await wx.login()
-  // code = res.code
-  // await onGetUserInfo(code)
 })
 onMounted(() => {})
-// 先判断有没有存储过的用户信息，后面再决定传参注册
+
 const onGetUserInfo = async (code: string) => {
   console.log('拿到请求openid的code', code)
   const res = await postLoginWxMinAPI({ code })
@@ -100,35 +89,25 @@ const onGetUserInfo = async (code: string) => {
       success: ({ confirm, cancel }) => {
         if (confirm) {
           console.log('confirm', confirm)
-          // isLoginPopupVisible.value = true
         }
       },
     })
     return
   }
-  loginSuccess(res.result) //如果有openid返回，则保存信息
+  loginSuccess(res.result)
   console.log('拿到token相关信息22', res)
 }
 const loginSuccess = (profile: PolutryLoginResult) => {
-  // 保存会员信息
   const memberStore = useMemberStore()
-  // TODO 设为admin用户
-  //profile.role = 'operator'
+
   memberStore.setProfile(profile)
-  // 成功提示
-  // uni.showToast({ icon: 'success', title: '登录成功' })
+
   setTimeout(() => {
-    // 页面跳转
     getCurrentUserInfo()
     console.log('登录成功 不必跳转;更新当前用户信息')
-    // uni.switchTab({ url: '/pages/my/my' })
-    // uni.navigateBack()
   }, 500)
 }
 
-// #endif
-
-// 计算手机号码格式
 function maskPhoneNumber(phoneNumber: string) {
   return phoneNumber?.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2') ?? '未知'
 }
@@ -137,18 +116,14 @@ const onLogin = async () => {
   await onGetUserInfo(code)
   console.log('准备跳转到登录页面登陆')
 }
-// 退出登录
+
 const onLogout = () => {
-  // 模态弹窗
   uni.showModal({
     content: '是否退出登录？',
     confirmColor: '#27BA9B',
     success: (res) => {
       if (res.confirm) {
-        // 清理用户信息
         memberStore.clearProfile()
-        // 返回上一页
-        // uni.navigateBack()
       }
     },
   })
@@ -159,7 +134,7 @@ const updateUserInfo = async (userName: any) => {
   const res: any = await putUserProfileAPI({
     ...newUserInfo,
   })
-  // 更新Store昵称
+
   uni.showLoading({
     title: '加载中',
     mask: true,
@@ -187,7 +162,6 @@ const updateUserInfo = async (userName: any) => {
   }, 1000)
 }
 
-// 点击保存提交表单
 const onSubmit = async () => {
   uni.showModal({
     title: '为了更好的用户体验，输入您的姓名',
@@ -203,7 +177,7 @@ const onSubmit = async () => {
       }
       if (cancel) {
         console.log('取消修改用户名', cancel)
-        // loginToBack()
+
         return
       }
     },
@@ -212,9 +186,6 @@ const onSubmit = async () => {
 const loginToBack = () => {
   uni.showToast({ icon: 'success', title: '登录成功' })
   setTimeout(() => {
-    // 页面跳转
-    // uni.switchTab({ url: '/pages/my/my' })
-    // uni.navigateBack()
     uni.switchTab({ url: '/pages/index/index' })
   }, 500)
 }
@@ -301,7 +272,6 @@ const loginToBack = () => {
     align-items: center;
     justify-content: center;
     .form-button {
-      // width: 190rpx;
     }
     .form-button:first-child {
       background: burlywood !important;
@@ -336,7 +306,7 @@ page {
     color: #999;
   }
 }
-/* 操作按钮 */
+
 .action {
   text-align: center;
   line-height: 90rpx;
@@ -350,7 +320,6 @@ page {
   }
 }
 
-// 表单
 .form {
   background-color: #f4f4f4;
 

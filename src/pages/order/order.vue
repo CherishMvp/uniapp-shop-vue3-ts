@@ -210,19 +210,9 @@ import { useMemberStore } from '@/stores'
 import { getPoultryOrderByIdAPI, postPoultryWeightAPI, getAllUsersAPI } from '@/services/order'
 import { CustomerModal } from '@/hooks/loginstate/components/tologin'
 
-/**
- * TODO
- * 打算时间筛选使用时间戳作为查询key；mysql中存储的date格式也是年月日格式
- * 根据日期格式的时间戳以及客户姓名，筛选对应的订单（customer角色无此两项功能，且只有最近三天的数据）
- *  1. 不选择日期，或者已选择日期为空的时候，返回所有预订单（admin和operator），客户角色（customer）只返回最近三天
- *  2. 做法一：数据量不大，考虑读取全部订单后，在前端根据角色、日期、客户姓名筛选即可
- *  3.做法二：后端控制做法，客户类角色访问对应api，后端筛选最近三比预订单即可；admin和operator访问对应接口，返回所有预订单即可（根据时间orderby）；、
- *      然后前端的筛选权限自行判断即可
- *  4. 进入该页面之前判断角色。如果为customer则不显示筛选功能，同时只显示本人的最近三个预定单
- **/
 const selectedDate = ref<any>('')
 const selectedName = ref('')
-const selectType = ref<any>('date') //date和daterange，不能以变量的形式写,设为any
+const selectType = ref<any>('date')
 const picker = ref()
 const memberStore = useMemberStore()
 const mockRole = ['admin', 'operator', 'customer']
@@ -236,9 +226,7 @@ const editHeaderInfo = ref({
     name: '',
   },
 })
-/**
- * 计算最终价格
- **/
+
 const calDetailPrice = computed(() => {
   return (detail: OrderDetail) => {
     if (Number(detail.weight) && Number(detail.fixedPrice)) {
@@ -250,9 +238,8 @@ const calDetailPrice = computed(() => {
   }
 })
 const editFormRules: UniHelper.UniFormsRules = {
-  // 对name字段进行必填验证
   weight: { rules: [{ required: true, errorMessage: '请输入重量', format: 'number' }] },
-  fixedPrice: { rules: [{ required: false, errorMessage: '请输入价格', format: 'number' }] }, //改为false
+  fixedPrice: { rules: [{ required: false, errorMessage: '请输入价格', format: 'number' }] },
 }
 const isCustomer = computed(() => {
   return userRole.value == 'admin' || userRole.value == 'operator' ? false : true
@@ -263,22 +250,19 @@ const editPoup = ref<{
 }>()
 const editPoupData = ref<OrderDetail[]>()
 const saveChanges = async () => {
-  let isValid = true // 校验状态标志
+  let isValid = true
   for (let i = 0; i < (editPoupData.value as any).length; i++) {
     const formRef = (editFormRef.value as any)[i]
     const isFormValid = await formRef?.validate?.()
     if (!isFormValid) {
       console.log('表单错误信息')
       isValid = false
-      break // 如果校验不通过，则停止后续处理
+      break
     }
   }
   if (isValid) {
-    // 所有表单校验通过，继续处理逻辑
-    /* editPoupData是一个数组，应该是要已数组的形式传过去，有批量修改 */
     console.log('Saving changes:', editPoupData.value)
-    // 可以将更新后的数据发送到服务器，或者使用 editPoupData.value 更新 Vuex store
-    // 修改重量
+
     if (editHeaderInfo.value.type == 'weight') {
       const newItems = editPoupData.value!.map(({ id, weight }) => ({
         id,
@@ -321,22 +305,16 @@ const saveChanges = async () => {
 }
 const closePoup = async () => {
   await getAllOrderList()
-  // editPoup.value?.close()
 }
 const handlePoup = (e: any) => {
   console.log('poup状态', e)
 }
-/**
- * @description 区分编辑重量和价格
- * @param id：0重量，1价格
- * @example id=0或1
- **/
+
 const current_oid = ref()
 const isLogin = ref(false)
 const hanleOrderEdit = (id: any, info: Datum) => {
   console.log('登陆状态', isLogin)
   if (!isLogin) {
-    // CustomerModal('请先登录', '/pages/login/login')
     return
   }
   current_oid.value = info.id
@@ -350,7 +328,6 @@ const hanleOrderEdit = (id: any, info: Datum) => {
     1: 'fixedPrice',
   }
   if (id == 0) {
-    // 处理editPoupData数组对象中的weight属性，设为undefined
     editPoupData.value.forEach((item: any) => {
       if (!Number(item.weight)) {
         item.weight = undefined
@@ -386,9 +363,7 @@ const onNameChange = async (e: any) => {
   curent_searchInfo.value.openId = e
   orderData.value = (await getPoultryOrderByIdAPI(curent_searchInfo.value)).result
 }
-// 初始化调用: 页面显示触发
-// 判断是否有订单数据
-// TODO：不管是date还是name，用一个变量存起来保存
+
 const curent_searchInfo = ref({
   openId: '',
   orderDate: '',
@@ -404,32 +379,23 @@ const getAllOrderList = async (justUpdateCurrent: boolean = false) => {
   }
   console.log('curent_searchInfo', curent_searchInfo.value)
   console.log('userRole', userRole.value)
-  // if (userRole.value != 'customer') openId = '456'
+
   const res = await getPoultryOrderByIdAPI(curent_searchInfo.value)
   console.log('res.result', res.result)
   orderData.value = res.result
-  // 获取客户列表
+
   await getUserList()
-  // orderData.value[0].orderDetail[0].baselinePrice
 }
 
-/**
- * @description 判断用户身份
- **/
-
 const checkUserIdentity = async () => {
-  // 可以通过memberStore来获取用户信息，包括角色信息，可以将userRole换成memberStore.profile的相关内容
-  // if (memberStore.profile) {}
   console.log('check start')
 
-  // 不管角色是什么，直接请求，前提是已经登陆
   if (memberStore.profile?.token) {
     userRole.value = memberStore.profile?.role
     if (userRole.value) {
       await getAllOrderList()
       isLogin.value = true
     } else {
-      // 什么角色都没有。赋空值
       orderData.value = []
       isLogin.value = false
     }
@@ -437,7 +403,6 @@ const checkUserIdentity = async () => {
   }
 }
 onShow(async () => {
-  // 模拟此处获取用户角色信息
   uni.showLoading({
     title: '加载中',
     mask: false,
@@ -448,15 +413,14 @@ onShow(async () => {
 })
 </script>
 <style lang="scss" scoped>
-//修改表单的字体大小
 .line :deep(.uni-forms-item__label) {
   font-size: 35rpx !important;
   justify-content: flex-end !important;
-  //width: 250rpx !important;
+
   flex: 1;
   height: 50px !important;
 }
-//居中对齐label和form
+
 .line :deep(.uni-forms-item) {
   align-items: center !important;
 }
@@ -469,7 +433,7 @@ onShow(async () => {
 .poup_wrap {
   height: 70vh;
   overflow: hidden;
-  //background-color: #27ba9b;
+
   .header {
     position: relative;
     line-height: 1.2;
@@ -522,7 +486,7 @@ onShow(async () => {
     }
   }
 }
-// 空状态
+
 .cart-blank,
 .login-blank {
   display: flex;
@@ -557,7 +521,6 @@ page {
 }
 
 .viewport {
-  //修改下视口宽度为100vh就行，scrollview设为flex：1使用剩下的100%就行
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -584,7 +547,7 @@ page {
   }
 }
 .scroll_view {
-  height: calc(100% - 20px); //flex:1会出现无法滚动到底部的问题
+  height: calc(100% - 20px);
   overflow: hidden;
   .header_tip {
     font-weight: 600;
@@ -643,7 +606,7 @@ page {
     height: 60rpx;
     width: 100%;
     margin-top: 20rpx;
-    // background-color: #bfa;
+
     line-height: 60rpx;
     display: flex;
     align-items: center;

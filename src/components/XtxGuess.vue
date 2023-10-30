@@ -5,61 +5,54 @@ import { onMounted, ref } from 'vue'
 import { CustomerModal } from '@/hooks/loginstate/components/tologin'
 import { baseImgUrl, baseUrl } from '@/utils/setting'
 
-// 分页参数
 const pageParams = {
   page: 1,
   pageSize: 10,
 }
-// 猜你喜欢的列表
+
 const guessList = ref<PoultryGoodsItem[]>([])
-// 已结束标记
+
 const finish = ref(false)
-// 获取猜你喜欢数据
+
 const getHomeGoodsGuessLikeData = async () => {
-  // 退出分页判断
   if (finish.value === true) {
     return uni.showToast({ icon: 'none', title: '没有更多数据~' })
   }
   const res = await getPoultryLikeAPI(pageParams)
 
   console.log('拿到商品: ', res)
-  // guessList.value = res.result.items
-  // 数组追加
+
   guessList.value.push(...res.result.items)
-  // 分页条件
+
   if (pageParams.page < res.result.totalPages) {
-    // 页码累加
     pageParams.page++
   } else {
     finish.value = true
   }
 }
 const props = defineProps(['isLogin'])
-// 重置数据
+
 const resetData = () => {
   pageParams.page = 1
   guessList.value = []
   finish.value = false
 }
-// 触发emit事件，打开商品详情弹窗
+
 const open = (goods_id: any) => {
   console.log('登陆状态', props.isLogin)
   if (props.isLogin) {
     emit('showPopup', goods_id)
   } else {
-    // CustomerModal('请先登录', '/pages/login/login')
   }
-  // 通过组件定义的ref调用uni-popup方法 ,如果传入参数 ，type 属性将失效 ，仅支持 ['top','left','bottom','right','center']
 }
-// 组件挂载完毕
+
 onMounted(() => {
   console.log('用的是老的guess组件')
   getHomeGoodsGuessLikeData()
 })
 
-// 子传父
 const emit = defineEmits(['showPopup'])
-// 暴露方法
+
 defineExpose({
   resetData,
   getMore: getHomeGoodsGuessLikeData,
@@ -98,7 +91,7 @@ defineExpose({
 :host {
   display: block;
 }
-/* 分类标题 */
+
 .caption {
   display: flex;
   justify-content: center;
@@ -124,7 +117,6 @@ defineExpose({
   }
 }
 
-/* 猜你喜欢 */
 .guess {
   display: flex;
   flex-wrap: wrap;
@@ -156,11 +148,11 @@ defineExpose({
   }
   .price {
     display: flex;
-    // align-items: stretch;
+
     justify-content: space-between;
     align-items: center;
     line-height: 1;
-    // height: 28px;
+
     padding-top: 4rpx;
     color: #e6851e;
     font-size: 40rpx;
@@ -169,7 +161,7 @@ defineExpose({
     font-size: 80%;
   }
 }
-// 加载提示文字
+
 .loading-text {
   text-align: center;
   font-size: 28rpx;

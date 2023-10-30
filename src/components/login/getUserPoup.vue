@@ -61,7 +61,6 @@ const baseUrl = ref()
 onMounted(() => {
   console.log('props', props.modelValue)
 
-  // 获取项目的 logo 和 名称
   uni.getSystemInfo({
     success: (res) => {
       project.name = res.appName
@@ -69,7 +68,7 @@ onMounted(() => {
   })
   project.logo = ''
 })
-// 选择用户头像， 重点， 得调用下上传图片接口
+
 const chooseavatar = (e: any) => {
   uni.uploadFile({
     url: baseUrl + 'api/common/upload',
@@ -78,9 +77,7 @@ const chooseavatar = (e: any) => {
     formData: {
       is_wxhead: 1,
     },
-    header: {
-      // Authorization: uni.getStorageSync("token")
-    },
+    header: {},
     success: (r): any => {
       let imgData = JSON.parse(r.data)
       console.log(imgData)
@@ -97,7 +94,7 @@ const getUserInfo = async () => {
     })
     return
   }
-  // 坑，，，点击昵称后，开发者工具上 一直提示 昵称是空，但是 真机上 是正常的
+
   if (nickname.value == '') {
     uni.showToast({
       title: '请编辑用户昵称或昵称不能使用特殊字符',
@@ -112,7 +109,6 @@ const getUserInfo = async () => {
   }
   console.log('rawData', rawData)
   emits('update:modelValue', false)
-  //   that.wxlogin()
 }
 </script>
 
