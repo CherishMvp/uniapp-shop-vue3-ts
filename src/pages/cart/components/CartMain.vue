@@ -212,6 +212,7 @@ function getNextDayDateString() {
 
 onShow(() => {
   selectedDate.value = getNextDayDateString()
+  isSelectedDate.value = true
   console.log('selectedDate.value', selectedDate.value)
 })
 
