@@ -191,7 +191,32 @@ const changeOrderDate = ({ detail }: any) => {
   selectedDate.value = detail.value
   isSelectedDate.value = true
 }
-const selectedDate = ref()
+function getNextDayDateString() {
+  // 获取当前日期
+  var currentDate = new Date()
+
+  // 获取下一天的日期
+  var nextDay = new Date(currentDate)
+  nextDay.setDate(currentDate.getDate() + 1)
+
+  // 格式化日期为"YYYY-MM-DD"格式
+  var formattedDate =
+    nextDay.getFullYear() +
+    '-' +
+    (nextDay.getMonth() + 1).toString().padStart(2, '0') +
+    '-' +
+    nextDay.getDate().toString().padStart(2, '0')
+
+  return formattedDate
+}
+
+onShow(() => {
+  selectedDate.value = getNextDayDateString()
+  console.log('selectedDate.value', selectedDate.value)
+})
+
+const selectedDate = ref() //改为第二天的时间
+
 const isSelectedDate = ref(false)
 
 const gotoPayment = () => {
