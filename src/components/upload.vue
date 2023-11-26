@@ -89,6 +89,15 @@ const selectImg = async (e: any) => {
   console.log('e', e)
   const tempFilePaths = e.tempFilePaths
   const imgUrl = tempFilePaths[0]
+  if (!imgUrl.includes('.png')) {
+    uni.showToast({
+      title: '图片格式不正确',
+      icon: 'error',
+      duration: 1500,
+      mask: false,
+    })
+    return
+  }
   fileInfo.value.imgUrl = imgUrl
   fileInfo.value.imgType = imgUrl.split('.').pop()
   emits('tmpImgPath', { imgUrl })
