@@ -79,18 +79,18 @@ const getMemberInfo = async () => {
   roleValue.value = memberStore.profile?.role
   if (memberStore.profile?.token) isLogin.value = true
 }
-onShow(async () => {
-  await getMemberInfo()
+onLoad(async () => {
+  await getUploadConfig()
   console.log('rooleValue: ', roleValue.value)
 })
 
-onLoad(async () => {
+onShow(async () => {
+  await getMemberInfo()
   uni.showLoading({
     title: '加载中',
     mask: false,
   })
   await getHotRecommendData()
-  await getUploadConfig()
   console.log('onload获取上传秘钥，两小时过期')
   setTimeout(() => {
     uni.hideLoading()

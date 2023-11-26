@@ -50,15 +50,26 @@
                   class="detail"
                   :class="{ 'last-detail': index2 === item.orderDetail?.length - 1 }"
                 >
-                  <div class="index">{{ index2 + 1 }}.</div>
-                  <div class="name">
-                    {{ detail.productName }} {{ detail.number
-                    }}{{
-                      detail.productName == '饲料' || detail.productName == '玉米' ? '斤' : '只'
-                    }}
+                  <div class="main_content">
+                    <div class="left_">
+                      <div class="index">{{ index2 + 1 }} .</div>
+                    </div>
+                    <div class="right_">
+                      <div class="first_">
+                        <span class="name">
+                          {{ detail.productName }} {{ detail.number
+                          }}{{
+                            detail.productName == '饲料' || detail.productName == '玉米'
+                              ? '斤'
+                              : '只'
+                          }}
+                        </span>
+                        <span class="spec">规格 {{ detail.spec }}</span>
+                      </div>
+
+                      <div class="base_price">{{ calDetailPrice(detail) }}</div>
+                    </div>
                   </div>
-                  <div class="base_price">{{ calDetailPrice(detail) }}</div>
-                  <div class="spec">规格 {{ detail.spec }}</div>
                 </view>
               </view>
               <!-- 小计 -->
@@ -586,6 +597,19 @@ page {
       align-items: center;
       flex-wrap: wrap;
       justify-content: flex-start;
+      .main_content {
+        display: flex;
+        align-items: center;
+        .right_ {
+          flex: 1;
+          .first_ {
+            margin-bottom: 10rpx;
+          }
+          .spec {
+            margin-left: 20rpx;
+          }
+        }
+      }
       .index {
         min-width: 45rpx;
         margin-right: -15rpx;
