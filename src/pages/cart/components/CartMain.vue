@@ -156,13 +156,28 @@ const handleOrder = async () => {
 
     selectedDate.value = undefined
     isSelectedDate.value = false
-
     await deletePoultryCartAPI({ itemIds: currentSelectedIdList })
     await getPoultryCartData()
-    CustomerModal('查看订单', '/pages/order/order', true)
+    // 发起消息订阅
+
+    await requestSubscribeMessage()
   }
 }
-
+const requestSubscribeMessage = async () => {
+  uni.requestSubscribeMessage({
+    tmplIds: ['7TIdnJvrSZf54gcndAAhgJzwGtOFmPcP07zIRz43Qbw'], // 替换为真实的模板 ID
+    success(res) {
+      console.log('订阅消息成功', res)
+      // 在这里可以将订阅结果发送到后端进行处理
+    },
+    fail(error) {
+      console.error('订阅消息失败', error)
+    },
+    complete: (complete) => {
+      CustomerModal('查看订单', '/pages/order/order', true)
+    },
+  })
+}
 const getDate = (type: string) => {
   const date = new Date()
   let year = date.getFullYear()
