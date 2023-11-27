@@ -32,6 +32,13 @@
       }
     },
     {
+      "path": "pages/order/orderDetail",
+      "style": {
+        "navigationBarTitleText": "订单详情",
+        "disableScroll": true
+      }
+    },
+    {
       "path": "pages/admin/admin",
       "style": {
         "navigationBarTitleText": "品类管理",
