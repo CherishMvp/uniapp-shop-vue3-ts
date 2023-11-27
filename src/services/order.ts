@@ -84,6 +84,34 @@ export const getPoultryOrderByIdAPI = (data: any) => {
     baseUrl,
   )
 }
+/**
+ * 获取指定订单ID的订单详情
+ * @param openId 用户openId
+ * @param orderId 订单ID
+ */
+export const getOrderInfoByOrderIdAPI = (data: any) => {
+  return http<any>(
+    {
+      method: 'GET',
+      url: `/poultry/findByOrderID`,
+      data,
+    },
+    baseUrl,
+  )
+}
+/**
+ * 发送模板信息
+ **/
+export const postTemplateInfo = (data: any) => {
+  return http<any>(
+    {
+      method: 'POST',
+      url: `/poultry/muban`,
+      data,
+    },
+    baseUrl,
+  )
+}
 
 /**
  * 创建订单

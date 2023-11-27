@@ -96,6 +96,18 @@
               <!-- TODO:后续要在pinia中添加角色的信息 -->
               <view class="footer" v-if="!isCustomer">
                 <view
+                  @tap="sendTemplateInfo(item)"
+                  v-if="userRole == 'operator' || userRole == 'admin'"
+                  class="button edit_weight_button"
+                  >发送订阅消息</view
+                >
+                <view
+                  @tap="getOrderDetail(item)"
+                  v-if="userRole == 'operator' || userRole == 'admin'"
+                  class="button edit_weight_button"
+                  >获取该笔订单详情</view
+                >
+                <view
                   @tap="hanleOrderEdit(0, item)"
                   v-if="userRole == 'operator' || userRole == 'admin'"
                   class="button edit_weight_button"
@@ -218,7 +230,13 @@ import { ref, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import type { Datum, OrderDetail } from '@/mock/mockOrder/type'
 import { useMemberStore } from '@/stores'
-import { getPoultryOrderByIdAPI, postPoultryWeightAPI, getAllUsersAPI } from '@/services/order'
+import {
+  getPoultryOrderByIdAPI,
+  postPoultryWeightAPI,
+  getAllUsersAPI,
+  postTemplateInfo,
+  getOrderInfoByOrderIdAPI,
+} from '@/services/order'
 import { CustomerModal } from '@/hooks/loginstate/components/tologin'
 
 const selectedDate = ref<any>('')
@@ -320,7 +338,25 @@ const closePoup = async () => {
 const handlePoup = (e: any) => {
   console.log('poup状态', e)
 }
-
+// 发送模板消息
+const sendTemplateInfo = async (item: any) => {
+  console.log('item', item)
+  // 订单详情页面获取
+  const res = await postTemplateInfo({ orderId: item.id, openId: item.openId })
+  console.log('res', res)
+  uni.showToast({
+    title: res.result.message,
+    icon: 'loading',
+    mask: true,
+  })
+}
+// 获取订单详情
+const getOrderDetail = async (item: any) => {
+  console.log('item', item)
+  // 订单详情页面获取
+  const res = await getOrderInfoByOrderIdAPI({ orderId: item.id, openId: item.openId })
+  console.log('res', res)
+}
 const current_oid = ref()
 const isLogin = ref(false)
 const hanleOrderEdit = (id: any, info: Datum) => {
