@@ -97,13 +97,13 @@
               <view class="footer" v-if="!isCustomer">
                 <view
                   @tap="sendTemplateInfo(item)"
-                  v-if="userRole == 'operator' || userRole == 'admin'"
+                  v-if="false && (userRole == 'operator' || userRole == 'admin')"
                   class="button edit_weight_button"
                   >发送订阅消息</view
                 >
                 <view
                   @tap="getOrderDetail(item)"
-                  v-if="userRole == 'operator' || userRole == 'admin'"
+                  v-if="false && (userRole == 'operator' || userRole == 'admin')"
                   class="button edit_weight_button"
                   >获取该笔订单详情</view
                 >
@@ -353,9 +353,9 @@ const sendTemplateInfo = async (item: any) => {
 // 获取订单详情
 const getOrderDetail = async (item: any) => {
   console.log('item', item)
-  // 订单详情页面获取
-  const res = await getOrderInfoByOrderIdAPI({ orderId: item.id, openId: item.openId })
-  console.log('res', res)
+  uni.navigateTo({
+    url: '/pages/order/orderDetail' + `?orderId=${item.id}&openId=${item.openId}`,
+  })
 }
 const current_oid = ref()
 const isLogin = ref(false)
